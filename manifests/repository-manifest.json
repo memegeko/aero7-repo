@@ -1,12 +1,12 @@
 {
   "repository": "aero7",
-  "status": "alpha-not-published",
+  "status": "alpha-ready",
   "published_url": "https://memegeko.github.io/aero7-repo/$arch",
   "signing_fingerprint": "72C79ABBBBE96446DD3324042694BFE1090F4FD6",
   "public_key": "keys/aero7-repository.asc",
-  "package_set_complete": false,
-  "last_successful_build": null,
+  "package_set_complete": true,
+  "last_successful_build": "20260720T184852Z-cd11cdbec00b",
   "notes": [
-    "Do not enable this repository in Aero7-shell until the signing key and first complete build are published and tested."
+    "Initial signed alpha package set is complete and ready for installer integration testing."
   ]
 }
