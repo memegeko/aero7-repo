@@ -329,7 +329,8 @@
       "makedepends": [
         "git",
         "extra-cmake-modules",
-        "plasma-wayland-protocols"
+        "plasma-wayland-protocols",
+        "vulkan-headers"
       ],
       "provides": [
         "aerothemeplasma-desktop"

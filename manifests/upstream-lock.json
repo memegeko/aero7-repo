@@ -53,9 +53,9 @@
     "aerothemeplasma-desktop-git": {
       "aur_url": "https://aur.archlinux.org/aerothemeplasma-desktop-git.git",
       "aur_commit": "cd87f91afb585f2163c462f7fe965def59c8a3dd",
-      "pkgbuild_sha256": "ad81612775e97960d2675629caef7d157df2f7d1005f57bf72fa53edfd503c51",
-      "srcinfo_sha256": "ebb3f812349b59fca83699f0a358f31249f215822e58d5f8764487bdb122c815",
-      "reviewed_at": "2026-07-20T18:03:22Z"
+      "pkgbuild_sha256": "2b6ec32a01f7fe770db7ffaf6aace755e9849e94c9fe4a44a4fee88cca5d5f8e",
+      "srcinfo_sha256": "abe9c65e69a18ceb269bf748cf4674a770974c93ee97222cbaa5e34f4b9bc2a1",
+      "reviewed_at": "2026-07-20T19:21:22Z"
     }
   }
 }

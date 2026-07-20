@@ -66,7 +66,8 @@ optdepends=(uac-polkit-agent
             qrca)
 makedepends=(git
              extra-cmake-modules
-             plasma-wayland-protocols)
+             plasma-wayland-protocols
+             vulkan-headers)
 options=('!debug')
 source=("${pkgname}::git+${url}.git")
 sha256sums=('SKIP')

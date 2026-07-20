@@ -9,6 +9,7 @@ pkgbase = aerothemeplasma-desktop-git
 	makedepends = git
 	makedepends = extra-cmake-modules
 	makedepends = plasma-wayland-protocols
+	makedepends = vulkan-headers
 	depends = gcc-libs
 	depends = bash
 	depends = glibc
