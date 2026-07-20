@@ -59,6 +59,7 @@ mkdir -p -- "$workdir"
 cp -a "$repo/packages/$package/." "$workdir/"
 
 if [[ ! -d "$chroot_dir/root" ]]; then
+  mkdir -p -- "$chroot_dir"
   sudo mkarchroot "$chroot_dir/root" base-devel
 else
   sudo arch-nspawn "$chroot_dir/root" pacman -Syu --noconfirm
