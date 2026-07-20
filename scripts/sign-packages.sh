@@ -12,6 +12,7 @@ builder_root="${AERO7_BUILDER_ROOT:-/srv/aero7-builder}"
 staging_root="${AERO7_STAGING_DIR:-$builder_root/staging}"
 staging="$staging_root/$build_id"
 fingerprint="${AERO7_SIGNING_FINGERPRINT:-}"
+passphrase_file="${AERO7_GPG_PASSPHRASE_FILE:-}"
 
 [[ -n "$fingerprint" ]] || {
   printf 'sign-packages: AERO7_SIGNING_FINGERPRINT is required\n' >&2
@@ -32,8 +33,17 @@ for package in "${expected[@]}"; do
   }
 done
 
+gpg_args=(--batch --yes --local-user "$fingerprint")
+if [[ -n "$passphrase_file" ]]; then
+  [[ -r "$passphrase_file" ]] || {
+    printf 'sign-packages: passphrase file is not readable: %s\n' "$passphrase_file" >&2
+    exit 1
+  }
+  gpg_args+=(--pinentry-mode loopback --passphrase-file "$passphrase_file")
+fi
+
 while IFS= read -r -d '' pkg; do
-  gpg --batch --yes --local-user "$fingerprint" --detach-sign --output "$pkg.sig" "$pkg"
+  gpg "${gpg_args[@]}" --detach-sign --output "$pkg.sig" "$pkg"
 done < <(find "$staging/packages" -maxdepth 1 -type f -name '*.pkg.tar.zst' -print0 | sort -z)
 
 public="$staging/public/x86_64"
@@ -43,7 +53,14 @@ cp -a "$repo/manifests/repository-manifest.json" "$public/repository-manifest.js
 
 (
   cd "$public"
-  repo-add --sign --key "$fingerprint" aero7.db.tar.zst ./*.pkg.tar.zst
+  if [[ -n "$passphrase_file" ]]; then
+    repo-add aero7.db.tar.zst ./*.pkg.tar.zst
+    for db_file in aero7.db.tar.zst aero7.files.tar.zst; do
+      gpg "${gpg_args[@]}" --detach-sign --output "$db_file.sig" "$db_file"
+    done
+  else
+    repo-add --sign --key "$fingerprint" aero7.db.tar.zst ./*.pkg.tar.zst
+  fi
 )
 
 for db_file in aero7.db.tar.zst aero7.files.tar.zst; do
