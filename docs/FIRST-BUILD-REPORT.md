@@ -14,7 +14,7 @@ Status: `MANUAL ACTION REQUIRED`
 | GitHub repository created | PASS: `memegeko/aero7-repo` |
 | Self-hosted runner status | MANUAL ACTION REQUIRED |
 | Runner labels | MANUAL ACTION REQUIRED |
-| Package signing fingerprint | MANUAL ACTION REQUIRED |
+| Package signing fingerprint | PASS: `72C79ABBBBE96446DD3324042694BFE1090F4FD6` |
 | Package build order | PASS WITH WARNINGS: generated locally from `.SRCINFO`; no packages built yet |
 | Per-package versions | NOT TESTED |
 | Per-package build time | NOT TESTED |
@@ -34,7 +34,7 @@ Status: `MANUAL ACTION REQUIRED`
 | Files changed in Aero7-shell | NOT TESTED |
 | Tests added | PASS WITH WARNINGS: repository validation tests added |
 | Tests run | PASS WITH WARNINGS: local source validation only |
-| Remaining risks | MANUAL ACTION REQUIRED: builder VM, signing key, first build, Pages deployment, qemu-mcp install test |
+| Remaining risks | MANUAL ACTION REQUIRED: self-hosted runner registration, first build, Pages deployment, qemu-mcp install test |
 
 Do not call this production-ready. The target conclusion after successful
 completion is: "The Aero7 signed package repository is ready for further alpha

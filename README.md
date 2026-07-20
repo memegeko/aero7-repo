@@ -28,7 +28,7 @@ The repository source, package pins, validation tests, and builder scripts are
 being prepared. A published pacman endpoint must not be enabled in Aero7-shell
 until a complete package set has been built, signed, deployed, and tested.
 
-Signing fingerprint: `MANUAL ACTION REQUIRED`
+Signing fingerprint: `72C79ABBBBE96446DD3324042694BFE1090F4FD6`
 
 ## Pacman Configuration
 

@@ -1,6 +1,6 @@
 # Signing
 
-Status: `MANUAL ACTION REQUIRED`
+Status: `PASS WITH WARNINGS`
 
 Create a dedicated signing key on `aero7-builder` only:
 
@@ -22,7 +22,7 @@ After creating the key:
 Current fingerprint:
 
 ```text
-MANUAL ACTION REQUIRED
+72C79ABBBBE96446DD3324042694BFE1090F4FD6
 ```
 
 Package files and repository databases must be signed. Published pacman config

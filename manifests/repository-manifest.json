@@ -2,7 +2,7 @@
   "repository": "aero7",
   "status": "alpha-not-published",
   "published_url": "https://memegeko.github.io/aero7-repo/$arch",
-  "signing_fingerprint": "MANUAL ACTION REQUIRED",
+  "signing_fingerprint": "72C79ABBBBE96446DD3324042694BFE1090F4FD6",
   "public_key": "keys/aero7-repository.asc",
   "package_set_complete": false,
   "last_successful_build": null,
