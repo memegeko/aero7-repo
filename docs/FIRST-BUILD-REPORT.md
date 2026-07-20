@@ -25,7 +25,7 @@ Status: `MANUAL ACTION REQUIRED`
 | Repository signature | NOT TESTED |
 | Pages deployment URL | NOT TESTED |
 | Published repository size | NOT TESTED |
-| GitHub workflow run | NOT TESTED |
+| GitHub workflow run | PASS WITH WARNINGS: validate runs `29766666107` and `29767429051` passed; package build run `29766666840` was cancelled after switching build workflow to manual-only |
 | qemu-mcp binary installation duration | NOT TESTED |
 | Previous source-build duration | NOT TESTED |
 | Speed improvement | NOT TESTED |
