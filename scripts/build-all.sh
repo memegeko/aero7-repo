@@ -14,6 +14,7 @@ if [[ "$(id -u)" -eq 0 ]]; then
 fi
 
 mkdir -p -- "$staging"
+printf '%s\n' "$build_id" > "$builder_root/current-build-id"
 python "$repo/scripts/dependency-order.py" --repo "$repo" --write
 mapfile -t packages < <(python - "$repo/manifests/build-order.json" <<'PY'
 import json

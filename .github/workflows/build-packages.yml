@@ -36,6 +36,11 @@ jobs:
       - name: Build complete package set
         run: scripts/build-all.sh
 
+      - name: Prepare repository artifact
+        run: |
+          build_id="$(cat /srv/aero7-builder/current-build-id)"
+          scripts/promote-build.sh "$build_id"
+
       - name: Upload staging report
         uses: actions/upload-artifact@v4
         with:
@@ -47,5 +52,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: aero7-pacman-repository
-          path: /srv/aero7-builder/staging/*/public/
+          path: public/
           if-no-files-found: error
