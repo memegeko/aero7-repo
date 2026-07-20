@@ -1,7 +1,8 @@
 # Publishing
 
-Publishing is alpha-only and must be manual until the first complete build,
-install, reboot, and rollback test succeeds.
+Publishing is alpha-only. The first complete signed package set is live on
+GitHub Pages, and future builds should continue to use the artifact-driven
+Pages workflow.
 
 Expected flow:
 
