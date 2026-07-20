@@ -11,14 +11,6 @@ on:
         options:
           - "false"
           - "true"
-  push:
-    branches:
-      - main
-    paths:
-      - "packages/**"
-      - "manifests/**"
-      - "scripts/**"
-      - ".github/workflows/build-packages.yml"
 
 permissions:
   contents: read
