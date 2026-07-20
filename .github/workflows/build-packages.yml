@@ -1,0 +1,59 @@
+name: build-packages
+
+on:
+  workflow_dispatch:
+    inputs:
+      promote:
+        description: Promote the build into public/ after validation
+        required: true
+        default: "false"
+        type: choice
+        options:
+          - "false"
+          - "true"
+  push:
+    branches:
+      - main
+    paths:
+      - "packages/**"
+      - "manifests/**"
+      - "scripts/**"
+      - ".github/workflows/build-packages.yml"
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: aero7-package-builder
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: [self-hosted, linux, x64, arch, aero7-builder]
+    timeout-minutes: 360
+    steps:
+      - name: Checkout exact commit
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Verify pinned package metadata
+        run: scripts/verify-sources.sh
+
+      - name: Build complete package set
+        run: scripts/build-all.sh
+
+      - name: Upload staging report
+        uses: actions/upload-artifact@v4
+        with:
+          name: aero7-build-report
+          path: /srv/aero7-builder/staging/*/build-manifest.json
+          if-no-files-found: error
+
+      - name: Upload repository artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: aero7-pacman-repository
+          path: /srv/aero7-builder/staging/*/public/
+          if-no-files-found: error

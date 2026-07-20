@@ -1,0 +1,61 @@
+{
+  "generated_at": "2026-07-20T18:03:22Z",
+  "packages": {
+    "aeroshell-libplasma-git": {
+      "aur_url": "https://aur.archlinux.org/aeroshell-libplasma-git.git",
+      "aur_commit": "bbc714881314fed92208b302dd87af3fe862fbea",
+      "pkgbuild_sha256": "93d5fc67c1771b99c47b6fc742b71ac10701b35b870560013bab29fe767c743a",
+      "srcinfo_sha256": "e46a178fb1079be17f869282786f26b55b991d8d6f2dec557809d6af0602f121",
+      "reviewed_at": "2026-07-20T18:03:22Z"
+    },
+    "aeroshell-workspace-git": {
+      "aur_url": "https://aur.archlinux.org/aeroshell-workspace-git.git",
+      "aur_commit": "b0fa9281d725995b8d0c4d8bc35ac0019831f41a",
+      "pkgbuild_sha256": "1991acbf9f1a77c826695438445d2f03c456b5bd46d110aa9e026eb849074d97",
+      "srcinfo_sha256": "268a8ac062d7ca65fbc075b941db7765f54ff303b409a24240c0d0ac01d9ea3f",
+      "reviewed_at": "2026-07-20T18:03:22Z"
+    },
+    "aeroshell-kwin-components-git": {
+      "aur_url": "https://aur.archlinux.org/aeroshell-kwin-components-git.git",
+      "aur_commit": "c93cdad0d253c425ef90a9cfb28f55b457a3952e",
+      "pkgbuild_sha256": "8882041bd46b806e679ad3ce443bd9a260202ed9c73369cc04d837c350c033fe",
+      "srcinfo_sha256": "387189d46abf81b018bcf7fe57f4adec38da56a090fc5234c4f0486b6f0eb9fc",
+      "reviewed_at": "2026-07-20T18:03:22Z"
+    },
+    "aerothemeplasma-icons-git": {
+      "aur_url": "https://aur.archlinux.org/aerothemeplasma-icons-git.git",
+      "aur_commit": "b892bd70841d998d326b6980c15013384238ff2d",
+      "pkgbuild_sha256": "a4974a1b62728e24d4feee35de10bd052c075464d8a5fa0e2216ba621e4f0574",
+      "srcinfo_sha256": "85f71433b4cfededb92eef984ba407f837cc04556e23954264d8cd69fa0bdb67",
+      "reviewed_at": "2026-07-20T18:03:22Z"
+    },
+    "aerothemeplasma-sounds-git": {
+      "aur_url": "https://aur.archlinux.org/aerothemeplasma-sounds-git.git",
+      "aur_commit": "4c7155a47b402c4b4717d1c2f7376fdfb869ba07",
+      "pkgbuild_sha256": "b058f91077fd6946ff6c8265be7df645b17b8ea94f28d059660cb9e874b21721",
+      "srcinfo_sha256": "e6540fcd990c08cd68746e19baaa1d9e25add5eb852e42daed58b40f51aae474",
+      "reviewed_at": "2026-07-20T18:03:22Z"
+    },
+    "aeroshell-smod-git": {
+      "aur_url": "https://aur.archlinux.org/aeroshell-smod-git.git",
+      "aur_commit": "d26a819ec3eb32a9630d6b658591b51c4fd1732f",
+      "pkgbuild_sha256": "806e043d19a181e095d651820bf298e3dcb3c2c97c62dff769c945a5792040c6",
+      "srcinfo_sha256": "4438d0baf027b2a0fec691e3a9ff0c897187e3409d8f177df5666d373ff78e2e",
+      "reviewed_at": "2026-07-20T18:03:22Z"
+    },
+    "uac-polkit-agent-git": {
+      "aur_url": "https://aur.archlinux.org/uac-polkit-agent-git.git",
+      "aur_commit": "3b54efd7f22856330b27722cca2a873b78a95b0d",
+      "pkgbuild_sha256": "8f89d4a5f7ab55da0cc8a40ff9b210e7ffe2b84a167a48875117200776b54169",
+      "srcinfo_sha256": "6f9f720fcca4d5c731654fc9fb7f32663acd863cd48cc337a85d384bcba2b8ca",
+      "reviewed_at": "2026-07-20T18:03:22Z"
+    },
+    "aerothemeplasma-desktop-git": {
+      "aur_url": "https://aur.archlinux.org/aerothemeplasma-desktop-git.git",
+      "aur_commit": "cd87f91afb585f2163c462f7fe965def59c8a3dd",
+      "pkgbuild_sha256": "ad81612775e97960d2675629caef7d157df2f7d1005f57bf72fa53edfd503c51",
+      "srcinfo_sha256": "ebb3f812349b59fca83699f0a358f31249f215822e58d5f8764487bdb122c815",
+      "reviewed_at": "2026-07-20T18:03:22Z"
+    }
+  }
+}

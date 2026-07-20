@@ -1,0 +1,12 @@
+{
+  "repository": "aero7",
+  "status": "alpha-not-published",
+  "published_url": "https://memegeko.github.io/aero7-repo/$arch",
+  "signing_fingerprint": "MANUAL ACTION REQUIRED",
+  "public_key": "keys/aero7-repository.asc",
+  "package_set_complete": false,
+  "last_successful_build": null,
+  "notes": [
+    "Do not enable this repository in Aero7-shell until the signing key and first complete build are published and tested."
+  ]
+}

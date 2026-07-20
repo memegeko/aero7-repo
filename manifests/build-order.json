@@ -1,0 +1,343 @@
+{
+  "generated_by": "scripts/dependency-order.py",
+  "packages": [
+    "aeroshell-libplasma-git",
+    "aerothemeplasma-icons-git",
+    "aerothemeplasma-sounds-git",
+    "aeroshell-smod-git",
+    "uac-polkit-agent-git",
+    "aeroshell-kwin-components-git",
+    "aeroshell-workspace-git",
+    "aerothemeplasma-desktop-git"
+  ],
+  "edges": {
+    "aeroshell-libplasma-git": [
+      "aeroshell-kwin-components-git",
+      "aeroshell-workspace-git",
+      "aerothemeplasma-desktop-git"
+    ],
+    "aeroshell-workspace-git": [
+      "aerothemeplasma-desktop-git"
+    ],
+    "aeroshell-kwin-components-git": [
+      "aerothemeplasma-desktop-git"
+    ],
+    "aerothemeplasma-icons-git": [
+      "aerothemeplasma-desktop-git"
+    ],
+    "aerothemeplasma-sounds-git": [
+      "aerothemeplasma-desktop-git"
+    ],
+    "aeroshell-smod-git": [
+      "aerothemeplasma-desktop-git"
+    ],
+    "uac-polkit-agent-git": [],
+    "aerothemeplasma-desktop-git": []
+  },
+  "package_metadata": {
+    "aeroshell-libplasma-git": {
+      "arch": [
+        "x86_64"
+      ],
+      "depends": [
+        "gcc-libs",
+        "glibc",
+        "plasma-activities",
+        "kcolorscheme",
+        "kconfig",
+        "kcoreaddons",
+        "kglobalaccel",
+        "kguiaddons",
+        "ki18n",
+        "kiconthemes",
+        "kio",
+        "kirigami",
+        "knotifications",
+        "kpackage",
+        "ksvg",
+        "kwidgetsaddons",
+        "kwindowsystem",
+        "libglvnd",
+        "libx11",
+        "libxcb",
+        "qt6-5compat",
+        "qt6-base",
+        "qt6-declarative",
+        "wayland"
+      ],
+      "makedepends": [
+        "git",
+        "extra-cmake-modules",
+        "kdoctools",
+        "wayland-protocols",
+        "plasma-wayland-protocols"
+      ],
+      "provides": [
+        "libplasma",
+        "aeroshell-libplasma"
+      ],
+      "conflicts": [
+        "plasma-framework",
+        "libplasma",
+        "aeroshell-libplasma"
+      ],
+      "replaces": [
+        "plasma-framework"
+      ]
+    },
+    "aerothemeplasma-icons-git": {
+      "arch": [
+        "any"
+      ],
+      "depends": [],
+      "makedepends": [
+        "git"
+      ],
+      "provides": [
+        "aerothemeplasma-icons"
+      ],
+      "conflicts": [
+        "aerothemeplasma-icons"
+      ],
+      "replaces": []
+    },
+    "aerothemeplasma-sounds-git": {
+      "arch": [
+        "any"
+      ],
+      "depends": [],
+      "makedepends": [
+        "git"
+      ],
+      "provides": [
+        "aerothemeplasma-sounds"
+      ],
+      "conflicts": [
+        "aerothemeplasma-sounds"
+      ],
+      "replaces": []
+    },
+    "aeroshell-smod-git": {
+      "arch": [
+        "x86_64"
+      ],
+      "depends": [
+        "gcc-libs",
+        "glibc",
+        "kconfig",
+        "kwin",
+        "kdecoration",
+        "kcoreaddons",
+        "libepoxy",
+        "ki18n",
+        "kcmutils",
+        "kguiaddons",
+        "plasma-wayland-protocols",
+        "wayland",
+        "wayland-protocols",
+        "qt6-wayland",
+        "kwindowsystem",
+        "kwidgetsaddons",
+        "pkgconf",
+        "qt6-base"
+      ],
+      "makedepends": [
+        "git",
+        "extra-cmake-modules",
+        "kdoctools",
+        "vulkan-headers"
+      ],
+      "provides": [
+        "aeroshell-smod"
+      ],
+      "conflicts": [
+        "aeroshell-smod"
+      ],
+      "replaces": []
+    },
+    "uac-polkit-agent-git": {
+      "arch": [
+        "x86_64"
+      ],
+      "depends": [
+        "gcc-libs",
+        "glibc",
+        "libstdc++",
+        "kconfig",
+        "kcoreaddons",
+        "kcrash",
+        "kdbusaddons",
+        "ki18n",
+        "kirigami",
+        "knotifications",
+        "kwindowsystem",
+        "polkit-qt6",
+        "qt6-base",
+        "qt6-declarative"
+      ],
+      "makedepends": [
+        "git",
+        "extra-cmake-modules",
+        "kdoctools"
+      ],
+      "provides": [
+        "uac-polkit-agent"
+      ],
+      "conflicts": [
+        "uac-polkit-agent"
+      ],
+      "replaces": []
+    },
+    "aeroshell-kwin-components-git": {
+      "arch": [
+        "x86_64"
+      ],
+      "depends": [
+        "gcc-libs",
+        "glibc",
+        "kwin",
+        "libepoxy",
+        "kconfig",
+        "kcmutils",
+        "kdecoration",
+        "ki18n",
+        "kcoreaddons",
+        "kwindowsystem",
+        "qt6-base",
+        "qt6-svg",
+        "kirigami",
+        "plasma-workspace",
+        "plasma5support",
+        "qt6-declarative",
+        "aeroshell-libplasma",
+        "ksvg",
+        "qt6-5compat",
+        "wayland"
+      ],
+      "makedepends": [
+        "git",
+        "extra-cmake-modules",
+        "kdoctools",
+        "plasma-wayland-protocols",
+        "wayland-protocols",
+        "vulkan-headers"
+      ],
+      "provides": [
+        "aeroshell-kwin-components"
+      ],
+      "conflicts": [
+        "aeroshell-kwin-components"
+      ],
+      "replaces": []
+    },
+    "aeroshell-workspace-git": {
+      "arch": [
+        "x86_64"
+      ],
+      "depends": [
+        "gcc-libs",
+        "glibc",
+        "kconfig",
+        "kcmutils",
+        "aeroshell-libplasma",
+        "sddm",
+        "libksysguard",
+        "plasma-workspace",
+        "qt6-declarative",
+        "kjobwidgets",
+        "plasma-activities-stats",
+        "ki18n",
+        "kcoreaddons",
+        "kwindowsystem",
+        "kservice",
+        "kio",
+        "qt6-base"
+      ],
+      "makedepends": [
+        "git",
+        "extra-cmake-modules"
+      ],
+      "provides": [
+        "aeroshell-workspace"
+      ],
+      "conflicts": [
+        "aeroshell-workspace"
+      ],
+      "replaces": []
+    },
+    "aerothemeplasma-desktop-git": {
+      "arch": [
+        "x86_64"
+      ],
+      "depends": [
+        "gcc-libs",
+        "bash",
+        "glibc",
+        "aeroshell-libplasma",
+        "aeroshell-workspace",
+        "aeroshell-kwin-components",
+        "aerothemeplasma-sounds",
+        "aerothemeplasma-icons",
+        "aeroshell-smod",
+        "qt6-virtualkeyboard",
+        "qt6-multimedia",
+        "qt6-5compat",
+        "qt6-wayland",
+        "qt6-declarative",
+        "kconfigwidgets",
+        "ksvg",
+        "wayland",
+        "kiconthemes",
+        "plasma-activities",
+        "kjobwidgets",
+        "kio",
+        "kglobalaccel",
+        "kpipewire",
+        "ki18n",
+        "kwin",
+        "plasma-workspace",
+        "powerdevil",
+        "kauth",
+        "kcmutils",
+        "networkmanager-qt",
+        "kconfig",
+        "kquickcharts",
+        "prison",
+        "knewstuff",
+        "kdeclarative",
+        "kirigami-addons",
+        "kcoreaddons",
+        "kservice",
+        "kxmlgui",
+        "plasma5support",
+        "kvantum",
+        "sddm",
+        "sddm-kcm",
+        "plasma-nm",
+        "plasma-pa",
+        "kwindowsystem",
+        "knotifications",
+        "knotifyconfig",
+        "kmenuedit",
+        "kirigami",
+        "kitemmodels",
+        "kpackage",
+        "kwidgetsaddons",
+        "plasma-desktop",
+        "qt6-base"
+      ],
+      "makedepends": [
+        "git",
+        "extra-cmake-modules",
+        "plasma-wayland-protocols"
+      ],
+      "provides": [
+        "aerothemeplasma-desktop"
+      ],
+      "conflicts": [
+        "aerothemeplasma-desktop"
+      ],
+      "replaces": []
+    }
+  }
+}

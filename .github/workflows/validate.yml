@@ -1,0 +1,35 @@
+name: validate
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install validation tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y shellcheck jq
+
+      - name: Bash syntax
+        run: bash -n scripts/*.sh
+
+      - name: ShellCheck
+        run: shellcheck scripts/*.sh
+
+      - name: Python validation
+        run: |
+          python3 -m py_compile scripts/dependency-order.py tests/validate-repo.py
+          python3 scripts/dependency-order.py --write
+          python3 tests/validate-repo.py
+
+      - name: JSON validity
+        run: jq empty manifests/*.json

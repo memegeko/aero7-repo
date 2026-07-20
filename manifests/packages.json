@@ -1,0 +1,49 @@
+{
+  "repository": "aero7",
+  "arch": "x86_64",
+  "required_packages": [
+    "aeroshell-libplasma-git",
+    "aeroshell-workspace-git",
+    "aeroshell-kwin-components-git",
+    "aerothemeplasma-icons-git",
+    "aerothemeplasma-sounds-git",
+    "aeroshell-smod-git",
+    "uac-polkit-agent-git",
+    "aerothemeplasma-desktop-git"
+  ],
+  "denylist": [
+    "aerothemeplasma-desktop-x11-git",
+    "aeroshell-kwin-components-x11-git",
+    "aeroshell-smodglow-x11-git",
+    "kwin-x11",
+    "plasma-x11-session"
+  ],
+  "internal_providers": {
+    "aeroshell-libplasma-git": [
+      "libplasma",
+      "aeroshell-libplasma",
+      "plasma-framework"
+    ],
+    "aeroshell-workspace-git": [
+      "aeroshell-workspace"
+    ],
+    "aeroshell-kwin-components-git": [
+      "aeroshell-kwin-components"
+    ],
+    "aerothemeplasma-icons-git": [
+      "aerothemeplasma-icons"
+    ],
+    "aerothemeplasma-sounds-git": [
+      "aerothemeplasma-sounds"
+    ],
+    "aeroshell-smod-git": [
+      "aeroshell-smod"
+    ],
+    "uac-polkit-agent-git": [
+      "uac-polkit-agent"
+    ],
+    "aerothemeplasma-desktop-git": [
+      "aerothemeplasma-desktop"
+    ]
+  }
+}
