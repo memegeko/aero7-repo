@@ -31,12 +31,17 @@ for package in "${expected[@]}"; do
   }
 done
 
-for required in aero7.db aero7.db.tar.zst aero7.db.tar.zst.sig aero7.files aero7.files.tar.zst aero7.files.tar.zst.sig repository-manifest.json; do
+for required in aero7.db aero7.db.sig aero7.db.tar.zst aero7.db.tar.zst.sig aero7.files aero7.files.sig aero7.files.tar.zst aero7.files.tar.zst.sig repository-manifest.json; do
   [[ -e "$public/$required" ]] || {
     printf 'test-repository: missing repository file %s\n' "$required" >&2
     exit 1
   }
 done
+
+if find "$public" -maxdepth 1 -type f -name '*.old*' | grep -q .; then
+  printf 'test-repository: stale repository database backup files were published\n' >&2
+  exit 1
+fi
 
 if command -v pacman >/dev/null 2>&1; then
   pacman -Sl aero7 --config <(

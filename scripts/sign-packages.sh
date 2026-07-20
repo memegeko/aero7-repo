@@ -61,6 +61,12 @@ cp -a "$repo/manifests/repository-manifest.json" "$public/repository-manifest.js
   else
     repo-add --sign --key "$fingerprint" aero7.db.tar.zst ./*.pkg.tar.zst
   fi
+
+  rm -f -- aero7.db.tar.zst.old aero7.db.tar.zst.old.sig aero7.files.tar.zst.old aero7.files.tar.zst.old.sig
+  cp -f --remove-destination aero7.db.tar.zst aero7.db
+  cp -f --remove-destination aero7.db.tar.zst.sig aero7.db.sig
+  cp -f --remove-destination aero7.files.tar.zst aero7.files
+  cp -f --remove-destination aero7.files.tar.zst.sig aero7.files.sig
 )
 
 for db_file in aero7.db.tar.zst aero7.files.tar.zst; do
