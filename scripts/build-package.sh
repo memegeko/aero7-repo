@@ -78,7 +78,12 @@ log_file="$log_root/${build_id}-${package}.log"
   sudo makechrootpkg -c -r "$chroot_dir" "${local_inputs[@]}"
 ) 2>&1 | tee "$log_file"
 
-mapfile -t outputs < <(find "$workdir" -maxdepth 1 -type f -name "${package}-*.pkg.tar.zst" | sort)
+outputs=()
+while IFS= read -r -d '' candidate; do
+  candidate_name="$(pacman -Qp "$candidate" 2>/dev/null | awk '{print $1}')"
+  [[ "$candidate_name" == "$package" ]] || continue
+  outputs+=("$candidate")
+done < <(find "$workdir" -maxdepth 1 -type f -name '*.pkg.tar.zst' -print0 | sort -z)
 if [[ "${#outputs[@]}" -eq 0 ]]; then
   printf 'build-package: no package output found for %s\n' "$package" >&2
   exit 1
