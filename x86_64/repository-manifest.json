@@ -5,8 +5,8 @@
   "signing_fingerprint": "72C79ABBBBE96446DD3324042694BFE1090F4FD6",
   "public_key": "keys/aero7-repository.asc",
   "package_set_complete": true,
-  "last_successful_build": "20260720T184852Z-cd11cdbec00b",
+  "last_successful_build": "20260721T182434Z-fc5f4adb98eb",
   "notes": [
-    "Initial signed alpha package set is complete and ready for installer integration testing."
+    "Signed alpha package set includes AeroShell core packages, linux-devmgmt, and tuxmanager for installer integration testing."
   ]
 }
