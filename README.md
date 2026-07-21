@@ -3,8 +3,8 @@
 Signed binary Arch Linux package repository infrastructure for Aero7-shell.
 
 This repository is alpha infrastructure. It is intended to make Aero7-shell
-installation faster by publishing a complete signed set of precompiled Aero
-packages for current Arch Linux x86_64 systems.
+installation faster by publishing a signed set of precompiled Aero packages
+and selected companion applications for current Arch Linux x86_64 systems.
 
 ## Package Set
 
@@ -19,12 +19,14 @@ package names:
 - `aeroshell-smod-git`
 - `uac-polkit-agent-git`
 - `aerothemeplasma-desktop-git`
+- `linux-devmgmt`
+- `tuxmanager`
 
 It does not build or publish X11 Plasma packages.
 
 ## Current Status
 
-The first complete alpha package set has been built, signed, deployed to
+The first complete alpha core package set has been built, signed, deployed to
 GitHub Pages, and install-tested from the qemu-mcp VM through Aero7-shell.
 
 Signing fingerprint: `72C79ABBBBE96446DD3324042694BFE1090F4FD6`

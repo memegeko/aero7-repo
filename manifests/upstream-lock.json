@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-20T18:03:22Z",
+  "generated_at": "2026-07-21T17:54:48Z",
   "packages": {
     "aeroshell-libplasma-git": {
       "aur_url": "https://aur.archlinux.org/aeroshell-libplasma-git.git",
@@ -56,6 +56,20 @@
       "pkgbuild_sha256": "2b6ec32a01f7fe770db7ffaf6aace755e9849e94c9fe4a44a4fee88cca5d5f8e",
       "srcinfo_sha256": "abe9c65e69a18ceb269bf748cf4674a770974c93ee97222cbaa5e34f4b9bc2a1",
       "reviewed_at": "2026-07-20T19:21:22Z"
+    },
+    "linux-devmgmt": {
+      "aur_url": "https://aur.archlinux.org/linux-devmgmt.git",
+      "aur_commit": "2044b10d7d4a81998a63c190ea42f2e67ce91375",
+      "pkgbuild_sha256": "c3d421f514c98acd72b41460c25d86c803139d6133161b10d7c4d9bdbea78e83",
+      "srcinfo_sha256": "ee3b1d7f914fce44cdd329cde4df1ed64afc66be41f0ef74c0966dc3b73a8d71",
+      "reviewed_at": "2026-07-21T17:54:48Z"
+    },
+    "tuxmanager": {
+      "aur_url": "https://aur.archlinux.org/tuxmanager.git",
+      "aur_commit": "b089f580b7694990fdfa081c575690060477e4f6",
+      "pkgbuild_sha256": "a0dd288591cebc1efc289a88c5d38a9b5e781396b648f44f20f9da9a83fcad90",
+      "srcinfo_sha256": "893128bd3032f52e4859b6d69ed8b0553cba68bebeebe2b5c06e2f3f740f1487",
+      "reviewed_at": "2026-07-21T17:54:48Z"
     }
   }
 }

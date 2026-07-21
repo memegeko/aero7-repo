@@ -22,6 +22,7 @@ PROPRIETARY_ASSET_PATTERNS = [
     re.compile(r"microsoft[ _-]?(logo|wallpaper|font|sound|icon)", re.IGNORECASE),
 ]
 PRIVATE_KEY_SUFFIXES = {".key", ".p12", ".pfx", ".pem"}
+EXPECTED_PACKAGE_COUNT = 10
 
 
 def fail(message: str) -> None:
@@ -57,8 +58,8 @@ def validate_packages() -> None:
     lock = load_json(REPO / "manifests" / "upstream-lock.json")["packages"]
     required = package_manifest["required_packages"]
     denylist = set(package_manifest["denylist"])
-    if len(required) != 8:
-        fail("expected exactly eight required packages")
+    if len(required) != EXPECTED_PACKAGE_COUNT:
+        fail(f"expected exactly {EXPECTED_PACKAGE_COUNT} required packages")
     if set(required) != set(lock):
         fail("upstream lock package set does not match required package set")
 

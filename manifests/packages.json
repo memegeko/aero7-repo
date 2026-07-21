@@ -9,7 +9,9 @@
     "aerothemeplasma-sounds-git",
     "aeroshell-smod-git",
     "uac-polkit-agent-git",
-    "aerothemeplasma-desktop-git"
+    "aerothemeplasma-desktop-git",
+    "linux-devmgmt",
+    "tuxmanager"
   ],
   "denylist": [
     "aerothemeplasma-desktop-x11-git",

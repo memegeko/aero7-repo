@@ -6,6 +6,8 @@
     "aerothemeplasma-sounds-git",
     "aeroshell-smod-git",
     "uac-polkit-agent-git",
+    "linux-devmgmt",
+    "tuxmanager",
     "aeroshell-kwin-components-git",
     "aeroshell-workspace-git",
     "aerothemeplasma-desktop-git"
@@ -32,7 +34,9 @@
       "aerothemeplasma-desktop-git"
     ],
     "uac-polkit-agent-git": [],
-    "aerothemeplasma-desktop-git": []
+    "aerothemeplasma-desktop-git": [],
+    "linux-devmgmt": [],
+    "tuxmanager": []
   },
   "package_metadata": {
     "aeroshell-libplasma-git": {
@@ -186,6 +190,42 @@
       "conflicts": [
         "uac-polkit-agent"
       ],
+      "replaces": []
+    },
+    "linux-devmgmt": {
+      "arch": [
+        "x86_64",
+        "aarch64"
+      ],
+      "depends": [
+        "qt6-base"
+      ],
+      "makedepends": [
+        "cmake",
+        "ninja"
+      ],
+      "provides": [],
+      "conflicts": [],
+      "replaces": []
+    },
+    "tuxmanager": {
+      "arch": [
+        "x86_64",
+        "aarch64",
+        "riscv64"
+      ],
+      "depends": [
+        "glibc",
+        "hicolor-icon-theme",
+        "libgcc",
+        "libstdc++",
+        "qt6-base"
+      ],
+      "makedepends": [
+        "qt6-tools"
+      ],
+      "provides": [],
+      "conflicts": [],
       "replaces": []
     },
     "aeroshell-kwin-components-git": {
