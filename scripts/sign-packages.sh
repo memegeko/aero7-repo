@@ -13,11 +13,16 @@ staging_root="${AERO7_STAGING_DIR:-$builder_root/staging}"
 staging="$staging_root/$build_id"
 fingerprint="${AERO7_SIGNING_FINGERPRINT:-}"
 passphrase_file="${AERO7_GPG_PASSPHRASE_FILE:-}"
+default_passphrase_file="${HOME:-}/.gnupg/aero7-repository.passphrase"
 
 [[ -n "$fingerprint" ]] || {
   printf 'sign-packages: AERO7_SIGNING_FINGERPRINT is required\n' >&2
   exit 1
 }
+
+if [[ -z "$passphrase_file" && -n "${HOME:-}" && -r "$default_passphrase_file" ]]; then
+  passphrase_file="$default_passphrase_file"
+fi
 
 if [[ ! -d "$staging/packages" ]]; then
   printf 'sign-packages: package staging directory missing: %s/packages\n' "$staging" >&2
