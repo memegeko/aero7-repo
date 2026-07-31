@@ -1,0 +1,225 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index ea9dd7ba..1e21f2f8 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -56,6 +56,7 @@ find_package(Qt6 ${QT_MIN_VERSION} CONFIG REQUIRED COMPONENTS
+     Widgets
+     Gui
+     DBus
++    UiPlugin
+ )
+ 
+ if (Qt6Gui_VERSION VERSION_GREATER_EQUAL "6.10.0")
+@@ -99,7 +100,7 @@ if(KF6UserFeedback_FOUND)
+     set(HAVE_KUSERFEEDBACK TRUE)
+ endif()
+ 
+-find_package(AeroQt REQUIRED)
++find_package(Aero7Qt REQUIRED)
+ 
+ find_package(KF6 ${KF6_MIN_VERSION} OPTIONAL_COMPONENTS
+     DocTools
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index e1dda0a1..1b9956b4 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -233,6 +233,7 @@ target_link_libraries(
+     KF6::KCMUtils
+     KF6::FileMetaData
+     KF6::ColorScheme
++    Aero7Qt::Aero7Qt
+ 
+     ${FTS_LIB}
+ )
+@@ -495,7 +496,7 @@ target_link_libraries(dolphinstatic
+     KF6::DBusAddons
+     KF6::Notifications
+     KF6::BookmarksWidgets
+-    AeroQt
++    Aero7Qt::Aero7Qt
+ )
+ 
+ if(HAVE_PACKAGEKIT)
+diff --git a/src/dolphinmainwindow.cpp b/src/dolphinmainwindow.cpp
+index e4d580fb..9a8a5d36 100644
+--- a/src/dolphinmainwindow.cpp
++++ b/src/dolphinmainwindow.cpp
+@@ -77,9 +77,9 @@
+ #include <KWindowSystem>
+ #include <KXMLGUIFactory>
+ 
+-#include <AeroQt/insetwindow.h>
+-#include <AeroQt/util/props.h>
+-#include <AeroQt/util/objecteventlistener.h>
++#include <Aero7Qt/eventlistener.h>
++#include <Aero7Qt/glassframe.h>
++#include <Aero7Qt/properties.h>
+ 
+ #include <kwidgetsaddons_version.h>
+ 
+@@ -291,7 +291,7 @@ DolphinMainWindow::DolphinMainWindow()
+     connect(GeneralSettings::self(), &GeneralSettings::tabBarChanged, this, &DolphinMainWindow::slotTabBarChanged);
+ 
+     setupWindowHeader();
+-    Aero::makeInsetWindow(this, nullptr, m_winHeader, nullptr);
++    Aero7::applyGlassFrame(this, nullptr, m_winHeader, nullptr);
+ }
+ 
+ DolphinMainWindow::~DolphinMainWindow()
+@@ -2632,8 +2632,8 @@ void DolphinMainWindow::setupWindowHeader()
+     auto d = m_winHeader->ui;
+ 
+     /* Nav buttons */
+-    bind_prop(m_backAction, "enabled", d->navs->back(), "enabled", &QAction::enabledChanged, true);
+-    bind_prop(m_forwardAction, "enabled", d->navs->forward(), "enabled", &QAction::enabledChanged, true);
++    Aero7::bindProperty(m_backAction, "enabled", d->navs->back(), "enabled", &QAction::enabledChanged, true);
++    Aero7::bindProperty(m_forwardAction, "enabled", d->navs->forward(), "enabled", &QAction::enabledChanged, true);
+     connect(d->navs->back(), &QAbstractButton::clicked, m_backAction, &QAction::trigger);
+     connect(d->navs->forward(), &QAbstractButton::clicked, m_forwardAction, &QAction::trigger);
+ 
+@@ -2646,7 +2646,7 @@ void DolphinMainWindow::setupWindowHeader()
+     /* Search bar */
+     QList<QMetaObject::Connection> conns;
+     QAction *lastSavedSearchAction = nullptr;
+-    connect(this, &DolphinMainWindow::urlChanged, [=]() mutable {    // ::urlChanged() is a proxy signal for the active view having changed. That doesn't have a notifier signal of its own.
++    connect(this, &DolphinMainWindow::urlChanged, [=, this]() mutable {    // ::urlChanged() is a proxy signal for the active view having changed. That doesn't have a notifier signal of its own.
+         for (auto c: conns)
+             QObject::disconnect(c);
+         conns.clear();
+@@ -2655,7 +2655,7 @@ void DolphinMainWindow::setupWindowHeader()
+ 
+         d->searchBar->setText(activeViewContainer()->m_searchBar->m_searchTermEditor->text());
+ 
+-        conns += (bind_prop(
++        conns += (Aero7::bindProperty(
+             d->searchBar, "text",
+             activeViewContainer()->m_searchBar->m_searchTermEditor, "text",
+             &QLineEdit::textChanged
+@@ -2696,7 +2696,7 @@ void DolphinMainWindow::setupWindowHeader()
+         d->actSearchOpts->menu()->exec(pos);
+     });
+ 
+-    onEvent(d->searchBar, QEvent::KeyPress, [=](QEvent *_event) {
++    Aero7::onEvent(d->searchBar, QEvent::KeyPress, [=](QEvent *_event) {
+         if (static_cast<QKeyEvent *>(_event)->key() == Qt::Key_Escape) {
+             d->searchBar->setText("");
+         }
+@@ -2711,7 +2711,7 @@ void DolphinMainWindow::setupWindowHeader()
+ 
+     d->separator->setVisible(false);
+ 
+-    connect(m_navigatorsWidgetAction, &DolphinNavigatorsWidgetAction::secondaryUrlNavigatorChanged, [=]() {
++    connect(m_navigatorsWidgetAction, &DolphinNavigatorsWidgetAction::secondaryUrlNavigatorChanged, [=, this]() {
+         if (m_navigatorsWidgetAction->secondaryUrlNavigator() != nullptr)
+         {
+             d->separator->setVisible(true);
+@@ -2723,10 +2723,10 @@ void DolphinMainWindow::setupWindowHeader()
+             m_navigatorsWidgetAction->secondaryUrlNavigator()->setFixedHeight(26);
+ 
+             // Separator visibility mirrors that of the second navigator
+-            onEvent(m_navigatorsWidgetAction->secondaryUrlNavigator(), QEvent::Show, [=](QEvent *) {
++            Aero7::onEvent(m_navigatorsWidgetAction->secondaryUrlNavigator(), QEvent::Show, [=](QEvent *) {
+                 d->separator->show();
+             });
+-            onEvent(m_navigatorsWidgetAction->secondaryUrlNavigator(), QEvent::Hide, [=](QEvent *) {
++            Aero7::onEvent(m_navigatorsWidgetAction->secondaryUrlNavigator(), QEvent::Hide, [=](QEvent *) {
+                 d->separator->hide();
+                 d->separator->parentWidget()->layout()->invalidate();
+                 d->separator->parentWidget()->layout()->activate();
+diff --git a/src/dolphinnavigatorswidgetaction.h b/src/dolphinnavigatorswidgetaction.h
+index 8b94ca6e..d804aaf4 100644
+--- a/src/dolphinnavigatorswidgetaction.h
++++ b/src/dolphinnavigatorswidgetaction.h
+@@ -16,8 +16,7 @@
+ #include <QWidgetAction>
+ #include <QHBoxLayout>
+ 
+-#include <AeroQt/util/objecteventlistener.h>
+-#include <AeroQt/util/props.h>
++#include <Aero7Qt/eventlistener.h>
+ 
+ #include <memory>
+ 
+@@ -126,12 +125,12 @@ public:
+     DolphinUrlNavigator *secondaryUrlNavigator();
+     DolphinUrlNavigator *m_secondaryUrlNavigator = nullptr;
+     DolphinUrlNavigator *stealSecondaryUrlNavigator() {     // Only call once upon each secondaryUrlNavigatorChanged
+-        QWidget *dummy;
++        QWidget *dummy = nullptr;
+         auto *secNav = replaceWithDummy(secondaryUrlNavigator(), &dummy);
+-        onEvent(dummy, QEvent::Show, [=](QEvent *) {
++        Aero7::onEvent(dummy, QEvent::Show, [=](QEvent *) {
+             secNav->show();
+         });
+-        onEvent(dummy, QEvent::Hide, [=](QEvent *) {
++        Aero7::onEvent(dummy, QEvent::Hide, [=](QEvent *) {
+             secNav->hide();
+             secNav->parentWidget()->layout()->invalidate();
+             secNav->parentWidget()->layout()->activate();
+diff --git a/src/dolphinwindowheader.ui b/src/dolphinwindowheader.ui
+index 764889b4..7d2ef986 100644
+--- a/src/dolphinwindowheader.ui
++++ b/src/dolphinwindowheader.ui
+@@ -21,7 +21,7 @@
+     <number>4</number>
+    </property>
+    <item>
+-    <widget class="Aero::NavButtons" name="navs" native="true"/>
++    <widget class="Aero7::NavigationButtons" name="navs" native="true"/>
+    </item>
+    <item>
+     <widget class="QFrame" name="primaryNavHole">
+@@ -127,9 +127,9 @@
+  </widget>
+  <customwidgets>
+   <customwidget>
+-   <class>Aero::NavButtons</class>
++   <class>Aero7::NavigationButtons</class>
+    <extends>QWidget</extends>
+-   <header>AeroQt/navbuttons.h</header>
++   <header>Aero7Qt/navigationbuttons.h</header>
+    <container>1</container>
+   </customwidget>
+  </customwidgets>
+diff --git a/src/main.cpp b/src/main.cpp
+index 0ddf98e0..8f3726ea 100644
+--- a/src/main.cpp
++++ b/src/main.cpp
+@@ -27,7 +27,7 @@
+ #include <KLocalizedString>
+ #include <KWindowSystem>
+ 
+-#include <AeroQt/stylesheet.h>
++#include <Aero7Qt/stylesheet.h>
+ 
+ #define HAVE_STYLE_MANAGER __has_include(<KStyleManager>)
+ #if HAVE_STYLE_MANAGER
+@@ -90,22 +90,23 @@ int main(int argc, char **argv)
+     QApplication::setStyle(QStringLiteral("breeze"));
+ #endif
+ #endif
+-    Aero::registerStylesheet(&app);
++    Aero7::applyApplicationStyle(&app);
+ 
+     QString qss = R"(
+         *[_Aero_transpbg="true"] DolphinUrlNavigator KUrlComboBox
+         {
+-            border-image: url(:/AeroQt/null.png)
++            border: none;
+         }
+ 
+         *[_Aero_transpbg="true"] DolphinUrlNavigator
+         {
+-            border-image: url(:/AeroQt/transpbg/entry/normal.png) 4 4 4 4 repeat;
+-            border-width: 4px;
++            border: 1px solid #7f9db9;
++            border-radius: 2px;
++            background: rgba(255, 255, 255, 235);
+         }
+         *[_Aero_transpbg="true"] DolphinUrlNavigator:hover
+         {
+-            border-image: url(:/AeroQt/transpbg/entry/hover.png) 4 4 4 4 repeat;
++            border-color: #3c7fb1;
+         }
+     )";
+     app.setStyleSheet(app.styleSheet() + qss);

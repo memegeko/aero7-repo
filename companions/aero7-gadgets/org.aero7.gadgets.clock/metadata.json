@@ -1,0 +1,14 @@
+{
+  "KPlugin": {
+    "Authors": [{ "Name": "Aero7 contributors" }],
+    "Category": "Date and Time",
+    "Description": "A glass analog clock for the Aero7 desktop",
+    "Icon": "preferences-system-time",
+    "Id": "org.aero7.gadgets.clock",
+    "License": "MIT",
+    "Name": "Aero7 Clock",
+    "Version": "1.0.0",
+    "Website": "https://github.com/memegeko/aero7-shell"
+  },
+  "X-Plasma-API-Minimum-Version": "6.0"
+}

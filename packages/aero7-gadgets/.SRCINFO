@@ -1,0 +1,17 @@
+pkgbase = aero7-gadgets
+	pkgdesc = Original glass Clock, CPU Meter, and Notes widgets for Plasma 6
+	pkgver = 1.0.0
+	pkgrel = 1
+	url = https://github.com/memegeko/aero7-shell
+	arch = any
+	license = MIT
+	depends = libksysguard
+	depends = libplasma
+	depends = qt6-declarative
+	provides = win-gadgets
+	conflicts = win-gadgets
+	conflicts = win-gadgets-git
+	source = aero7-gadgets-1.0.0.tar.gz
+	sha256sums = c19d04df2488c9fb2df0075ff1efaf9df27a9d1764322a0507c29ee57d108157
+
+pkgname = aero7-gadgets

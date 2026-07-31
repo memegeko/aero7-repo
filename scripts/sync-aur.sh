@@ -10,7 +10,12 @@ cleanup() {
 trap cleanup EXIT
 
 cd "$repo"
-mapfile -t packages < <(jq -r '.required_packages[]' manifests/packages.json)
+mapfile -t packages < <(jq -r '
+  .packages
+  | to_entries[]
+  | select((.value.source_type // "aur") == "aur")
+  | .key
+' manifests/upstream-lock.json)
 for package in "${packages[@]}"; do
   git clone --quiet "https://aur.archlinux.org/${package}.git" "$workdir/$package"
   printf '%s %s\n' "$package" "$(git -C "$workdir/$package" rev-parse HEAD)"

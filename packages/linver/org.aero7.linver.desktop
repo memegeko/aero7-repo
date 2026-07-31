@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Aero7 System Information
+Comment=View system version and computer information
+Exec=linver
+Icon=org.aero7.linver
+Categories=Qt;KDE;System;
+StartupNotify=true

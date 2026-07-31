@@ -1,0 +1,155 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index d70f0b0..c93b839 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -31,6 +31,7 @@ find_package(Qt6 ${QT_MIN_VERSION} CONFIG REQUIRED COMPONENTS
+     Core
+     Widgets
+     PrintSupport
++    UiPlugin
+ )
+ 
+ find_package(KF6 ${KF_MIN_VERSION} REQUIRED COMPONENTS
+@@ -42,10 +43,11 @@ find_package(KF6 ${KF_MIN_VERSION} REQUIRED COMPONENTS
+     TextWidgets
+     JobWidgets
+     Crash
++    Config
+ )
+ 
+ find_package(SARibbonBar REQUIRED)
+-find_package(AeroQt REQUIRED)
++find_package(Aero7Qt REQUIRED)
+ 
+ add_definitions(-DQT_USE_QSTRINGBUILDER)
+ 
+@@ -349,7 +351,7 @@ target_link_libraries(kolourpaint
+     KF6::Crash
+     Qt6::PrintSupport
+     SARibbonBar::SARibbonBar
+-    AeroQt
++    Aero7Qt::Aero7Qt
+     kolourpaint_lgpl
+ )
+ 
+diff --git a/kolourpaint.cpp b/kolourpaint.cpp
+index 61623e9..8290828 100644
+--- a/kolourpaint.cpp
++++ b/kolourpaint.cpp
+@@ -19,12 +19,12 @@
+ #include <QDir>
+ #include <QImageReader>
+ 
+-#include <AeroQt/stylesheet.h>
++#include <Aero7Qt/stylesheet.h>
+ 
+ int main(int argc, char *argv[])
+ {
+     QApplication app(argc, argv);
+-    Aero::registerStylesheet(&app);
++    Aero7::applyApplicationStyle(&app);
+ 
+     QImageReader::setAllocationLimit(0); // no explicit memory limit
+ 
+diff --git a/mainWindow/kpMainWindow.h b/mainWindow/kpMainWindow.h
+index 1ad3c51..e488aae 100644
+--- a/mainWindow/kpMainWindow.h
++++ b/mainWindow/kpMainWindow.h
+@@ -13,8 +13,8 @@
+ #include <kxmlguiwindow.h>
+ 
+ #include "imagelib/kpImage.h"
+-#include <SARibbonBar/SARibbonBar.h>
+-#include <SARibbonBar/SARibbonWidget.h>
++#include <SARibbonBar.h>
++#include <SARibbonWidget.h>
+ 
+ #include "kpDefs.h"
+ #include "pixmapfx/kpPixmapFX.h"
+diff --git a/mainWindow/kpMainWindow_Ribbon.cpp b/mainWindow/kpMainWindow_Ribbon.cpp
+index 7f019f2..e70ec8f 100644
+--- a/mainWindow/kpMainWindow_Ribbon.cpp
++++ b/mainWindow/kpMainWindow_Ribbon.cpp
+@@ -9,14 +9,14 @@
+ #include "lgpl/generic/kpUrlFormatter.h"
+ #include "kpLogCategories.h"
+ 
+-#include <SARibbonBar/SARibbonCategory.h>
+-#include <SARibbonBar/SARibbonPanel.h>
+-#include <SARibbonBar/SARibbonMenu.h>
+-#include <SARibbonBar/SARibbonQuickAccessBar.h>
+-#include <SARibbonBar/SARibbonButtonGroupWidget.h>
+-#include <SARibbonBar/SARibbonColorToolButton.h>
+-#include <SARibbonBar/SARibbonApplicationButton.h>
+-#include <SARibbonBar/SARibbonMenu.h>
++#include <SARibbonCategory.h>
++#include <SARibbonPanel.h>
++#include <SARibbonMenu.h>
++#include <SARibbonQuickAccessBar.h>
++#include <SARibbonButtonGroupWidget.h>
++#include <SARibbonColorToolButton.h>
++#include <SARibbonApplicationButton.h>
++#include <SARibbonMenu.h>
+ 
+ 
+ #include <KStandardAction>
+diff --git a/mainWindow/kpMainWindow_Text.cpp b/mainWindow/kpMainWindow_Text.cpp
+index 8db59c2..3e5a5b1 100644
+--- a/mainWindow/kpMainWindow_Text.cpp
++++ b/mainWindow/kpMainWindow_Text.cpp
+@@ -7,7 +7,7 @@
+ #include "kpMainWindowPrivate.h"
+ #include "mainWindow/kpMainWindow.h"
+ 
+-#include <SARibbonBar/SARibbonContextCategory.h>
++#include <SARibbonContextCategory.h>
+ 
+ #include <KActionCollection>
+ #include <KSharedConfig>
+diff --git a/mainWindow/kpMainWindow_View.cpp b/mainWindow/kpMainWindow_View.cpp
+index 2950cae..1d741f5 100644
+--- a/mainWindow/kpMainWindow_View.cpp
++++ b/mainWindow/kpMainWindow_View.cpp
+@@ -27,8 +27,8 @@
+ #include "views/manager/kpViewManager.h"
+ #include "widgets/toolbars/kpToolToolBar.h"
+ 
+-#include <SARibbonBar/SARibbonCategory.h>
+-#include <SARibbonBar/SARibbonPanel.h>
++#include <SARibbonCategory.h>
++#include <SARibbonPanel.h>
+ 
+ static QAction* createAction(QMainWindow *win, const char *text, const char *iconurl)
+ {
+diff --git a/widgets/toolbars/kpToolToolBar.cpp b/widgets/toolbars/kpToolToolBar.cpp
+index f23868e..75819e3 100644
+--- a/widgets/toolbars/kpToolToolBar.cpp
++++ b/widgets/toolbars/kpToolToolBar.cpp
+@@ -19,9 +19,9 @@
+ #include <QWidgetAction>
+ #include <QHBoxLayout>
+ 
+-#include <SARibbonBar/SARibbonPanel.h>
+-#include <SARibbonBar/SARibbonCategory.h>
+-#include <SARibbonBar/SARibbonButtonGroupWidget.h>
++#include <SARibbonPanel.h>
++#include <SARibbonCategory.h>
++#include <SARibbonButtonGroupWidget.h>
+ 
+ #include <KToggleAction>
+ 
+diff --git a/widgets/toolbars/options/kpToolWidgetBase.h b/widgets/toolbars/options/kpToolWidgetBase.h
+index aa2017d..2dc8ce9 100644
+--- a/widgets/toolbars/options/kpToolWidgetBase.h
++++ b/widgets/toolbars/options/kpToolWidgetBase.h
+@@ -15,8 +15,8 @@
+ #include <QRect>
+ #include <QWidget>
+ 
+-#include <SARibbonBar/SARibbonGallery.h>
+-#include <SARibbonBar/SARibbonGalleryGroup.h>
++#include <SARibbonGallery.h>
++#include <SARibbonGalleryGroup.h>
+ 
+ class QMouseEvent;
+ 

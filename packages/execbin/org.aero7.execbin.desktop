@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Run
+Comment=Open a program, folder, document, or Internet resource
+Exec=execbin
+Icon=org.aero7.execbin
+Categories=Qt;KDE;Utility;
+StartupNotify=true

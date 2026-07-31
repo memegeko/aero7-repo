@@ -1,0 +1,32 @@
+pkgname=winxplorer
+pkgver=0.1.0
+pkgrel=1
+pkgdesc='Aero7 compact file explorer with original code-drawn glass controls'
+arch=('x86_64')
+url='https://gitgud.io/catpswin56/winxplorer'
+license=('GPL-3.0-or-later')
+depends=('glibc' 'kio' 'kirigami' 'kwindowsystem' 'qt6-base' 'qt6-declarative')
+makedepends=('cmake' 'git' 'ninja')
+source=("winxplorer::git+$url.git#commit=9d2fae647e1bd9fc7f1dd53f36f8d5e160f4fddc"
+        'aero7.patch'
+        'org.aero7.winxplorer.desktop')
+sha256sums=('SKIP'
+            'bdccd6121e7a6b529c9b90628556f523c81a0c0a743c7a662a1d14f56438ae69'
+            '13139e92ca2d5b8a4f2dfb42a49bc6d799a6413bd9c8761ca514953cc2d10513')
+
+prepare() {
+  patch -d winxplorer -Np1 < aero7.patch
+  rm -rf winxplorer/aero
+}
+
+build() {
+  cmake -S winxplorer -B build -G Ninja \
+    -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
+  cmake --build build
+}
+
+package() {
+  DESTDIR="$pkgdir" cmake --install build
+  install -Dm644 org.aero7.winxplorer.desktop "$pkgdir/usr/share/applications/org.aero7.winxplorer.desktop"
+  install -Dm644 winxplorer/LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}

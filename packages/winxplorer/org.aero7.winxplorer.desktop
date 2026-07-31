@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=WinXplorer
+Comment=Browse files with the Aero7 compact explorer
+Exec=winxplorer
+Icon=system-file-manager
+Categories=Qt;KDE;System;FileTools;FileManager;
+StartupNotify=true
+MimeType=inode/directory;

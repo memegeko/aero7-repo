@@ -1,0 +1,13 @@
+diff --git a/shell32.qrc b/shell32.qrc
+index a6b75b4..b66e681 100644
+--- a/shell32.qrc
++++ b/shell32.qrc
+@@ -1,6 +1,6 @@
+ <RCC>
+     <qresource prefix="/">
+-        <file alias="16">resources/app.ico</file>
+-        <file alias="32">resources/32.png</file>
++        <file alias="16">resources/aero7-companion.png</file>
++        <file alias="32">resources/aero7-companion.png</file>
+     </qresource>
+ </RCC>

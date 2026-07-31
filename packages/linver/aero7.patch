@@ -1,0 +1,17 @@
+diff --git a/basebrd.qrc b/basebrd.qrc
+index b1adefe..44b3144 100644
+--- a/basebrd.qrc
++++ b/basebrd.qrc
+@@ -1,8 +1,8 @@
+ <RCC>
+     <qresource prefix="/">
+-        <file alias="7Ultimate">resources/versions/7/ultimate.png</file>
+-        <file alias="vistaUltimate">resources/versions/vista/ultimate.png</file>
+-        <file alias="7Ico">resources/versions/7/app.ico</file>
+-        <file alias="8">resources/versions/8/noedition.png</file>
++        <file alias="7Ultimate">resources/aero7-companion.png</file>
++        <file alias="vistaUltimate">resources/aero7-companion.png</file>
++        <file alias="7Ico">resources/aero7-companion.png</file>
++        <file alias="8">resources/aero7-companion.png</file>
+     </qresource>
+ </RCC>
