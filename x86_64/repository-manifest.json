@@ -1,12 +1,12 @@
 {
   "repository": "aero7",
-  "status": "alpha-ready",
+  "status": "beta-ready",
   "published_url": "https://memegeko.github.io/aero7-repo/$arch",
   "signing_fingerprint": "72C79ABBBBE96446DD3324042694BFE1090F4FD6",
   "public_key": "keys/aero7-repository.asc",
   "package_set_complete": true,
-  "last_successful_build": "20260721T182434Z-fc5f4adb98eb",
+  "last_successful_build": "20260731T213342Z-d4c1b8978de0",
   "notes": [
-    "Signed alpha package set includes AeroShell core packages, linux-devmgmt, and tuxmanager for installer integration testing."
+    "Signed beta package set contains all 19 required Aero7 packages for installer integration testing."
   ]
 }
