@@ -2,7 +2,7 @@
 
 Signed binary Arch Linux package repository infrastructure for Aero7-shell.
 
-This repository is alpha infrastructure. It is intended to make Aero7-shell
+This repository is beta infrastructure. It is intended to make Aero7-shell
 installation faster by publishing a signed set of precompiled Aero packages
 and selected companion applications for current Arch Linux x86_64 systems.
 
@@ -35,16 +35,14 @@ It does not build or publish X11 Plasma packages.
 
 ## Current Status
 
-The first complete alpha core package set has been built, signed, deployed to
-GitHub Pages, and install-tested from the qemu-mcp VM through Aero7-shell.
+The complete 19-package beta set has been built in a clean Arch chroot, signed,
+deployed to GitHub Pages, and verified again from the live repository endpoint.
 
-Nine companion application recipes are now included as beta candidates. Their
+Nine companion application recipes are included in the signed beta set. Their
 exact upstream revisions are pinned, all source patches apply cleanly, and all
 seven compiled GUI applications pass isolated startup tests. All nine
-companion packages also pass local `makepkg` builds without sudo, including a
-packaged-binary path scan. Promotion still requires the normal privileged
-clean-chroot build, signing pass, and fresh-VM transaction test on the
-repository builder.
+companion packages pass local `makepkg` builds without sudo, a packaged-binary
+path scan, and the repository's clean-chroot build and signing checks.
 
 Sevulet is intentionally not packaged because its source and redistributable
 license could not be obtained.

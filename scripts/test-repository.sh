@@ -10,7 +10,8 @@ build_id="${1:-}"
 
 builder_root="${AERO7_BUILDER_ROOT:-/srv/aero7-builder}"
 staging_root="${AERO7_STAGING_DIR:-$builder_root/staging}"
-public="$staging_root/$build_id/public/x86_64"
+public_root="$staging_root/$build_id/public"
+public="$public_root/x86_64"
 
 [[ -d "$public" ]] || {
   printf 'test-repository: public repository directory missing: %s\n' "$public" >&2
@@ -37,6 +38,19 @@ for required in aero7.db aero7.db.sig aero7.db.tar.zst aero7.db.tar.zst.sig aero
     exit 1
   }
 done
+
+public_key="$public_root/keys/aero7-repository.asc"
+[[ -f "$public_key" ]] || {
+  printf 'test-repository: missing repository public key %s\n' "$public_key" >&2
+  exit 1
+}
+
+expected_fingerprint="$(jq -r '.signing_fingerprint' "$public/repository-manifest.json")"
+actual_fingerprint="$(gpg --batch --show-keys --with-colons "$public_key" | awk -F: '$1 == "fpr" { print $10; exit }')"
+[[ "$actual_fingerprint" == "$expected_fingerprint" ]] || {
+  printf 'test-repository: public key fingerprint mismatch: expected %s, got %s\n' "$expected_fingerprint" "$actual_fingerprint" >&2
+  exit 1
+}
 
 if find "$public" -maxdepth 1 -type f -name '*.old*' | grep -q .; then
   printf 'test-repository: stale repository database backup files were published\n' >&2
