@@ -1,0 +1,46 @@
+pkgname=aero7-kolourpaint
+pkgver=25.12.3
+pkgrel=1
+pkgdesc='Aero7-styled paint program with a ribbon interface'
+arch=('x86_64')
+url='https://invent.kde.org/albert-tomanek/kolourpaint/-/tree/saribbon-aero'
+license=('GPL-2.0-or-later' 'LGPL-2.0-or-later' 'MIT')
+depends=('glibc' 'kconfig' 'kconfigwidgets' 'kcoreaddons' 'kcrash' 'kguiaddons'
+         'ki18n' 'kio' 'kwidgetsaddons' 'kxmlgui' 'libstdc++' 'qt6-base'
+         'qt6-svg')
+makedepends=('aero7-qt' 'extra-cmake-modules' 'git' 'kdoctools' 'ninja')
+provides=("kolourpaint=$pkgver" 'saribbonbar=2.9.2')
+conflicts=('kolourpaint' 'saribbonbar')
+source=("aero-kolourpaint::git+https://invent.kde.org/albert-tomanek/kolourpaint.git#commit=0a0debee63d9902b1dd6dafdddad41f21549c5b7"
+        "saribbon::git+https://github.com/czyt1988/SARibbon.git#commit=540624e98a53cff47fc1b0531d9129ae3a7fe6b2"
+        'aero7.patch')
+sha256sums=('SKIP'
+            'SKIP'
+            '8d46f2f1117270185e3314ae7c75a4b388c16b26fedbf75f65e922e9200a0873')
+
+prepare() {
+  patch -d aero-kolourpaint -Np1 < aero7.patch
+}
+
+build() {
+  cmake -S saribbon -B saribbon-build -G Ninja \
+    -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$srcdir/saribbon-prefix" \
+    -DSARIBBON_BUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF
+  cmake --build saribbon-build
+  cmake --install saribbon-build
+
+  cmake -S aero-kolourpaint -B build -G Ninja \
+    -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr \
+    -DCMAKE_PREFIX_PATH="$srcdir/saribbon-prefix" -DCMAKE_SKIP_RPATH=ON \
+    -DBUILD_TESTING=OFF
+  cmake --build build
+}
+
+package() {
+  DESTDIR="$pkgdir" cmake --install build
+  DESTDIR="$pkgdir" cmake --install saribbon-build --prefix /usr
+  install -Dm644 aero-kolourpaint/COPYING "$pkgdir/usr/share/licenses/$pkgname/COPYING"
+  install -Dm644 aero-kolourpaint/COPYING.DOC "$pkgdir/usr/share/licenses/$pkgname/COPYING.DOC"
+  install -Dm644 aero-kolourpaint/COPYING.LIB "$pkgdir/usr/share/licenses/$pkgname/COPYING.LIB"
+  install -Dm644 saribbon/LICENSE "$pkgdir/usr/share/licenses/$pkgname/SARibbon-LICENSE"
+}

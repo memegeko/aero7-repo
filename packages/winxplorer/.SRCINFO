@@ -1,0 +1,24 @@
+pkgbase = winxplorer
+	pkgdesc = Aero7 compact file explorer with original code-drawn glass controls
+	pkgver = 0.1.0
+	pkgrel = 1
+	url = https://gitgud.io/catpswin56/winxplorer
+	arch = x86_64
+	license = GPL-3.0-or-later
+	makedepends = cmake
+	makedepends = git
+	makedepends = ninja
+	depends = glibc
+	depends = kio
+	depends = kirigami
+	depends = kwindowsystem
+	depends = qt6-base
+	depends = qt6-declarative
+	source = winxplorer::git+https://gitgud.io/catpswin56/winxplorer.git#commit=9d2fae647e1bd9fc7f1dd53f36f8d5e160f4fddc
+	source = aero7.patch
+	source = org.aero7.winxplorer.desktop
+	sha256sums = SKIP
+	sha256sums = bdccd6121e7a6b529c9b90628556f523c81a0c0a743c7a662a1d14f56438ae69
+	sha256sums = 13139e92ca2d5b8a4f2dfb42a49bc6d799a6413bd9c8761ca514953cc2d10513
+
+pkgname = winxplorer

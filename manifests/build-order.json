@@ -8,12 +8,22 @@
     "uac-polkit-agent-git",
     "linux-devmgmt",
     "tuxmanager",
+    "aero7-qt",
+    "winxplorer",
+    "execbin",
+    "linver",
+    "aero7-gadgets",
     "aeroshell-kwin-components-git",
     "aeroshell-workspace-git",
+    "aero7-dolphin",
+    "aero7-gwenview",
+    "aero7-kolourpaint",
+    "linux-control-panel",
     "aerothemeplasma-desktop-git"
   ],
   "edges": {
     "aeroshell-libplasma-git": [
+      "aero7-gadgets",
       "aeroshell-kwin-components-git",
       "aeroshell-workspace-git",
       "aerothemeplasma-desktop-git"
@@ -36,7 +46,21 @@
     "uac-polkit-agent-git": [],
     "aerothemeplasma-desktop-git": [],
     "linux-devmgmt": [],
-    "tuxmanager": []
+    "tuxmanager": [],
+    "aero7-qt": [
+      "aero7-dolphin",
+      "aero7-gwenview",
+      "aero7-kolourpaint",
+      "linux-control-panel"
+    ],
+    "aero7-dolphin": [],
+    "aero7-gwenview": [],
+    "linux-control-panel": [],
+    "aero7-kolourpaint": [],
+    "aero7-gadgets": [],
+    "winxplorer": [],
+    "execbin": [],
+    "linver": []
   },
   "package_metadata": {
     "aeroshell-libplasma-git": {
@@ -228,6 +252,95 @@
       "conflicts": [],
       "replaces": []
     },
+    "aero7-qt": {
+      "arch": [
+        "any"
+      ],
+      "depends": [
+        "qt6-base"
+      ],
+      "makedepends": [
+        "cmake",
+        "ninja"
+      ],
+      "provides": [],
+      "conflicts": [],
+      "replaces": []
+    },
+    "winxplorer": {
+      "arch": [
+        "x86_64"
+      ],
+      "depends": [
+        "glibc",
+        "kio",
+        "kirigami",
+        "kwindowsystem",
+        "qt6-base",
+        "qt6-declarative"
+      ],
+      "makedepends": [
+        "cmake",
+        "git",
+        "ninja"
+      ],
+      "provides": [],
+      "conflicts": [],
+      "replaces": []
+    },
+    "execbin": {
+      "arch": [
+        "x86_64"
+      ],
+      "depends": [
+        "glibc",
+        "kwindowsystem",
+        "qt6-base"
+      ],
+      "makedepends": [
+        "cmake",
+        "extra-cmake-modules",
+        "git",
+        "ninja"
+      ],
+      "provides": [],
+      "conflicts": [],
+      "replaces": []
+    },
+    "linver": {
+      "arch": [
+        "x86_64"
+      ],
+      "depends": [
+        "glibc",
+        "qt6-base"
+      ],
+      "makedepends": [
+        "git"
+      ],
+      "provides": [],
+      "conflicts": [],
+      "replaces": []
+    },
+    "aero7-gadgets": {
+      "arch": [
+        "any"
+      ],
+      "depends": [
+        "libksysguard",
+        "libplasma",
+        "qt6-declarative"
+      ],
+      "makedepends": [],
+      "provides": [
+        "win-gadgets"
+      ],
+      "conflicts": [
+        "win-gadgets",
+        "win-gadgets-git"
+      ],
+      "replaces": []
+    },
     "aeroshell-kwin-components-git": {
       "arch": [
         "x86_64"
@@ -303,6 +416,181 @@
       "conflicts": [
         "aeroshell-workspace"
       ],
+      "replaces": []
+    },
+    "aero7-dolphin": {
+      "arch": [
+        "x86_64"
+      ],
+      "depends": [
+        "baloo",
+        "baloo-widgets",
+        "glibc",
+        "kbookmarks",
+        "kcmutils",
+        "kcodecs",
+        "kcolorscheme",
+        "kcompletion",
+        "kconfig",
+        "kconfigwidgets",
+        "kcoreaddons",
+        "kcrash",
+        "kdbusaddons",
+        "kfilemetadata",
+        "kguiaddons",
+        "ki18n",
+        "kiconthemes",
+        "kio",
+        "kio-extras",
+        "kjobwidgets",
+        "knewstuff",
+        "knotifications",
+        "kparts",
+        "kservice",
+        "ktextwidgets",
+        "kuserfeedback",
+        "kwidgetsaddons",
+        "kwindowsystem",
+        "kxmlgui",
+        "libstdc++",
+        "qt6-base",
+        "qt6-multimedia",
+        "solid"
+      ],
+      "makedepends": [
+        "aero7-qt",
+        "extra-cmake-modules",
+        "git",
+        "kdoctools",
+        "ninja"
+      ],
+      "provides": [
+        "dolphin=25.12.3"
+      ],
+      "conflicts": [
+        "dolphin"
+      ],
+      "replaces": []
+    },
+    "aero7-gwenview": {
+      "arch": [
+        "x86_64"
+      ],
+      "depends": [
+        "baloo",
+        "cfitsio",
+        "exiv2",
+        "glibc",
+        "kcolorscheme",
+        "kcompletion",
+        "kconfig",
+        "kconfigwidgets",
+        "kcoreaddons",
+        "kcrash",
+        "kfilemetadata",
+        "kguiaddons",
+        "ki18n",
+        "kiconthemes",
+        "kimageannotator",
+        "kio",
+        "kitemmodels",
+        "kitemviews",
+        "kjobwidgets",
+        "kparts",
+        "kservice",
+        "kwidgetsaddons",
+        "kxmlgui",
+        "lcms2",
+        "libjpeg-turbo",
+        "libkdcraw",
+        "libpng",
+        "libstdc++",
+        "libtiff",
+        "libx11",
+        "plasma-activities",
+        "purpose",
+        "qt6-base",
+        "qt6-multimedia",
+        "qt6-svg",
+        "solid",
+        "wayland"
+      ],
+      "makedepends": [
+        "aero7-qt",
+        "extra-cmake-modules",
+        "git",
+        "kdoctools",
+        "ninja",
+        "plasma-wayland-protocols",
+        "qt6-wayland",
+        "wayland-protocols"
+      ],
+      "provides": [
+        "gwenview=25.12.2"
+      ],
+      "conflicts": [
+        "gwenview"
+      ],
+      "replaces": []
+    },
+    "aero7-kolourpaint": {
+      "arch": [
+        "x86_64"
+      ],
+      "depends": [
+        "glibc",
+        "kconfig",
+        "kconfigwidgets",
+        "kcoreaddons",
+        "kcrash",
+        "kguiaddons",
+        "ki18n",
+        "kio",
+        "kwidgetsaddons",
+        "kxmlgui",
+        "libstdc++",
+        "qt6-base",
+        "qt6-svg"
+      ],
+      "makedepends": [
+        "aero7-qt",
+        "extra-cmake-modules",
+        "git",
+        "kdoctools",
+        "ninja"
+      ],
+      "provides": [
+        "kolourpaint=25.12.3",
+        "saribbonbar=2.9.2"
+      ],
+      "conflicts": [
+        "kolourpaint",
+        "saribbonbar"
+      ],
+      "replaces": []
+    },
+    "linux-control-panel": {
+      "arch": [
+        "x86_64"
+      ],
+      "depends": [
+        "cups",
+        "glibc",
+        "kwidgetsaddons",
+        "kwindowsystem",
+        "openssl",
+        "qt6-base",
+        "qt6-multimedia",
+        "zlib"
+      ],
+      "makedepends": [
+        "aero7-qt",
+        "cmake",
+        "git",
+        "ninja"
+      ],
+      "provides": [],
+      "conflicts": [],
       "replaces": []
     },
     "aerothemeplasma-desktop-git": {

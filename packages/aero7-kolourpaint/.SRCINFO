@@ -1,0 +1,39 @@
+pkgbase = aero7-kolourpaint
+	pkgdesc = Aero7-styled paint program with a ribbon interface
+	pkgver = 25.12.3
+	pkgrel = 1
+	url = https://invent.kde.org/albert-tomanek/kolourpaint/-/tree/saribbon-aero
+	arch = x86_64
+	license = GPL-2.0-or-later
+	license = LGPL-2.0-or-later
+	license = MIT
+	makedepends = aero7-qt
+	makedepends = extra-cmake-modules
+	makedepends = git
+	makedepends = kdoctools
+	makedepends = ninja
+	depends = glibc
+	depends = kconfig
+	depends = kconfigwidgets
+	depends = kcoreaddons
+	depends = kcrash
+	depends = kguiaddons
+	depends = ki18n
+	depends = kio
+	depends = kwidgetsaddons
+	depends = kxmlgui
+	depends = libstdc++
+	depends = qt6-base
+	depends = qt6-svg
+	provides = kolourpaint=25.12.3
+	provides = saribbonbar=2.9.2
+	conflicts = kolourpaint
+	conflicts = saribbonbar
+	source = aero-kolourpaint::git+https://invent.kde.org/albert-tomanek/kolourpaint.git#commit=0a0debee63d9902b1dd6dafdddad41f21549c5b7
+	source = saribbon::git+https://github.com/czyt1988/SARibbon.git#commit=540624e98a53cff47fc1b0531d9129ae3a7fe6b2
+	source = aero7.patch
+	sha256sums = SKIP
+	sha256sums = SKIP
+	sha256sums = 8d46f2f1117270185e3314ae7c75a4b388c16b26fedbf75f65e922e9200a0873
+
+pkgname = aero7-kolourpaint

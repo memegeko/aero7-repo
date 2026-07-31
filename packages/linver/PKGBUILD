@@ -1,0 +1,37 @@
+pkgname=linver
+pkgver=1.0.0
+pkgrel=3
+pkgdesc='Aero7 system version and branding information utility'
+arch=('x86_64')
+url='https://gitgud.io/wackyideas/linver'
+license=('AGPL-3.0-or-later')
+depends=('glibc' 'qt6-base')
+makedepends=('git')
+source=("linver::git+$url.git#commit=087f2746703d9c885de2e1a4f6360314283703f4"
+        'aero7.patch'
+        'aero7-companion.png'
+        'org.aero7.linver.desktop')
+sha256sums=('SKIP'
+            '35afc5861987e463ff2771526c226e51785f084a3777a5295ee5eabd6f6c1c3a'
+            '166da06c56233c648b68a369dee96131910727e6171321ff4b9ec65a736db3d1'
+            '82e639f911e84db3cbb692034e250fad8df890cfb9e2c0fe329ab51e47b9aca6')
+
+prepare() {
+  patch -d linver -Np1 < aero7.patch
+  install -Dm644 aero7-companion.png linver/resources/aero7-companion.png
+  rm -rf linver/resources/versions
+}
+
+build() {
+  mkdir -p build
+  cd build
+  qmake6 ../linver/linver.pro PREFIX=/usr
+  make
+}
+
+package() {
+  install -Dm755 build/linver "$pkgdir/usr/bin/linver"
+  install -Dm644 org.aero7.linver.desktop "$pkgdir/usr/share/applications/org.aero7.linver.desktop"
+  install -Dm644 aero7-companion.png "$pkgdir/usr/share/icons/hicolor/256x256/apps/org.aero7.linver.png"
+  install -Dm644 linver/LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}

@@ -1,0 +1,21 @@
+pkgname=aero7-gadgets
+pkgver=1.0.0
+pkgrel=1
+pkgdesc='Original glass Clock, CPU Meter, and Notes widgets for Plasma 6'
+arch=('any')
+url='https://github.com/memegeko/aero7-shell'
+license=('MIT')
+depends=('libksysguard' 'libplasma' 'qt6-declarative')
+provides=('win-gadgets')
+conflicts=('win-gadgets' 'win-gadgets-git')
+source=("$pkgname-$pkgver.tar.gz")
+sha256sums=('c19d04df2488c9fb2df0075ff1efaf9df27a9d1764322a0507c29ee57d108157')
+
+package() {
+  local applet
+  for applet in org.aero7.gadgets.clock org.aero7.gadgets.cpu org.aero7.gadgets.notes; do
+    install -d "$pkgdir/usr/share/plasma/plasmoids/$applet"
+    cp -r "$srcdir/$pkgname/$applet/." "$pkgdir/usr/share/plasma/plasmoids/$applet/"
+  done
+  install -Dm644 "$srcdir/$pkgname/LICENSE" "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}

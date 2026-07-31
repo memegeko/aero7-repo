@@ -1,0 +1,559 @@
+diff --git a/.qmlls.ini b/.qmlls.ini
+index b0473a3..a157479 100644
+--- a/.qmlls.ini
++++ b/.qmlls.ini
+@@ -1,5 +1,5 @@
+ [General]
+-buildDir="/home/catpswin56/Escritorio/Repositories/winxplorer/build/Desktop-Debug"
++buildDir="/tmp/aero7-upstream-audit.jS3Qo8/winxplorer/build-aero7-clean"
+ no-cmake-calls=false
+ docDir=/usr/share/doc/qt6
+ importPaths="/usr/lib/qt6/qml"
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 0e61c1e..dccea0d 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -11,7 +11,7 @@ find_package(KF6WindowSystem)
+ find_package(KF6KIO)
+ find_package(Qt6 REQUIRED COMPONENTS
+     Core Widgets
+-    Quick Multimedia
++    Quick
+     Concurrent
+ )
+ 
+@@ -59,7 +59,6 @@ target_link_libraries(winxplorer
+         Qt6::Quick
+         Qt6::Core
+         Qt6::Widgets
+-        Qt6::Multimedia
+         Qt6::Concurrent
+ 
+         Controlsplugin Panesplugin
+diff --git a/NavigationBar.qml b/NavigationBar.qml
+index 9e6288b..76ecaf3 100644
+--- a/NavigationBar.qml
++++ b/NavigationBar.qml
+@@ -24,7 +24,7 @@ RowLayout {
+ 
+         implicitHeight: 24
+ 
+-        BorderImage {
++        Rectangle {
+             readonly property string state: {
+                 if(parent.enabled) {
+                     if(parent.containsMouse) return "hover";
+@@ -35,13 +35,10 @@ RowLayout {
+ 
+             anchors.fill: parent
+ 
+-            border {
+-                top: 3
+-                bottom: 3
+-                left: 3
+-                right: 3
+-            }
+-            source: "qrc:/aero/glassArea/addressBar/" + state + ".png"
++            radius: 3
++            border.width: 1
++            border.color: state === "hover" ? "#59a8df" : "#7b9db4"
++            color: state === "disabled" ? "#d9e1e6" : (state === "hover" ? "#f8fcff" : "#ffffff")
+         }
+ 
+         RowLayout {
+@@ -73,9 +70,12 @@ RowLayout {
+         }
+     }
+ 
+-    Image {
++    Item {
+         id: navigationBtns
+ 
++        implicitWidth: 71
++        implicitHeight: 27
++
+         property list<string> history: []
+         readonly property string state: {
+             if(history.length > 0) {
+@@ -92,7 +92,14 @@ RowLayout {
+             }
+         }
+ 
+-        source: "qrc:/aero/glassArea/navButtons/" + state + ".png"
++        Rectangle {
++            anchors.fill: parent
++            radius: 13
++            border.width: 1
++            border.color: "#426b88"
++            color: state === "pressed" ? "#71b8dd" : (state === "hover" ? "#d7f3ff" : "#b9dced")
++            opacity: state === "disabled" ? 0.55 : 1
++        }
+ 
+         MouseArea {
+             id: historyMa
+@@ -141,16 +148,13 @@ RowLayout {
+ 
+                             anchors.fill: parent
+ 
+-                            BorderImage {
++                            Rectangle {
+                                 anchors.fill: parent
+ 
+-                                border {
+-                                    top: 2
+-                                    bottom: 3
+-                                    right: 3
+-                                    left: 3
+-                                }
+-                                source: "qrc:/aero/fileView/item-hover.png"
++                                radius: 3
++                                border.width: 1
++                                border.color: "#6aa9d5"
++                                color: "#dff2ff"
+ 
+                                 visible: itemMa.containsMouse
+                             }
+@@ -264,7 +268,7 @@ RowLayout {
+                     fwdImg.canGoForward = Qt.binding(() => filesModel.canGoForward)
+                 }
+ 
+-                Image {
++                Rectangle {
+                     id: bckImg
+ 
+                     property bool canGoBack: false
+@@ -284,7 +288,17 @@ RowLayout {
+ 
+                     anchors.fill: parent
+ 
+-                    source: "qrc:/aero/glassArea/navButtons/back/" + (canGoBack ? state : "disabled") + ".png"
++                    radius: height / 2
++                    color: state === "pressed" ? "#6aaed5" : (state === "hover" ? "#e7f7ff" : "transparent")
++                    opacity: canGoBack ? 1 : 0.35
++
++                    Text {
++                        anchors.centerIn: parent
++                        text: "‹"
++                        color: "#164f76"
++                        font.pixelSize: 24
++                        font.bold: true
++                    }
+                 }
+             }
+ 
+@@ -300,7 +314,7 @@ RowLayout {
+                     fwdImg.canGoForward = Qt.binding(() => filesModel.canGoForward)
+                 }
+ 
+-                Image {
++                Rectangle {
+                     id: fwdImg
+ 
+                     property bool canGoForward: false
+@@ -320,7 +334,17 @@ RowLayout {
+ 
+                     anchors.fill: parent
+ 
+-                    source: "qrc:/aero/glassArea/navButtons/forward/" + (canGoForward ? state : "disabled") + ".png"
++                    radius: height / 2
++                    color: state === "pressed" ? "#6aaed5" : (state === "hover" ? "#e7f7ff" : "transparent")
++                    opacity: canGoForward ? 1 : 0.35
++
++                    Text {
++                        anchors.centerIn: parent
++                        text: "›"
++                        color: "#164f76"
++                        font.pixelSize: 24
++                        font.bold: true
++                    }
+                 }
+             }
+         }
+@@ -348,7 +372,7 @@ RowLayout {
+ 
+                 hoverEnabled: true
+ 
+-                BorderImage {
++                Rectangle {
+                     readonly property string state: {
+                         if(parent.enabled) {
+                             if(parent.containsPress) return "pressed";
+@@ -360,13 +384,10 @@ RowLayout {
+ 
+                     anchors.fill: parent
+ 
+-                    border {
+-                        top: 3
+-                        bottom: 2
+-                        left: 3
+-                        right: 2
+-                    }
+-                    source: "qrc:/aero/misc/squareBtns/" + state + ".png"
++                    radius: 2
++                    border.width: 1
++                    border.color: "#6b9fbd"
++                    color: state === "pressed" ? "#72b7dc" : (state === "hover" ? "#d8f1ff" : "transparent")
+ 
+                     opacity: parent.flat ? parent.containsMouse : true
+ 
+diff --git a/aero.qrc b/aero.qrc
+index be12f52..03585ec 100644
+--- a/aero.qrc
++++ b/aero.qrc
+@@ -1,35 +1,2 @@
+ <RCC>
+-    <qresource prefix="/">
+-        <file>aero/commandBar/btn-hover.png</file>
+-        <file>aero/commandBar/btn-pressed.png</file>
+-        <file>aero/commandBar/shine.png</file>
+-        <file>aero/fileView/header/background.png</file>
+-        <file>aero/fileView/header/item-normal.png</file>
+-        <file>aero/fileView/header/item-selected.png</file>
+-        <file>aero/fileView/item-hover.png</file>
+-        <file>aero/fileView/item-selected-hover.png</file>
+-        <file>aero/fileView/item-selected.png</file>
+-        <file>aero/glassArea/addressBar/disabled.png</file>
+-        <file>aero/glassArea/addressBar/hover.png</file>
+-        <file>aero/glassArea/addressBar/normal.png</file>
+-        <file>aero/glassArea/navButtons/back/disabled.png</file>
+-        <file>aero/glassArea/navButtons/back/hover.png</file>
+-        <file>aero/glassArea/navButtons/back/normal.png</file>
+-        <file>aero/glassArea/navButtons/back/pressed.png</file>
+-        <file>aero/glassArea/navButtons/forward/disabled.png</file>
+-        <file>aero/glassArea/navButtons/forward/hover.png</file>
+-        <file>aero/glassArea/navButtons/forward/normal.png</file>
+-        <file>aero/glassArea/navButtons/forward/pressed.png</file>
+-        <file>aero/glassArea/navButtons/disabled.png</file>
+-        <file>aero/glassArea/navButtons/hover.png</file>
+-        <file>aero/glassArea/navButtons/normal.png</file>
+-        <file>aero/glassArea/navButtons/pressed.png</file>
+-        <file>aero/misc/squareBtns/disabled.png</file>
+-        <file>aero/misc/squareBtns/hover.png</file>
+-        <file>aero/misc/squareBtns/normal.png</file>
+-        <file>aero/misc/squareBtns/pressed.png</file>
+-        <file>aero/misc/detailsShadow.png</file>
+-        <file>aero/misc/navStart.wav</file>
+-        <file>aero/fileView/header/item-normal-first.png</file>
+-    </qresource>
+ </RCC>
+diff --git a/controls/.qmlls.ini b/controls/.qmlls.ini
+index b0473a3..30af8a4 100644
+--- a/controls/.qmlls.ini
++++ b/controls/.qmlls.ini
+@@ -1,5 +1,5 @@
+ [General]
+-buildDir="/home/catpswin56/Escritorio/Repositories/winxplorer/build/Desktop-Debug"
++buildDir="/tmp/aero7-upstream-audit.jS3Qo8/winxplorer/build-aero7-clean/controls"
+ no-cmake-calls=false
+ docDir=/usr/share/doc/qt6
+ importPaths="/usr/lib/qt6/qml"
+diff --git a/controls/CommandBar.qml b/controls/CommandBar.qml
+index b6ad533..cd721cc 100644
+--- a/controls/CommandBar.qml
++++ b/controls/CommandBar.qml
+@@ -36,15 +36,19 @@ Item {
+             GradientStop { position: 0.0; color: "#044875" }
+         }
+     }
+-    BorderImage {
++    Rectangle {
+         anchors.fill: parent
+-        border {
+-            top: 1
+-            bottom: 2
+-            right: 1
+-            left: 1
++        color: "transparent"
++        border.width: 1
++        border.color: "#73afc8"
++
++        Rectangle {
++            anchors.left: parent.left
++            anchors.right: parent.right
++            anchors.top: parent.top
++            height: 1
++            color: "#d9f7ff"
+         }
+-        source: "qrc:/aero/commandBar/shine.png"
+     }
+ 
+     RowLayout {
+diff --git a/controls/CommandButton.qml b/controls/CommandButton.qml
+index f5982c3..668d36a 100644
+--- a/controls/CommandButton.qml
++++ b/controls/CommandButton.qml
+@@ -19,7 +19,7 @@ MouseArea {
+ 
+         anchors.fill: parent
+ 
+-        BorderImage {
++        Rectangle {
+             readonly property string state: {
+                 if(controlRoot.containsPress) return "pressed";
+                 return "hover";
+@@ -27,14 +27,10 @@ MouseArea {
+ 
+             anchors.fill: parent
+ 
+-            border {
+-                top: 3
+-                bottom: 3
+-                right: 3
+-                left: 3
+-            }
+-
+-            source: "qrc:/aero/commandBar/btn-" + state + ".png"
++            radius: 3
++            border.width: 1
++            border.color: "#9dc7df"
++            color: state === "pressed" ? "#7eb4d0" : "#c8e8f7"
+ 
+             visible: controlRoot.containsMouse
+         }
+diff --git a/controls/FileColumns.qml b/controls/FileColumns.qml
+index 21a8114..b38a0b2 100644
+--- a/controls/FileColumns.qml
++++ b/controls/FileColumns.qml
+@@ -57,16 +57,14 @@ Item {
+                 width: model.width
+                 height: parent.height
+ 
+-                BorderImage {
++                Rectangle {
+                     anchors.fill: parent
+-
+-                    border {
+-                        top: 0
+-                        bottom: 2
+-                        left: 2
+-                        right: 2
++                    border.width: 1
++                    border.color: "#aebdca"
++                    gradient: Gradient {
++                        GradientStop { position: 0.0; color: "#ffffff" }
++                        GradientStop { position: 1.0; color: "#dce8f0" }
+                     }
+-                    source: parent.index == 0 ? "qrc:/aero/fileView/header/item-normal-first.png" : "qrc:/aero/fileView/header/item-normal.png"
+                 }
+ 
+                 Text {
+diff --git a/filesmodel.cpp b/filesmodel.cpp
+index 3ace083..2cb44ab 100644
+--- a/filesmodel.cpp
++++ b/filesmodel.cpp
+@@ -2,7 +2,6 @@
+ 
+ #include <QDesktopServices>
+ #include <QUrl>
+-#include <QAudioOutput>
+ #include <QtConcurrent/QtConcurrent>
+ #include <QFuture>
+ 
+@@ -20,10 +19,6 @@ FilesModel::FilesModel(QObject *parent)
+     connect(m_watcher, &QFileSystemWatcher::fileChanged, this, &FilesModel::refreshFileList);
+     connect(m_watcher, &QFileSystemWatcher::directoryChanged, this, &FilesModel::refreshFileList);
+ 
+-    m_navigationSound = new QMediaPlayer();
+-    m_navigationSound->setSource(QUrl("qrc:/aero/misc/navStart.wav"));
+-    QAudioOutput *audioOutput = new QAudioOutput();
+-    m_navigationSound->setAudioOutput(audioOutput);
+ }
+ 
+ // idk if this works lmao
+@@ -36,8 +31,6 @@ FilesModel::~FilesModel()
+     delete m_currentDir;
+     delete m_watcher;
+ 
+-    delete m_navigationSound->audioOutput();
+-    delete m_navigationSound;
+ 
+     if(m_loadingThread) {
+         m_loadingThread->terminate();
+@@ -133,7 +126,6 @@ void FilesModel::setCurrentDir(const QString &newDir)
+     m_canGoForward = m_forwardHistory.length() > 0;
+ 
+     m_currentDir->setPath(newDir);
+-    m_navigationSound->play();
+     emit currentDirChanged();
+ 
+     m_canGoUp = m_currentDir->absolutePath() != "/";
+diff --git a/filesmodel.h b/filesmodel.h
+index 22fc0f5..c17f1e5 100644
+--- a/filesmodel.h
++++ b/filesmodel.h
+@@ -3,9 +3,9 @@
+ 
+ #include <QObject>
+ #include <QAbstractListModel>
++#include <QUrl>
+ #include <QDir>
+ #include <QFileSystemWatcher>
+-#include <QMediaPlayer>
+ #include <QThread>
+ #include <QMimeDatabase>
+ 
+@@ -164,7 +164,6 @@ private:
+     QDir *m_currentDir;
+     QFileSystemWatcher *m_watcher;
+ 
+-    QMediaPlayer *m_navigationSound;
+ 
+     bool m_canGoBack;
+     bool m_canGoForward;
+diff --git a/main.cpp b/main.cpp
+index 1ab3380..7c50c08 100644
+--- a/main.cpp
++++ b/main.cpp
+@@ -8,6 +8,9 @@
+ #include "filesmodel.h"
+ #include "favoritesmodel.h"
+ 
++Q_IMPORT_QML_PLUGIN(ControlsPlugin)
++Q_IMPORT_QML_PLUGIN(PanesPlugin)
++
+ int main(int argc, char *argv[])
+ {
+     QApplication app(argc, argv);
+@@ -15,9 +18,6 @@ int main(int argc, char *argv[])
+     qmlRegisterType<FilesModel>("io.gitgud.catpswin56.private.filesbackend", 1, 0, "FilesModel");
+     qmlRegisterType<FavoritesModel>("io.gitgud.catpswin56.private.filesbackend", 1, 0, "FavoritesModel");
+ 
+-    Q_IMPORT_QML_PLUGIN(ControlsPlugin)
+-    Q_IMPORT_QML_PLUGIN(PanesPlugin)
+-
+     QQmlApplicationEngine engine;
+     QObject::connect(
+         &engine,
+diff --git a/panes/.qmlls.ini b/panes/.qmlls.ini
+index b0473a3..1207b43 100644
+--- a/panes/.qmlls.ini
++++ b/panes/.qmlls.ini
+@@ -1,5 +1,5 @@
+ [General]
+-buildDir="/home/catpswin56/Escritorio/Repositories/winxplorer/build/Desktop-Debug"
++buildDir="/tmp/aero7-upstream-audit.jS3Qo8/winxplorer/build-aero7-clean/panes"
+ no-cmake-calls=false
+ docDir=/usr/share/doc/qt6
+ importPaths="/usr/lib/qt6/qml"
+diff --git a/panes/Details.qml b/panes/Details.qml
+index aa68a56..5c91396 100644
+--- a/panes/Details.qml
++++ b/panes/Details.qml
+@@ -27,16 +27,22 @@ Item {
+         }
+     }
+ 
+-    BorderImage {
++    Rectangle {
+         anchors.fill: parent
++        color: "transparent"
++        border.width: 1
++        border.color: "#8eafc7"
+ 
+-        border {
+-            top: 6
+-            bottom: 0
+-            left: 1
+-            right: 1
++        Rectangle {
++            anchors.left: parent.left
++            anchors.right: parent.right
++            anchors.top: parent.top
++            height: 5
++            gradient: Gradient {
++                GradientStop { position: 0.0; color: "#6f91a8" }
++                GradientStop { position: 1.0; color: "transparent" }
++            }
+         }
+-        source: "qrc:/aero/misc/detailsShadow.png"
+     }
+ 
+     Row {
+diff --git a/panes/Files.qml b/panes/Files.qml
+index 63b906a..5fc09b3 100644
+--- a/panes/Files.qml
++++ b/panes/Files.qml
+@@ -97,7 +97,7 @@ Item {
+             opacity: 0.5
+         }
+ 
+-        BorderImage {
++        Rectangle {
+             anchors {
+                 right: listScrollView.right
+                 left: listScrollView.left
+@@ -105,13 +105,9 @@ Item {
+ 
+             height: 24
+ 
+-            border {
+-                top: 0
+-                bottom: 2
+-                right: 0
+-                left: 2
+-            }
+-            source: "qrc:/aero/fileView/header/background.png"
++            color: "#e7eef3"
++            border.width: 1
++            border.color: "#b4c2cd"
+         }
+ 
+         // put the listview inside a scrollview to get rid of the
+@@ -209,7 +205,7 @@ Item {
+                         filesModel.trigger(index);
+                     }
+ 
+-                    BorderImage {
++                    Rectangle {
+                         readonly property string state: {
+                             if(listView.selectedIndex == parent.index) {
+                                 if(parent.containsMouse) return "-selected-hover";
+@@ -219,13 +215,10 @@ Item {
+ 
+                         anchors.fill: parent
+ 
+-                        border {
+-                            top: 3
+-                            bottom: 3
+-                            right: 3
+-                            left: 3
+-                        }
+-                        source: "qrc:/aero/fileView/item" + state + ".png"
++                        radius: 3
++                        border.width: 1
++                        border.color: state === "-hover" ? "#9ac7e3" : "#4d9dcc"
++                        color: state === "-selected" ? "#b8dcf2" : (state === "-selected-hover" ? "#cdeafb" : "#e5f4fd")
+ 
+                         visible: listView.selectedIndex == fileRoot.index || parent.containsMouse
+                     }
+diff --git a/panes/Navigation.qml b/panes/Navigation.qml
+index 48fd137..f89beca 100644
+--- a/panes/Navigation.qml
++++ b/panes/Navigation.qml
+@@ -47,7 +47,7 @@ Item {
+ 
+                 onClicked: favoritesModel.trigger(model.path)
+ 
+-                BorderImage {
++                Rectangle {
+                     readonly property string state: {
+                         if(parent.containsPress) return "-selected-hover";
+                         return "-selected"
+@@ -55,13 +55,10 @@ Item {
+ 
+                     anchors.fill: parent
+ 
+-                    border {
+-                        top: 3
+-                        bottom: 3
+-                        right: 3
+-                        left: 3
+-                    }
+-                    source: "qrc:/aero/fileView/item" + state + ".png"
++                    radius: 3
++                    border.width: 1
++                    border.color: "#5aa4d2"
++                    color: state === "-selected-hover" ? "#cbeafd" : "#e4f4fd"
+ 
+                     visible: parent.containsMouse
+                 }

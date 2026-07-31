@@ -1,0 +1,29 @@
+pkgname=linux-control-panel
+pkgver=0.1.0
+pkgrel=1
+pkgdesc='Aero7 system settings hub for Linux and Plasma 6'
+arch=('x86_64')
+url='https://github.com/actuallyaridan/linux-control'
+license=('GPL-3.0-or-later')
+depends=('cups' 'glibc' 'kwidgetsaddons' 'kwindowsystem' 'openssl' 'qt6-base'
+         'qt6-multimedia' 'zlib')
+makedepends=('aero7-qt' 'cmake' 'git' 'ninja')
+source=("linux-control::git+$url.git#commit=280a1bda565faf085df5a48dd9ee03a44d127977"
+        'aero7.patch')
+sha256sums=('SKIP'
+            'a65b5bbad1e1d09650c77f3a88b6a56a1be8c69d8cc6f6e0865d40f0cd0d9b78')
+
+prepare() {
+  patch -d linux-control -Np1 < aero7.patch
+}
+
+build() {
+  cmake -S linux-control -B build -G Ninja \
+    -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
+  cmake --build build
+}
+
+package() {
+  DESTDIR="$pkgdir" cmake --install build
+  install -Dm644 linux-control/LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}

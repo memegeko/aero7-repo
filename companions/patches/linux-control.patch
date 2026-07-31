@@ -1,0 +1,100 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 63e9652..c982a0b 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -7,12 +7,13 @@ set(CMAKE_AUTOMOC ON)
+ set(CMAKE_AUTOUIC ON)
+ set(CMAKE_AUTORCC ON)
+ 
+-find_package(Qt6 REQUIRED COMPONENTS Widgets Multimedia Concurrent DBus OpenGL)
++find_package(Qt6 REQUIRED COMPONENTS Widgets Multimedia Concurrent DBus OpenGL UiPlugin)
++find_package(KF6Config REQUIRED)
+ find_package(KF6WidgetsAddons REQUIRED)
+ find_package(KF6WindowSystem REQUIRED)
+ find_package(ZLIB REQUIRED)
+ find_package(OpenSSL REQUIRED)
+-find_package(AeroQt REQUIRED)
++find_package(Aero7Qt REQUIRED)
+ find_package(Cups REQUIRED)
+ 
+ add_executable(controlpanel
+@@ -74,7 +75,7 @@ target_link_libraries(controlpanel PRIVATE
+     KF6::WindowSystem
+     ZLIB::ZLIB
+     OpenSSL::Crypto
+-    AeroQt
++    Aero7Qt::Aero7Qt
+     Cups::Cups
+ )
+ 
+diff --git a/src/main.cpp b/src/main.cpp
+index 263ba05..7b543e1 100644
+--- a/src/main.cpp
++++ b/src/main.cpp
+@@ -5,7 +5,7 @@
+ #include <QTimer>
+ #include "MainWindow.h"
+ #include "IconHelper.h"
+-#include <AeroQt/stylesheet.h>
++#include <Aero7Qt/stylesheet.h>
+ 
+ // AeroQt's application stylesheet skins QScrollBar with the Win7 look. We want
+ // the desktop theme's native scroll bars instead, and they cannot be rescued
+@@ -95,7 +95,7 @@ int main(int argc, char *argv[]) {
+     // No setApplicationDisplayName: Qt appends it to every window/dialog title.
+     app.setWindowIcon(themeIcon({"preferences-system"}));
+ 
+-    Aero::registerStylesheet(&app);
++    Aero7::applyApplicationStyle(&app);
+     new ScrollBarUnstyler(&app);   // native scroll bars; owned by the app
+ 
+     MainWindow w;
+diff --git a/src/ui/MainWindow.cpp b/src/ui/MainWindow.cpp
+index 37dc38f..d8349aa 100644
+--- a/src/ui/MainWindow.cpp
++++ b/src/ui/MainWindow.cpp
+@@ -31,8 +31,8 @@
+ #include <QProcess>
+ #include <QStandardPaths>
+ #include <QMessageBox>
+-#include <AeroQt/navbuttons.h>
+-#include <AeroQt/insetwindow.h>
++#include <Aero7Qt/glassframe.h>
++#include <Aero7Qt/navigationbuttons.h>
+ #include "Categories.h"
+ #include "Branding.h"
+ #include "PageId.h"
+@@ -95,7 +95,7 @@ MainWindow::MainWindow(QWidget *parent)
+     // Aero glass on crumb bar: must be after setCentralWidget
+     setAttribute(Qt::WA_TranslucentBackground, true);
+     setAttribute(Qt::WA_NoSystemBackground, true);
+-    Aero::makeInsetWindow(this, central, m_crumbBar, nullptr);
++    Aero7::applyGlassFrame(this, central, m_crumbBar, nullptr);
+ 
+     // Intercept mouse side-button events from any child widget.
+     qApp->installEventFilter(this);
+@@ -110,7 +110,7 @@ void MainWindow::buildCrumbBar()
+     layout->setSpacing(2);
+ 
+     // Aero-style back/forward nav buttons
+-    auto *navBtns = new Aero::NavButtons(m_crumbBar);
++    auto *navBtns = new Aero7::NavigationButtons(m_crumbBar);
+     m_backBtn = navBtns->back();
+     m_forwardBtn = navBtns->forward();
+     m_backBtn->setEnabled(false);
+@@ -126,8 +126,8 @@ void MainWindow::buildCrumbBar()
+     auto *pathBox = new QWidget;
+     pathBox->setObjectName("addressBox");
+     pathBox->setStyleSheet(
+-        "#addressBox { border-image: url(:/AeroQt/transpbg/entry/normal.png) 4 4 4 4 repeat; border-width: 4px; }"
+-        "#addressBox:hover { border-image: url(:/AeroQt/transpbg/entry/hover.png) 4 4 4 4 repeat; }"
++        "#addressBox { background: rgba(255,255,255,235); border: 1px solid #7f9db9; border-radius: 2px; }"
++        "#addressBox:hover { border-color: #3c7fb1; }"
+     );
+     pathBox->setFixedHeight(24);
+     m_pathLayout = new QHBoxLayout(pathBox);
+@@ -1144,4 +1144,3 @@ QWidget *MainWindow::buildCategoryPage(const QString &currentCategory)
+ 
+     return page;
+ }
+-

@@ -1,0 +1,304 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 8e04e47b..e876f9f7 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -58,7 +58,7 @@ if (APPLE OR HAIKU OR NOT UNIX)
+     set(GWENVIEW_NO_WAYLAND_GESTURES ON)
+ endif()
+ 
+-find_package(Qt6 ${QT_MIN_VERSION} CONFIG REQUIRED Core Widgets Concurrent Svg PrintSupport Multimedia MultimediaWidgets)
++find_package(Qt6 ${QT_MIN_VERSION} CONFIG REQUIRED Core Widgets Concurrent Svg PrintSupport Multimedia MultimediaWidgets UiPlugin)
+ find_package(Qt6DBus ${QT_MIN_VERSION} CONFIG QUIET)
+ find_package(Qt6SvgWidgets)
+ find_package(Qt6OpenGLWidgets)
+@@ -86,6 +86,7 @@ find_package(KF6 ${KF_MIN_VERSION} REQUIRED COMPONENTS
+     GuiAddons
+     WidgetsAddons
+     Crash
++    Config
+ )
+ find_package(KF6 ${KF_MIN_VERSION} OPTIONAL_COMPONENTS
+     DocTools
+@@ -102,7 +103,7 @@ ecm_set_disabled_deprecation_versions(QT 5.14.0 KF 5.99.0
+ 
+ add_definitions(-DQT_NO_FOREACH)
+ 
+-find_package(AeroQt REQUIRED)
++find_package(Aero7Qt REQUIRED)
+ 
+ ## Dependencies
+ find_package(JPEG)
+diff --git a/app/CMakeLists.txt b/app/CMakeLists.txt
+index d3adc300..3ebd3a4f 100644
+--- a/app/CMakeLists.txt
++++ b/app/CMakeLists.txt
+@@ -110,7 +110,7 @@ target_link_libraries(gwenview
+     KF6::WidgetsAddons
+     KF6::GuiAddons
+     KF6::Crash
+-    AeroQt
++    Aero7Qt::Aero7Qt
+     gwenviewlib
+     )
+ 
+diff --git a/app/aero_components/BottomControls.cpp b/app/aero_components/BottomControls.cpp
+index 269021ff..32d9af34 100644
+--- a/app/aero_components/BottomControls.cpp
++++ b/app/aero_components/BottomControls.cpp
+@@ -9,14 +9,27 @@ BottomControlsContainer::BottomControlsContainer(QWidget *parent) : QWidget(pare
+ void BottomControlsContainer::paintEvent(QPaintEvent *event) {
+     Q_UNUSED(event);
+     QPainter painter(this);
+-    painter.drawPixmap(0, 13, QPixmap(":/aero_components/bottom_controls/left_edge"));
+-    painter.drawPixmap(183, 4, QPixmap(":/aero_components/bottom_controls/slideshow_bg"));
+-    painter.drawPixmap(390, 13, QPixmap(":/aero_components/bottom_controls/right_edge"));
++    painter.setRenderHint(QPainter::Antialiasing, true);
+ 
+-    painter.drawPixmap(16, 13, 167, 33, QPixmap(":/aero_components/bottom_controls/bg"));
+-    painter.drawPixmap(223, 13, 167, 33, QPixmap(":/aero_components/bottom_controls/bg"));
++    QLinearGradient bar(0, 10, 0, 48);
++    bar.setColorAt(0.0, QColor(245, 251, 255, 238));
++    bar.setColorAt(0.45, QColor(170, 211, 239, 238));
++    bar.setColorAt(1.0, QColor(63, 126, 180, 238));
++    painter.setPen(QPen(QColor(19, 69, 111, 220), 1));
++    painter.setBrush(bar);
++    painter.drawRoundedRect(QRectF(10.5, 12.5, 385, 34), 17, 17);
+ 
+-    painter.drawPixmap(356, 19, QPixmap(":/aero_components/bottom_controls/separator"));
++    QRadialGradient center(QPointF(203, 29), 28);
++    center.setColorAt(0.0, QColor(255, 255, 255, 250));
++    center.setColorAt(0.55, QColor(91, 196, 245, 245));
++    center.setColorAt(1.0, QColor(14, 91, 151, 245));
++    painter.setBrush(center);
++    painter.drawEllipse(QRectF(178.5, 4.5, 49, 49));
++
++    painter.setPen(QColor(255, 255, 255, 150));
++    painter.drawLine(356, 18, 356, 41);
++    painter.setPen(QColor(31, 78, 117, 120));
++    painter.drawLine(357, 18, 357, 41);
+ }
+ 
+ QSize BottomControlsContainer::sizeHint() const
+@@ -25,36 +38,47 @@ QSize BottomControlsContainer::sizeHint() const
+ }
+ 
+ SevenPhotoBottomControls::SevenPhotoBottomControls(QWidget *parent) : BottomControlsContainer(parent) {
+-    slideshowButton = new GlowingButton(QPixmap(":/aero_components/slideshow_button/normal"), QPixmap(":/aero_components/slideshow_button/hover"), QPixmap(":/aero_components/slideshow_button/press"), QPixmap(":/aero_components/slideshow_button/disabled"), this);
++    const auto makeButton = [this](const QString &iconName, const QString &fallbackName) {
++        auto *button = new GlowingButton(this);
++        QIcon icon = QIcon::fromTheme(iconName);
++        if (icon.isNull()) {
++            icon = QIcon::fromTheme(fallbackName);
++        }
++        button->setIcon(icon);
++        button->setIconSize(QSize(18, 18));
++        return button;
++    };
++
++    slideshowButton = makeButton(QStringLiteral("media-playback-start"), QStringLiteral("media-playback-pause"));
+     slideshowButton->setFixedSize(44, 48);
+     slideshowButton->move(181, 5);
+ 
+-    backButton = new GlowingButton(QPixmap(":/aero_components/back_button/normal"), QPixmap(":/aero_components/back_button/hover"), QPixmap(":/aero_components/back_button/press"), QPixmap(":/aero_components/back_button/disabled"), this);
++    backButton = makeButton(QStringLiteral("go-previous"), QStringLiteral("arrow-left"));
+     backButton->setFixedSize(51, 25);
+     backButton->move(130, 17);
+     backButton->setDrawIdleOnHover(true);
+-    forwardButton = new GlowingButton(QPixmap(":/aero_components/forward_button/normal"), QPixmap(":/aero_components/forward_button/hover"), QPixmap(":/aero_components/forward_button/press"), QPixmap(":/aero_components/forward_button/disabled"), this);
++    forwardButton = makeButton(QStringLiteral("go-next"), QStringLiteral("arrow-right"));
+     forwardButton->setFixedSize(51, 25);
+     forwardButton->move(225, 17);
+     forwardButton->setDrawIdleOnHover(true);
+ 
+-    zoomButton = new GlowingButton(QPixmap(":/aero_components/zoom_button/normal"), QPixmap(":/aero_components/zoom_button/hover"), QPixmap(":/aero_components/zoom_button/press"), QPixmap(":/aero_components/zoom_button/disabled"), this);
++    zoomButton = makeButton(QStringLiteral("zoom-in"), QStringLiteral("edit-find"));
+     zoomButton->setFixedSize(37, 25);
+     zoomButton->move(27, 17);
+ 
+-    contentButton = new GlowingButton(QPixmap(":/aero_components/fit_button/normal"), QPixmap(":/aero_components/fit_button/hover"), QPixmap(":/aero_components/fit_button/press"), QPixmap(":/aero_components/fit_button/disabled"), this);
++    contentButton = makeButton(QStringLiteral("zoom-fit-best"), QStringLiteral("zoom-original"));
+     contentButton->setFixedSize(27, 25);
+     contentButton->move(85, 17);
+ 
+-    rotateCCWButton = new GlowingButton(QPixmap(":/aero_components/rotate_ccw_button/normal"), QPixmap(":/aero_components/rotate_ccw_button/hover"), QPixmap(":/aero_components/rotate_ccw_button/press"), QPixmap(":/aero_components/rotate_ccw_button/disabled"), this);
++    rotateCCWButton = makeButton(QStringLiteral("object-rotate-left"), QStringLiteral("edit-undo"));
+     rotateCCWButton->setFixedSize(25, 25);
+     rotateCCWButton->move(288, 17);
+ 
+-    rotateCWButton = new GlowingButton(QPixmap(":/aero_components/rotate_cw_button/normal"), QPixmap(":/aero_components/rotate_cw_button/hover"), QPixmap(":/aero_components/rotate_cw_button/press"), QPixmap(":/aero_components/rotate_cw_button/disabled"), this);
++    rotateCWButton = makeButton(QStringLiteral("object-rotate-right"), QStringLiteral("edit-redo"));
+     rotateCWButton->setFixedSize(25, 25);
+     rotateCWButton->move(321, 17);
+ 
+-    deleteButton = new GlowingButton(QPixmap(":/aero_components/delete_button/normal"), QPixmap(":/aero_components/delete_button/hover"), QPixmap(":/aero_components/delete_button/press"), QPixmap(":/aero_components/delete_button/disabled"), this);
++    deleteButton = makeButton(QStringLiteral("edit-delete"), QStringLiteral("user-trash"));
+     deleteButton->setFixedSize(25, 25);
+     deleteButton->move(367, 17);
+ }
+diff --git a/app/aero_components/CommandButton.cpp b/app/aero_components/CommandButton.cpp
+index b748e1b0..bf035b19 100644
+--- a/app/aero_components/CommandButton.cpp
++++ b/app/aero_components/CommandButton.cpp
+@@ -19,6 +19,7 @@ void CommandButton::setIcon(QIcon newImage) {
+ }
+ 
+ void CommandButton::paintEvent(QPaintEvent* event) {
++	Q_UNUSED(event);
+ 	QPainter painter = QPainter(this);
+ 	bool isDown = this->isDown();
+ 
+@@ -38,7 +39,13 @@ void CommandButton::paintEvent(QPaintEvent* event) {
+ 	}
+ 
+ 	if (this->menu()) {
+-		painter.drawPixmap(this->width() - 26 + (isDown ? 1 : 0), (isDown ? 9 : 8), QPixmap(":/aero_components/command_bar/dropdown"));
++		const int x = this->width() - 16 + (isDown ? 1 : 0);
++		const int y = 11 + (isDown ? 1 : 0);
++		QPolygon arrow;
++		arrow << QPoint(x, y) << QPoint(x + 7, y) << QPoint(x + 3, y + 4);
++		painter.setPen(Qt::NoPen);
++		painter.setBrush(QColor(28, 67, 104));
++		painter.drawPolygon(arrow);
+ 	}
+ }
+ 
+@@ -65,4 +72,4 @@ QSize CommandButton::sizeHint() const {
+ 	
+ 	QSize ret(width, -1);
+ 	return ret;
+-}
+\ No newline at end of file
++}
+diff --git a/app/aero_components/GlowingButton.cpp b/app/aero_components/GlowingButton.cpp
+index 0792645d..f49e511c 100644
+--- a/app/aero_components/GlowingButton.cpp
++++ b/app/aero_components/GlowingButton.cpp
+@@ -51,6 +51,10 @@ void GlowingButton::leaveEvent(QEvent *event) {
+ }
+ 
+ void GlowingButton::paintEvent(QPaintEvent *event) {
++    if (idleImage.isNull() && hoverImage.isNull() && pressImage.isNull()) {
++        QToolButton::paintEvent(event);
++        return;
++    }
+     Q_UNUSED(event);
+     QPainter painter(this);
+     painter.setRenderHint(QPainter::Antialiasing, false);
+@@ -83,6 +87,7 @@ void GlowingButton::paintEvent(QPaintEvent *event) {
+ 
+ void GlowingButton::setup() {
+     this->setAttribute(Qt::WA_Hover, true);
++    this->setAutoRaise(true);
+ 
+     this->animator = new QVariantAnimation(this);
+     this->animator->setDuration(125);
+diff --git a/app/gwenview.qrc b/app/gwenview.qrc
+index 738d36ff..e556958d 100644
+--- a/app/gwenview.qrc
++++ b/app/gwenview.qrc
+@@ -3,72 +3,4 @@
+ <file>gwenviewui.rc</file>
+ </qresource>
+ 
+-<qresource prefix="/aero_components/command_bar/">
+-	<file alias="background">aero_components/res/command_bar/background.png</file>
+-	<file alias="button_hover">aero_components/res/command_bar/button_hover.png</file>
+-	<file alias="button_press">aero_components/res/command_bar/button_press.png</file>
+-	<file alias="button_focus">aero_components/res/command_bar/button_focus.png</file>
+-	<file alias="dropdown">aero_components/res/command_bar/dropdown.png</file>
+-</qresource>
+-<qresource prefix="/aero_components/bottom_controls/">
+-	<file alias="left_edge">aero_components/res/bottom_controls/left_edge.png</file>
+-	<file alias="right_edge">aero_components/res/bottom_controls/right_edge.png</file>
+-	<file alias="separator">aero_components/res/bottom_controls/separator.png</file>
+-	<file alias="bg">aero_components/res/bottom_controls/bg.png</file>
+-	<file alias="slideshow_bg">aero_components/res/bottom_controls/slideshow_bg.png</file>
+-</qresource>
+-<qresource prefix="/aero_components/slideshow_button/">
+-	<file alias="normal">aero_components/res/slideshow_button/normal.png</file>
+-	<file alias="hover">aero_components/res/slideshow_button/hover.png</file>
+-	<file alias="press">aero_components/res/slideshow_button/press.png</file>
+-	<file alias="disabled">aero_components/res/slideshow_button/disabled.png</file>
+-</qresource>
+-<qresource prefix="/aero_components/back_button/">
+-	<file alias="normal">aero_components/res/back_button/normal.png</file>
+-	<file alias="hover">aero_components/res/back_button/hover.png</file>
+-	<file alias="press">aero_components/res/back_button/press.png</file>
+-	<file alias="disabled">aero_components/res/back_button/disabled.png</file>
+-</qresource>
+-<qresource prefix="/aero_components/forward_button/">
+-	<file alias="normal">aero_components/res/forward_button/normal.png</file>
+-	<file alias="hover">aero_components/res/forward_button/hover.png</file>
+-	<file alias="press">aero_components/res/forward_button/press.png</file>
+-	<file alias="disabled">aero_components/res/forward_button/disabled.png</file>
+-</qresource>
+-<qresource prefix="/aero_components/delete_button/">
+-	<file alias="normal">aero_components/res/delete_button/normal.png</file>
+-	<file alias="hover">aero_components/res/delete_button/hover.png</file>
+-	<file alias="press">aero_components/res/delete_button/press.png</file>
+-	<file alias="disabled">aero_components/res/delete_button/disabled.png</file>
+-</qresource>
+-<qresource prefix="/aero_components/fit_button/">
+-	<file alias="normal">aero_components/res/fit_button/normal.png</file>
+-	<file alias="hover">aero_components/res/fit_button/hover.png</file>
+-	<file alias="press">aero_components/res/fit_button/press.png</file>
+-	<file alias="disabled">aero_components/res/fit_button/disabled.png</file>
+-</qresource>
+-<qresource prefix="/aero_components/actual_size_button/">
+-	<file alias="normal">aero_components/res/actual_size_button/normal.png</file>
+-	<file alias="hover">aero_components/res/actual_size_button/hover.png</file>
+-	<file alias="press">aero_components/res/actual_size_button/press.png</file>
+-	<file alias="disabled">aero_components/res/actual_size_button/disabled.png</file>
+-</qresource>
+-<qresource prefix="/aero_components/rotate_cw_button/">
+-	<file alias="normal">aero_components/res/rotate_cw_button/normal.png</file>
+-	<file alias="hover">aero_components/res/rotate_cw_button/hover.png</file>
+-	<file alias="press">aero_components/res/rotate_cw_button/press.png</file>
+-	<file alias="disabled">aero_components/res/rotate_cw_button/disabled.png</file>
+-</qresource>
+-<qresource prefix="/aero_components/rotate_ccw_button/">
+-	<file alias="normal">aero_components/res/rotate_ccw_button/normal.png</file>
+-	<file alias="hover">aero_components/res/rotate_ccw_button/hover.png</file>
+-	<file alias="press">aero_components/res/rotate_ccw_button/press.png</file>
+-	<file alias="disabled">aero_components/res/rotate_ccw_button/disabled.png</file>
+-</qresource>
+-<qresource prefix="/aero_components/zoom_button/">
+-	<file alias="normal">aero_components/res/zoom_button/normal.png</file>
+-	<file alias="hover">aero_components/res/zoom_button/hover.png</file>
+-	<file alias="press">aero_components/res/zoom_button/press.png</file>
+-	<file alias="disabled">aero_components/res/zoom_button/disabled.png</file>
+-</qresource>
+ </RCC>
+diff --git a/app/mainwindow.cpp b/app/mainwindow.cpp
+index 9cedb38e..cdab24c7 100644
+--- a/app/mainwindow.cpp
++++ b/app/mainwindow.cpp
+@@ -72,8 +72,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ #include <KXMLGUIFactory>
+ #include <kwidgetsaddons_version.h>
+ #include <kxmlgui_version.h>
+-#include <AeroQt/insetwindow.h>
+-#include <AeroQt/stylesheet.h>
++#include <Aero7Qt/glassframe.h>
++#include <Aero7Qt/stylesheet.h>
+ #ifndef GWENVIEW_SEMANTICINFO_BACKEND_NONE
+ #include "lib/semanticinfo/semanticinfodirmodel.h"
+ #endif
+@@ -1191,7 +1191,7 @@ MainWindow::MainWindow()
+     : KXmlGuiWindow()
+     , d(new MainWindow::Private)
+ {
+-    Aero::registerStylesheet(qApp);
++    Aero7::applyApplicationStyle(qApp);
+ 
+     d->q = this;
+     d->mCurrentMainPageId = StartMainPageId;
+@@ -1215,7 +1215,7 @@ MainWindow::MainWindow()
+     createGUI();
+     loadConfig();
+ 
+-    Aero::makeInsetWindow(this, nullptr, nullptr, d->createBottomArea());
++    Aero7::applyGlassFrame(this, nullptr, nullptr, d->createBottomArea());
+ 
+     QImageReader::setAllocationLimit(2000);
+ 

@@ -22,7 +22,7 @@ PROPRIETARY_ASSET_PATTERNS = [
     re.compile(r"microsoft[ _-]?(logo|wallpaper|font|sound|icon)", re.IGNORECASE),
 ]
 PRIVATE_KEY_SUFFIXES = {".key", ".p12", ".pfx", ".pem"}
-EXPECTED_PACKAGE_COUNT = 10
+EXPECTED_PACKAGE_COUNT = 19
 
 
 def fail(message: str) -> None:
@@ -88,8 +88,24 @@ def validate_packages() -> None:
             if denied in text:
                 fail(f"{package} references denied package {denied}")
         entry = lock[package]
-        if entry["aur_url"] != f"https://aur.archlinux.org/{package}.git":
-            fail(f"{package} AUR URL mismatch")
+        source_type = entry.get("source_type", "aur")
+        if source_type == "aur":
+            if entry.get("aur_url") != f"https://aur.archlinux.org/{package}.git":
+                fail(f"{package} AUR URL mismatch")
+        elif source_type == "pinned-vcs":
+            revisions = entry.get("source_revisions", {})
+            if not revisions:
+                fail(f"{package} has no pinned VCS revisions")
+            for source_url, revision in revisions.items():
+                if len(revision) != 40 or not re.fullmatch(r"[0-9a-f]{40}", revision):
+                    fail(f"{package} has an invalid pinned revision for {source_url}")
+                if revision not in text:
+                    fail(f"{package} PKGBUILD does not contain pinned revision {revision}")
+        elif source_type == "local":
+            if entry.get("source_revisions", {}) != {}:
+                fail(f"{package} local source must not declare remote revisions")
+        else:
+            fail(f"{package} has unknown source type {source_type}")
         if sha256(pkgbuild) != entry["pkgbuild_sha256"]:
             fail(f"{package} PKGBUILD checksum mismatch")
         if sha256(srcinfo_path) != entry["srcinfo_sha256"]:
