@@ -1,7 +1,7 @@
 pkgbase = aero7-gwenview
 	pkgdesc = Aero7-styled KDE image viewer with original code-drawn controls
 	pkgver = 25.12.2
-	pkgrel = 1
+	pkgrel = 2
 	url = https://gitgud.io/atmk/gwenview-aero
 	arch = x86_64
 	license = GPL-2.0-or-later

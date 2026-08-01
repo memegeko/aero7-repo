@@ -126,6 +126,57 @@ def validate_workflows() -> None:
         fail("build workflow missing protected concurrency group")
 
 
+def validate_desktop_polish() -> None:
+    launcher_patch = (
+        REPO
+        / "packages"
+        / "aerothemeplasma-desktop-git"
+        / "aero7-desktop-polish.patch"
+    ).read_text(encoding="utf-8")
+    for required in [
+        "model: rootModel.modelForRow(1)",
+        "sorted: true",
+        "showAllApps: true",
+        "showAllAppsCategorized: false",
+        'executableString: "control"',
+        'itemIcon: "system-run"',
+        "<default>execbin</default>",
+    ]:
+        if required not in launcher_patch:
+            fail(f"Aero launcher polish is missing: {required}")
+    if launcher_patch.count('executable.exec("tux-manager")') < 3:
+        fail("Task Manager launcher actions are not consistently wired")
+
+    branded_packages = {
+        "aero7-dolphin": ["Name=File Explorer"],
+        "aero7-gwenview": ["Name=Photo Viewer", "Icon=multimedia-photo-viewer"],
+        "tuxmanager": ["Name=Task Manager", "Icon=ksysguardd"],
+    }
+    for package, required_lines in branded_packages.items():
+        pkgbuild = (REPO / "packages" / package / "PKGBUILD").read_text(
+            encoding="utf-8"
+        )
+        for required in required_lines:
+            if required not in pkgbuild:
+                fail(f"{package} is missing desktop branding: {required}")
+
+    run_desktop = (
+        REPO / "packages" / "execbin" / "org.aero7.execbin.desktop"
+    ).read_text(encoding="utf-8")
+    if "Icon=system-run" not in run_desktop:
+        fail("Run dialog does not use the Aero-compatible icon")
+
+    glass_frame = (
+        REPO / "companions" / "aero7-qt" / "include" / "Aero7Qt" / "glassframe.h"
+    ).read_text(encoding="utf-8")
+    for selector in [
+        r'QWidget[aero7GlassRegion=\"true\"]',
+        r'QWidget[aero7InsetContent=\"true\"]',
+    ]:
+        if selector not in glass_frame:
+            fail(f"Aero7Qt frame styling is not scoped: {selector}")
+
+
 def validate_no_secrets_or_assets() -> None:
     for path in REPO.rglob("*"):
         if ".git" in path.parts:
@@ -147,6 +198,7 @@ def validate_no_secrets_or_assets() -> None:
 def main() -> int:
     validate_packages()
     validate_workflows()
+    validate_desktop_polish()
     validate_no_secrets_or_assets()
     print("validate-repo: ok")
     return 0

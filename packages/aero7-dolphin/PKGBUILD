@@ -1,6 +1,6 @@
 pkgname=aero7-dolphin
 pkgver=25.12.3
-pkgrel=1
+pkgrel=2
 pkgdesc='Aero7-styled KDE file manager'
 arch=('x86_64')
 url='https://gitgud.io/atmk/dolphin-aero'
@@ -32,6 +32,16 @@ build() {
 
 package() {
   DESTDIR="$pkgdir" cmake --install build
+  local desktop="$pkgdir/usr/share/applications/org.kde.dolphin.desktop"
+  awk '
+    BEGIN { in_desktop = 0 }
+    /^\[Desktop Entry\]$/ { in_desktop = 1; print; next }
+    in_desktop && /^\[/ { in_desktop = 0 }
+    in_desktop && /^Name\[/ { next }
+    in_desktop && /^Name=/ { print "Name=File Explorer"; next }
+    { print }
+  ' "$desktop" >"$desktop.tmp"
+  mv "$desktop.tmp" "$desktop"
   install -Dm644 aero-dolphin/COPYING "$pkgdir/usr/share/licenses/$pkgname/COPYING"
   install -Dm644 aero-dolphin/COPYING.DOC "$pkgdir/usr/share/licenses/$pkgname/COPYING.DOC"
 }

@@ -1,7 +1,7 @@
 # Maintainer: WackyIdeas <wackyideas@disroot.org>
 
 pkgname=('aerothemeplasma-desktop-git')
-pkgver=6.7.0_724.r5fd2458
+pkgver=6.7.0_731.r6746c83
 pkgrel=1
 pkgdesc="An alternative shell for KDE Plasma that aims to replicate the look and feel of Windows 7"
 arch=(x86_64)
@@ -69,8 +69,10 @@ makedepends=(git
              plasma-wayland-protocols
              vulkan-headers)
 options=('!debug')
-source=("${pkgname}::git+${url}.git")
-sha256sums=('SKIP')
+source=("${pkgname}::git+${url}.git#commit=6746c83e05b718cda8b28a8e25921b0d73a950f0"
+        'aero7-desktop-polish.patch')
+sha256sums=('SKIP'
+            '4f6eab35d20f03486b17e2f8fe192b3ad1041a76175fccb8095eb52d7b41baad')
 conflicts=(aerothemeplasma-desktop)
 provides=(aerothemeplasma-desktop)
 groups=(aerothemeplasma)
@@ -78,6 +80,10 @@ groups=(aerothemeplasma)
 pkgver() {
   cd "$srcdir/${pkgname%}"
   echo "$(grep 'set(PROJECT_VERSION ' CMakeLists.txt | cut -d '"' -f 2)_$(git rev-list --count HEAD).r$(git rev-parse --short HEAD)"
+}
+
+prepare() {
+  patch -d "${pkgname%}" -Np1 < aero7-desktop-polish.patch
 }
 
 build() {

@@ -1,0 +1,105 @@
+diff --git a/plasma/look-and-feel/authui7/contents/logout/Logout.qml b/plasma/look-and-feel/authui7/contents/logout/Logout.qml
+index 378f186..5fc37fd 100644
+--- a/plasma/look-and-feel/authui7/contents/logout/Logout.qml
++++ b/plasma/look-and-feel/authui7/contents/logout/Logout.qml
+@@ -119,7 +119,7 @@ PlasmaCore.Dialog {
+                             root.cancelRequested();
+                             break;
+                         case(4):
+-                            executable.exec("kstart ksysguard");
++                            executable.exec("tux-manager");
+                             break;
+                     }
+                 }
+diff --git a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/config/main.xml b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/config/main.xml
+index 6cceea0..50f5440 100644
+--- a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/config/main.xml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/config/main.xml
+@@ -42,7 +42,7 @@
+     </entry>
+ 
+     <entry name="defaultRunnerApp" type="String">
+-      <default>krunner --replace</default>
++      <default>execbin</default>
+     </entry>
+     <entry name="appNameFormat" type="Int">
+       <default>0</default>
+diff --git a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/ApplicationsView.qml b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/ApplicationsView.qml
+index 31274cc..78da68c 100644
+--- a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/ApplicationsView.qml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/ApplicationsView.qml
+@@ -95,7 +95,7 @@ Item {
+ 
+         focus: true
+         appView: true
+-        model: rootModel
++        model: rootModel.modelForRow(1)
+ 
+         function clearBreadcrumbs() {
+             applicationsView.listView.currentIndex = -1;
+diff --git a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/SidePanelModels.qml b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/SidePanelModels.qml
+index 56fc39f..1e9a10a 100644
+--- a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/SidePanelModels.qml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/SidePanelModels.qml
+@@ -134,7 +134,7 @@ QtObject {
+             description: i18n("Change settings and customize the functionality of your computer."),
+ 			itemIcon: "preferences-system",
+ 			itemIconFallback: "preferences-desktop",
+-			executableString: "systemsettings",
++			executableString: "control",
+ 			executeProgram: true,
+             menuModel: null,
+         },
+@@ -172,7 +172,7 @@ QtObject {
+             name: i18n("Run"),
+ 			itemText: i18n("Run..."),
+             description: i18n("Opens a program, folder, document, or web site."),
+-			itemIcon: "krunner",
++			itemIcon: "system-run",
+ 			itemIconFallback: "system-run",
+ 			executableString: Plasmoid.configuration.defaultRunnerApp,
+ 			executeProgram: true,
+diff --git a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/main.qml b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/main.qml
+index bcc94cd..fb6e170 100644
+--- a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/main.qml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/main.qml
+@@ -100,14 +100,14 @@ PlasmoidItem {
+ 
+         appNameFormat: Plasmoid.configuration.appNameFormat
+         flat: true
+-        sorted: false
++        sorted: true
+         showSeparators: false
+         appletInterface: kicker
+ 
+         paginate: false
+         pageSize: Plasmoid.configuration.numberColumns *  Plasmoid.configuration.numberRows
+ 
+         showTopLevelItems: true
+-        showAllApps: false
++        showAllApps: true
+         showAllAppsCategorized: false
+         showRecentApps: false
+         showRecentDocs: false
+@@ -249,7 +249,7 @@ PlasmoidItem {
+             text: i18n("Task Manager")
+             icon.name: "ksysguardd"
+             onTriggered: {
+-                menu_executable.exec("kstart ksysguard");
++                menu_executable.exec("tux-manager");
+ 
+             }
+         }
+diff --git a/plasma/plasmoids/io.gitgud.wackyideas.seventasks/contents/ui/main.qml b/plasma/plasmoids/io.gitgud.wackyideas.seventasks/contents/ui/main.qml
+index 64b15a0..c2ebada 100644
+--- a/plasma/plasmoids/io.gitgud.wackyideas.seventasks/contents/ui/main.qml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.seventasks/contents/ui/main.qml
+@@ -66,7 +66,7 @@ PlasmoidItem {
+             text: i18n("Task Manager")
+             icon.name: "ksysguardd"
+             onTriggered: {
+-                menu_executable.exec("kstart ksysguard");
++                menu_executable.exec("tux-manager");
+ 
+             }
+         }

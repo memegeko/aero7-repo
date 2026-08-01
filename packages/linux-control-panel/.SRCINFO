@@ -1,7 +1,7 @@
 pkgbase = linux-control-panel
 	pkgdesc = Aero7 system settings hub for Linux and Plasma 6
 	pkgver = 0.1.0
-	pkgrel = 1
+	pkgrel = 2
 	url = https://github.com/actuallyaridan/linux-control
 	arch = x86_64
 	license = GPL-3.0-or-later

@@ -1,7 +1,7 @@
 pkgbase = aero7-dolphin
 	pkgdesc = Aero7-styled KDE file manager
 	pkgver = 25.12.3
-	pkgrel = 1
+	pkgrel = 2
 	url = https://gitgud.io/atmk/dolphin-aero
 	arch = x86_64
 	license = LGPL-2.0-or-later

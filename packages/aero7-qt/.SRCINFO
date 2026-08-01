@@ -1,7 +1,7 @@
 pkgbase = aero7-qt
 	pkgdesc = Licensed Qt 6 glass compatibility helpers for Aero7 applications
 	pkgver = 1.0.0
-	pkgrel = 1
+	pkgrel = 2
 	url = https://github.com/memegeko/aero7-shell
 	arch = any
 	license = MIT
@@ -9,6 +9,6 @@ pkgbase = aero7-qt
 	makedepends = ninja
 	depends = qt6-base
 	source = aero7-qt-1.0.0.tar.gz
-	sha256sums = 550fdab34c1fe435032d5254f12408dc8a434f246c34a93a43fd48d5663eeb51
+	sha256sums = adaead296e6d24d7dba90b124c618d724b6e6deb18720129a837c2c6740fdadf
 
 pkgname = aero7-qt
