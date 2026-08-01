@@ -11,6 +11,11 @@ on:
         options:
           - "false"
           - "true"
+      resume_build_id:
+        description: Existing complete staging build to sign and publish without recompiling
+        required: false
+        default: ""
+        type: string
 
 permissions:
   contents: read
@@ -34,7 +39,17 @@ jobs:
         run: scripts/verify-sources.sh
 
       - name: Build complete package set
+        if: inputs.resume_build_id == ''
         run: scripts/build-all.sh
+
+      - name: Finalize existing staged package set
+        if: inputs.resume_build_id != ''
+        env:
+          RESUME_BUILD_ID: ${{ inputs.resume_build_id }}
+        run: |
+          [[ "$RESUME_BUILD_ID" =~ ^[0-9]{8}T[0-9]{6}Z-[0-9a-f]{12}$ ]]
+          scripts/finalize-build.sh "$RESUME_BUILD_ID"
+          printf '%s\n' "$RESUME_BUILD_ID" > /srv/aero7-builder/current-build-id
 
       - name: Prepare repository artifact
         run: |

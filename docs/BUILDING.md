@@ -15,6 +15,12 @@ scripts/build-all.sh
 allowlisted package into one staging build ID, signs the complete set, creates
 the pacman repository database, and runs repository checks.
 
+If compilation finishes but signing or artifact upload is interrupted, rerun
+the `build-packages` workflow with `resume_build_id` set to the complete staging
+build ID. The resume path validates the ID, signs and tests the existing full
+package set, regenerates its manifest with the original source commit, and does
+not recompile packages. Never use it for a partial staging directory.
+
 The build must fail if any required package fails. Do not publish partial
 staging directories.
 

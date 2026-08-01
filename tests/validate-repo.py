@@ -124,6 +124,18 @@ def validate_workflows() -> None:
             fail(f"build workflow missing runner label {label}")
     if "concurrency:" not in text or "aero7-package-builder" not in text:
         fail("build workflow missing protected concurrency group")
+    for resume_guard in [
+        "resume_build_id:",
+        "inputs.resume_build_id == ''",
+        "inputs.resume_build_id != ''",
+        'scripts/finalize-build.sh "$RESUME_BUILD_ID"',
+    ]:
+        if resume_guard not in text:
+            fail(f"build workflow missing guarded resume behavior: {resume_guard}")
+
+    build_all = (REPO / "scripts" / "build-all.sh").read_text(encoding="utf-8")
+    if '"$repo/scripts/finalize-build.sh" "$build_id"' not in build_all:
+        fail("fresh builds do not use the shared finalization path")
 
 
 def validate_desktop_polish() -> None:
