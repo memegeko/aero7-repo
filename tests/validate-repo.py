@@ -152,16 +152,20 @@ def validate_desktop_polish() -> None:
         / "aero7-desktop-polish.patch"
     ).read_text(encoding="utf-8")
     for required in [
-        "model: rootModel.modelForRow(1)",
         "sorted: true",
         "showAllApps: true",
         "showAllAppsCategorized: false",
         'executableString: "control"',
         'itemIcon: "system-run"',
         "<default>execbin</default>",
+        "existingPanels[existingIndex].remove()",
+        "name=breeze-light",
+        "BackgroundNormal=240,240,240",
     ]:
         if required not in launcher_patch:
             fail(f"Aero launcher polish is missing: {required}")
+    if "model: rootModel.modelForRow(1)" in launcher_patch:
+        fail("All Programs still points at a nonexistent child model")
     if launcher_patch.count('executable.exec("tux-manager")') < 3:
         fail("Task Manager launcher actions are not consistently wired")
 

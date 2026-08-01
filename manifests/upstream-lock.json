@@ -55,9 +55,9 @@
       "source_revisions": {
         "https://github.com/aeroshell-desktop/aerothemeplasma": "6746c83e05b718cda8b28a8e25921b0d73a950f0"
       },
-      "pkgbuild_sha256": "97035e6f7653e0d661b121f1b5dc78077e2dc2dcee24cdc855e8feeaeaab4179",
-      "srcinfo_sha256": "fc1b5dc8360a79a49a4e6f1b20dd135c0fd517fa475d3fc8994b8f6f56cdbf71",
-      "reviewed_at": "2026-07-20T19:21:22Z"
+      "pkgbuild_sha256": "ef085a1d228dbad9d99f01a9f7944359ad4973c0fe827c2e6cd37bfb655907be",
+      "srcinfo_sha256": "30352048e0fd933122d9d683e218d972bfee94ee101891bd834e1ace54180381",
+      "reviewed_at": "2026-08-01T21:05:00Z"
     },
     "linux-devmgmt": {
       "aur_url": "https://aur.archlinux.org/linux-devmgmt.git",
