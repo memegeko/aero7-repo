@@ -137,6 +137,12 @@ def validate_workflows() -> None:
     if '"$repo/scripts/finalize-build.sh" "$build_id"' not in build_all:
         fail("fresh builds do not use the shared finalization path")
 
+    sign_packages = (REPO / "scripts" / "sign-packages.sh").read_text(
+        encoding="utf-8"
+    )
+    if ".last_successful_build = $build_id" not in sign_packages:
+        fail("published repository manifest is not stamped with the current build ID")
+
 
 def validate_desktop_polish() -> None:
     launcher_patch = (

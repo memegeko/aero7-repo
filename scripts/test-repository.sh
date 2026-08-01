@@ -52,6 +52,12 @@ actual_fingerprint="$(gpg --batch --show-keys --with-colons "$public_key" | awk 
   exit 1
 }
 
+published_build="$(jq -r '.last_successful_build' "$public/repository-manifest.json")"
+[[ "$published_build" == "$build_id" ]] || {
+  printf 'test-repository: manifest build mismatch: expected %s, got %s\n' "$build_id" "$published_build" >&2
+  exit 1
+}
+
 if find "$public" -maxdepth 1 -type f -name '*.old*' | grep -q .; then
   printf 'test-repository: stale repository database backup files were published\n' >&2
   exit 1

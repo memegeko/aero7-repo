@@ -21,6 +21,8 @@ When all packages are staged but finalization failed, dispatch
 `build-packages` again with the staging ID in `resume_build_id`. This guarded
 recovery path runs the normal signing and repository tests before promotion and
 artifact upload; it cannot publish a missing or incomplete package set.
+Finalization also stamps `repository-manifest.json` with that staging build ID,
+and validation refuses to publish when the manifest and staging ID differ.
 
 If GitHub Pages rejects the artifact due to size, keep the staged build intact,
 publish an alpha GitHub Release artifact for testing, and document the storage
