@@ -14,8 +14,10 @@ Imported recipes:
 - `uac-polkit-agent-git`
 - `aerothemeplasma-desktop-git`
 
-No Aero7 compatibility patches are currently applied. If patches are added,
-document the patch file, reason, and divergence from upstream here.
+The package recipes carry narrowly scoped Aero7 compatibility and integration
+patches documented beside each PKGBUILD. The AeroThemePlasma desktop recipe
+also replaces the SevenStart orb sprites with project-owner-supplied Aero7
+artwork while retaining the upstream QML implementation and AGPL license.
 
 Do not add proprietary Microsoft artwork, logos, sounds, fonts, icons, or other
 copyrighted assets.

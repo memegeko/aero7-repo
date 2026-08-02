@@ -1,6 +1,6 @@
 pkgname=execbin
 pkgver=0.23.0
-pkgrel=4
+pkgrel=5
 pkgdesc='Aero7 Run dialog for Plasma 6 with original branding'
 arch=('x86_64')
 url='https://gitgud.io/catpswin56/execbin'
@@ -13,8 +13,8 @@ source=("execbin::git+$url.git#commit=6127849ad534b07d44b278b14f2246cf43ada3b9"
         'org.aero7.execbin.desktop')
 sha256sums=('SKIP'
             '599786a7ea330e55a7b0dfca043b984f6ef60d37c49e3cc1bb33ee7a28180fe0'
-            '166da06c56233c648b68a369dee96131910727e6171321ff4b9ec65a736db3d1'
-            'eaa99b3bf1de0d5dad38d1fd6698d500a03629503afefc37b4f2ef53eb7a6679')
+            'e6baaeb47988325d99602d92fe6f06495ef02a4605f64ff6877cf2cd61362d2b'
+            'f187f8221890c95b3f7e9cc0088b307951fca67f4df8e73d6ab8d63990c4a2ca')
 
 prepare() {
   patch -d execbin -Np1 < aero7.patch

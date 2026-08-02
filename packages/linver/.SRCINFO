@@ -1,7 +1,7 @@
 pkgbase = linver
 	pkgdesc = Aero7 system version and branding information utility
 	pkgver = 1.0.0
-	pkgrel = 4
+	pkgrel = 5
 	url = https://gitgud.io/wackyideas/linver
 	arch = x86_64
 	license = AGPL-3.0-or-later
@@ -15,7 +15,7 @@ pkgbase = linver
 	source = org.aero7.linver.desktop
 	sha256sums = SKIP
 	sha256sums = 082564ca3c892d8e2fecacb03b86f0420bca716ffb7cdbc63215859de7712b55
-	sha256sums = 166da06c56233c648b68a369dee96131910727e6171321ff4b9ec65a736db3d1
+	sha256sums = e6baaeb47988325d99602d92fe6f06495ef02a4605f64ff6877cf2cd61362d2b
 	sha256sums = 82e639f911e84db3cbb692034e250fad8df890cfb9e2c0fe329ab51e47b9aca6
 
 pkgname = linver

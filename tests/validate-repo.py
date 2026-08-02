@@ -169,6 +169,18 @@ def validate_desktop_polish() -> None:
     if launcher_patch.count('executable.exec("tux-manager")') < 3:
         fail("Task Manager launcher actions are not consistently wired")
 
+    desktop_pkgbuild = (
+        REPO / "packages" / "aerothemeplasma-desktop-git" / "PKGBUILD"
+    ).read_text(encoding="utf-8")
+    for required in [
+        "aero7-start-orb.png",
+        "aero7-start-orb-small.png",
+        "io.gitgud.wackyideas.SevenStart/contents/ui/orbs/orb.png",
+        "io.gitgud.wackyideas.SevenStart/contents/ui/orbs/orb_small.png",
+    ]:
+        if required not in desktop_pkgbuild:
+            fail(f"Aero7 Start branding is missing: {required}")
+
     branded_packages = {
         "aero7-dolphin": ["Name=File Explorer"],
         "aero7-gwenview": ["Name=Photo Viewer", "Icon=multimedia-photo-viewer"],
@@ -185,8 +197,8 @@ def validate_desktop_polish() -> None:
     run_desktop = (
         REPO / "packages" / "execbin" / "org.aero7.execbin.desktop"
     ).read_text(encoding="utf-8")
-    if "Icon=system-run" not in run_desktop:
-        fail("Run dialog does not use the Aero-compatible icon")
+    if "Icon=org.aero7.execbin" not in run_desktop:
+        fail("Run dialog does not use the current Aero7 application icon")
 
     glass_frame = (
         REPO / "companions" / "aero7-qt" / "include" / "Aero7Qt" / "glassframe.h"
