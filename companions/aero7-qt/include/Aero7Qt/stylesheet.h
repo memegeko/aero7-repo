@@ -2,6 +2,8 @@
 #pragma once
 
 #include <QApplication>
+#include <QColor>
+#include <QPalette>
 #include <QString>
 
 namespace Aero7 {
@@ -73,6 +75,20 @@ inline void applyApplicationStyle(QApplication *application)
     if (!application) {
         return;
     }
+    QPalette palette = application->palette();
+    palette.setColor(QPalette::Window, QColor(240, 240, 240));
+    palette.setColor(QPalette::WindowText, QColor(0, 0, 0));
+    palette.setColor(QPalette::Base, QColor(255, 255, 255));
+    palette.setColor(QPalette::AlternateBase, QColor(247, 247, 247));
+    palette.setColor(QPalette::ToolTipBase, QColor(255, 255, 225));
+    palette.setColor(QPalette::ToolTipText, QColor(0, 0, 0));
+    palette.setColor(QPalette::Text, QColor(0, 0, 0));
+    palette.setColor(QPalette::Button, QColor(240, 240, 240));
+    palette.setColor(QPalette::ButtonText, QColor(0, 0, 0));
+    palette.setColor(QPalette::Highlight, QColor(51, 153, 255));
+    palette.setColor(QPalette::HighlightedText, QColor(255, 255, 255));
+    application->setPalette(palette);
+
     const QString marker = QStringLiteral("/* Aero7Qt */");
     if (application->styleSheet().contains(marker)) {
         return;

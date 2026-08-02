@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/branding/aero7-companion.png" width="150" alt="Aero7 logo">
+</p>
+
 # Aero7 Package Repository
 
 Signed binary Arch Linux package repository infrastructure for Aero7-shell.

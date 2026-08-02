@@ -1,6 +1,6 @@
 pkgname=aero7-kolourpaint
 pkgver=25.12.3
-pkgrel=1
+pkgrel=2
 pkgdesc='Aero7-styled paint program with a ribbon interface'
 arch=('x86_64')
 url='https://invent.kde.org/albert-tomanek/kolourpaint/-/tree/saribbon-aero'

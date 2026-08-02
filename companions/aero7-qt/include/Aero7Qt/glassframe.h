@@ -29,15 +29,21 @@ inline void applyGlassFrame(QMainWindow *window,
 
     if (header) {
         header->setProperty("aero7GlassRegion", true);
-        header->setStyleSheet(glass + header->styleSheet());
+        header->setStyleSheet(
+            QStringLiteral("QWidget[aero7GlassRegion=\"true\"] { %1 }").arg(glass)
+            + header->styleSheet());
     }
     if (footer) {
         footer->setProperty("aero7GlassRegion", true);
-        footer->setStyleSheet(glass + footer->styleSheet());
+        footer->setStyleSheet(
+            QStringLiteral("QWidget[aero7GlassRegion=\"true\"] { %1 }").arg(glass)
+            + footer->styleSheet());
     }
     if (content) {
         content->setProperty("aero7InsetContent", true);
-        content->setStyleSheet(inset + content->styleSheet());
+        content->setStyleSheet(
+            QStringLiteral("QWidget[aero7InsetContent=\"true\"] { %1 }").arg(inset)
+            + content->styleSheet());
     }
 }
 

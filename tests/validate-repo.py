@@ -124,6 +124,91 @@ def validate_workflows() -> None:
             fail(f"build workflow missing runner label {label}")
     if "concurrency:" not in text or "aero7-package-builder" not in text:
         fail("build workflow missing protected concurrency group")
+    for resume_guard in [
+        "resume_build_id:",
+        "inputs.resume_build_id == ''",
+        "inputs.resume_build_id != ''",
+        'scripts/finalize-build.sh "$RESUME_BUILD_ID"',
+    ]:
+        if resume_guard not in text:
+            fail(f"build workflow missing guarded resume behavior: {resume_guard}")
+
+    build_all = (REPO / "scripts" / "build-all.sh").read_text(encoding="utf-8")
+    if '"$repo/scripts/finalize-build.sh" "$build_id"' not in build_all:
+        fail("fresh builds do not use the shared finalization path")
+
+    sign_packages = (REPO / "scripts" / "sign-packages.sh").read_text(
+        encoding="utf-8"
+    )
+    if ".last_successful_build = $build_id" not in sign_packages:
+        fail("published repository manifest is not stamped with the current build ID")
+
+
+def validate_desktop_polish() -> None:
+    launcher_patch = (
+        REPO
+        / "packages"
+        / "aerothemeplasma-desktop-git"
+        / "aero7-desktop-polish.patch"
+    ).read_text(encoding="utf-8")
+    for required in [
+        "sorted: true",
+        "showAllApps: true",
+        "showAllAppsCategorized: false",
+        'executableString: "control"',
+        'itemIcon: "system-run"',
+        "<default>execbin</default>",
+        "existingPanels[existingIndex].remove()",
+        "name=breeze-light",
+        "BackgroundNormal=240,240,240",
+    ]:
+        if required not in launcher_patch:
+            fail(f"Aero launcher polish is missing: {required}")
+    if "model: rootModel.modelForRow(1)" in launcher_patch:
+        fail("All Programs still points at a nonexistent child model")
+    if launcher_patch.count('executable.exec("tux-manager")') < 3:
+        fail("Task Manager launcher actions are not consistently wired")
+
+    desktop_pkgbuild = (
+        REPO / "packages" / "aerothemeplasma-desktop-git" / "PKGBUILD"
+    ).read_text(encoding="utf-8")
+    for required in [
+        "aero7-start-orb.png",
+        "aero7-start-orb-small.png",
+        "io.gitgud.wackyideas.SevenStart/contents/ui/orbs/orb.png",
+        "io.gitgud.wackyideas.SevenStart/contents/ui/orbs/orb_small.png",
+    ]:
+        if required not in desktop_pkgbuild:
+            fail(f"Aero7 Start branding is missing: {required}")
+
+    branded_packages = {
+        "aero7-dolphin": ["Name=File Explorer"],
+        "aero7-gwenview": ["Name=Photo Viewer", "Icon=multimedia-photo-viewer"],
+        "tuxmanager": ["Name=Task Manager", "Icon=ksysguardd"],
+    }
+    for package, required_lines in branded_packages.items():
+        pkgbuild = (REPO / "packages" / package / "PKGBUILD").read_text(
+            encoding="utf-8"
+        )
+        for required in required_lines:
+            if required not in pkgbuild:
+                fail(f"{package} is missing desktop branding: {required}")
+
+    run_desktop = (
+        REPO / "packages" / "execbin" / "org.aero7.execbin.desktop"
+    ).read_text(encoding="utf-8")
+    if "Icon=org.aero7.execbin" not in run_desktop:
+        fail("Run dialog does not use the current Aero7 application icon")
+
+    glass_frame = (
+        REPO / "companions" / "aero7-qt" / "include" / "Aero7Qt" / "glassframe.h"
+    ).read_text(encoding="utf-8")
+    for selector in [
+        r'QWidget[aero7GlassRegion=\"true\"]',
+        r'QWidget[aero7InsetContent=\"true\"]',
+    ]:
+        if selector not in glass_frame:
+            fail(f"Aero7Qt frame styling is not scoped: {selector}")
 
 
 def validate_no_secrets_or_assets() -> None:
@@ -147,6 +232,7 @@ def validate_no_secrets_or_assets() -> None:
 def main() -> int:
     validate_packages()
     validate_workflows()
+    validate_desktop_polish()
     validate_no_secrets_or_assets()
     print("validate-repo: ok")
     return 0

@@ -11,7 +11,6 @@
     "aero7-qt",
     "winxplorer",
     "execbin",
-    "linver",
     "aero7-gadgets",
     "aeroshell-kwin-components-git",
     "aeroshell-workspace-git",
@@ -19,6 +18,7 @@
     "aero7-gwenview",
     "aero7-kolourpaint",
     "linux-control-panel",
+    "linver",
     "aerothemeplasma-desktop-git"
   ],
   "edges": {
@@ -51,7 +51,8 @@
       "aero7-dolphin",
       "aero7-gwenview",
       "aero7-kolourpaint",
-      "linux-control-panel"
+      "linux-control-panel",
+      "linver"
     ],
     "aero7-dolphin": [],
     "aero7-gwenview": [],
@@ -302,21 +303,6 @@
         "extra-cmake-modules",
         "git",
         "ninja"
-      ],
-      "provides": [],
-      "conflicts": [],
-      "replaces": []
-    },
-    "linver": {
-      "arch": [
-        "x86_64"
-      ],
-      "depends": [
-        "glibc",
-        "qt6-base"
-      ],
-      "makedepends": [
-        "git"
       ],
       "provides": [],
       "conflicts": [],
@@ -588,6 +574,22 @@
         "cmake",
         "git",
         "ninja"
+      ],
+      "provides": [],
+      "conflicts": [],
+      "replaces": []
+    },
+    "linver": {
+      "arch": [
+        "x86_64"
+      ],
+      "depends": [
+        "glibc",
+        "qt6-base"
+      ],
+      "makedepends": [
+        "aero7-qt",
+        "git"
       ],
       "provides": [],
       "conflicts": [],

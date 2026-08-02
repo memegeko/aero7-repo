@@ -1,3 +1,107 @@
+diff --git a/about.cpp b/about.cpp
+index 0856e9d..8409636 100644
+--- a/about.cpp
++++ b/about.cpp
+@@ -1,6 +1,7 @@
+ #include "about.h"
+ #include "ui_about.h"
+
++#include <QSysInfo>
+ #include <stdio.h>
+ #include <locale.h>
+ #include <unistd.h>
+@@ -28,7 +29,10 @@ void About::updateBranding()
+
+     wndIcon = QIcon(brd.iconPath);
+
+-    ui->branding->setPixmap(QPixmap(brd.brandingPath));
++    ui->branding->setMinimumHeight(130);
++    ui->branding->setMaximumHeight(140);
++    ui->branding->setPixmap(QPixmap(brd.brandingPath).scaled(
++        QSize(190, 130), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+
+     ui->hSpacerL->setFixedWidth(brd.spacerLeftWidth);
+     ui->hSpacerR->setFixedWidth(brd.spacerRightWidth);
+@@ -62,38 +66,21 @@ void About::updateBranding()
+     QString distro;
+     if(!fakeBranding)
+     {
+-        proc = new QProcess(this);
+-        proc->setReadChannel(QProcess::StandardOutput);
+-        proc->setProcessChannelMode(QProcess::MergedChannels);
+-        connect (proc, SIGNAL(readyReadStandardOutput()), this, SLOT(readOutput()));
+-        connect (proc, SIGNAL(finished(int , QProcess::ExitStatus)), this, SLOT(finished()));
+-        commandOutput = "";
+-        proc->start("uname", QStringList() << "-rmo");
+-
+-        if(proc->waitForFinished())
+-        {
+-            QStringList out = commandOutput.split(" ");
+-            kernel_version = out[0];
+-            arch = out[1] + ",";
+-            osname = out[2].left(out[2].length()-1);
+-            copyright = "";
+-
+-            ui->version->setText("Version "+ kernel_version +" ("+ arch + " " + osname + ")");
+-            ui->copyright->setText("Linux is a Registered Trademark of Linus Torvalds. All trademarks are property of their respective owners.");
+-        }
+-        commandOutput = "";
+-        proc->start("lsb_release", QStringList() << "-ds");
+-
+-        if(proc->waitForFinished())
+-        {
+-            distro = commandOutput.mid(1, commandOutput.length()-3);
+-            ui->os->setText(distro);
+-        }
++        distro = QSysInfo::prettyProductName().trimmed();
++        if (distro.isEmpty()) distro = QStringLiteral("Aero7 GNU/Linux");
++        kernel_version = QSysInfo::kernelVersion();
++        arch = QSysInfo::currentCpuArchitecture();
++        osname = QSysInfo::kernelType();
++        copyright = "";
++
++        ui->os->setText(distro);
++        ui->version->setText("Version " + kernel_version + " (" + arch + ", " + osname + ")");
++        ui->copyright->setText("Linux is a registered trademark of Linus Torvalds. Other marks belong to their respective owners.");
+     }
+
+-    if(currentWinver == CUSTOM && !fakeBranding) winverName = distro;
++    if(!fakeBranding) winverName = QStringLiteral("Aero7");
+     else winverName = brd.winverName;
+-    ui->longdesc->setText("<p style=\"line-height:85%\">The " + winverName + " operating system and its user interface are protected by trademark and other pending or existing intellectual property rights in the United States and other countries.</p>");
++    ui->longdesc->setText("<p style=\"line-height:100%\">Aero7 is a free and open-source desktop built on GNU/Linux and KDE Plasma. Individual components remain available under their respective open-source licenses.</p>");
+
+     struct sysinfo info;
+     sysinfo(&info);
+@@ -113,7 +100,7 @@ void About::updateBranding()
+     else
+     {
+         ui->memoryLbl->setText("Physical memory available to " + distro + ": " + totalMemory + " KB");
+-        license = "This product is licensed under the <a style=\"color: #0066cc;\" href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html\">GNU General<br>Public License v2</a> to:";
++        license = "Aero7 includes software licensed under the <a style=\"color: #0066cc;\" href=\"https://www.gnu.org/licenses/\">GNU General Public License</a> and other open-source licenses for:";
+         this->setWindowTitle("About Linux");
+     }
+
+@@ -188,6 +175,5 @@ void About::on_branding_clicked()
+
+ About::~About()
+ {
+-    delete proc;
+     delete ui;
+ }
+diff --git a/about.h b/about.h
+index 6eccb3d..0d2453a 100644
+--- a/about.h
++++ b/about.h
+@@ -105,7 +105,7 @@ inline void About::initializeBrandingInfo()
+
+     // Win7
+     brandingInfo[WIN_7].windowWidth = 458;
+-    brandingInfo[WIN_7].windowHeight = 374;
++    brandingInfo[WIN_7].windowHeight = 430;
+     brandingInfo[WIN_7].iconPath = ":/7Ico";
+     brandingInfo[WIN_7].brandingPath = ":/7Ultimate";
+     brandingInfo[WIN_7].brandingSeparator = true;
 diff --git a/basebrd.qrc b/basebrd.qrc
 index b1adefe..44b3144 100644
 --- a/basebrd.qrc
@@ -15,3 +119,23 @@ index b1adefe..44b3144 100644
 +        <file alias="8">resources/aero7-companion.png</file>
      </qresource>
  </RCC>
+diff --git a/main.cpp b/main.cpp
+index 85651df..f9b1573 100644
+--- a/main.cpp
++++ b/main.cpp
+@@ -2,6 +2,7 @@
+
+ #include <QApplication>
+ #include <QCoreApplication>
++#include <Aero7Qt/stylesheet.h>
+
+ int main(int argc, char *argv[])
+ {
+@@ -9,6 +10,7 @@ int main(int argc, char *argv[])
+     QCoreApplication::setApplicationName("linver");
+
+     QApplication a(argc, argv);
++    Aero7::applyApplicationStyle(&a);
+     About w;
+     w.move(25, 25);
+     w.show();

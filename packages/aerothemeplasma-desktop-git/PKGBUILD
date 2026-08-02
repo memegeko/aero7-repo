@@ -1,8 +1,8 @@
 # Maintainer: WackyIdeas <wackyideas@disroot.org>
 
 pkgname=('aerothemeplasma-desktop-git')
-pkgver=6.7.0_724.r5fd2458
-pkgrel=1
+pkgver=6.7.0_731.r6746c83
+pkgrel=3
 pkgdesc="An alternative shell for KDE Plasma that aims to replicate the look and feel of Windows 7"
 arch=(x86_64)
 url="https://github.com/aeroshell-desktop/aerothemeplasma"
@@ -69,8 +69,14 @@ makedepends=(git
              plasma-wayland-protocols
              vulkan-headers)
 options=('!debug')
-source=("${pkgname}::git+${url}.git")
-sha256sums=('SKIP')
+source=("${pkgname}::git+${url}.git#commit=6746c83e05b718cda8b28a8e25921b0d73a950f0"
+        'aero7-desktop-polish.patch'
+        'aero7-start-orb.png'
+        'aero7-start-orb-small.png')
+sha256sums=('SKIP'
+            'a85107dc2f49048bf441278b5b31fab902891f035439b0b7434e015c84a358e7'
+            '3b4a582327becaae1c19da361e4aee4bd1533031e1afe6b14600524f8ad5fe80'
+            '3b4a582327becaae1c19da361e4aee4bd1533031e1afe6b14600524f8ad5fe80')
 conflicts=(aerothemeplasma-desktop)
 provides=(aerothemeplasma-desktop)
 groups=(aerothemeplasma)
@@ -78,6 +84,14 @@ groups=(aerothemeplasma)
 pkgver() {
   cd "$srcdir/${pkgname%}"
   echo "$(grep 'set(PROJECT_VERSION ' CMakeLists.txt | cut -d '"' -f 2)_$(git rev-list --count HEAD).r$(git rev-parse --short HEAD)"
+}
+
+prepare() {
+  patch -d "${pkgname%}" -Np1 < aero7-desktop-polish.patch
+  install -Dm644 aero7-start-orb.png \
+    "${pkgname%}/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/orbs/orb.png"
+  install -Dm644 aero7-start-orb-small.png \
+    "${pkgname%}/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/orbs/orb_small.png"
 }
 
 build() {

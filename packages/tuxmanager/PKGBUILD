@@ -3,7 +3,7 @@
 pkgname=tuxmanager
 _srcname=TuxManager
 pkgver=1.0.7
-pkgrel=1
+pkgrel=2
 pkgdesc="A Linux Task Manager alternative built with Qt6"
 arch=('x86_64' 'aarch64' 'riscv64')
 url="https://github.com/benapetr/${_srcname}"
@@ -24,4 +24,15 @@ package() {
 	install -Dm755 tux-manager -t "${pkgdir}/usr/bin/"
 	install -Dm644 packaging/data/io.github.benapetr.TuxManager.desktop -t "${pkgdir}/usr/share/applications/"
 	install -Dm644 src/tux_manager_icon.svg -t "${pkgdir}/usr/share/icons/hicolor/scalable/apps/"
+	local desktop="${pkgdir}/usr/share/applications/io.github.benapetr.TuxManager.desktop"
+	awk '
+		BEGIN { in_desktop = 0 }
+		/^\[Desktop Entry\]$/ { in_desktop = 1; print; next }
+		in_desktop && /^\[/ { in_desktop = 0 }
+		in_desktop && /^Name\[/ { next }
+		in_desktop && /^Name=/ { print "Name=Task Manager"; next }
+		in_desktop && /^Icon=/ { print "Icon=ksysguardd"; next }
+		{ print }
+	' "$desktop" >"$desktop.tmp"
+	mv "$desktop.tmp" "$desktop"
 }
