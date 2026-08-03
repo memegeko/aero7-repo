@@ -42,6 +42,13 @@ def sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
+def png_size(path: Path) -> tuple[int, int]:
+    data = path.read_bytes()[:24]
+    if data[:8] != b"\x89PNG\r\n\x1a\n" or len(data) < 24:
+        fail(f"not a valid PNG: {path}")
+    return int.from_bytes(data[16:20], "big"), int.from_bytes(data[20:24], "big")
+
+
 def parse_srcinfo(path: Path) -> dict[str, list[str]]:
     data: dict[str, list[str]] = {}
     for raw in path.read_text(encoding="utf-8").splitlines():
@@ -161,6 +168,9 @@ def validate_desktop_polish() -> None:
         "existingPanels[existingIndex].remove()",
         "name=breeze-light",
         "BackgroundNormal=240,240,240",
+        'color: "#f7f7f7"',
+        'source: "../images/aero7-watermark.png"',
+        "<default>46</default>",
     ]:
         if required not in launcher_patch:
             fail(f"Aero launcher polish is missing: {required}")
@@ -175,11 +185,25 @@ def validate_desktop_polish() -> None:
     for required in [
         "aero7-start-orb.png",
         "aero7-start-orb-small.png",
+        "aero7-watermark.png",
         "io.gitgud.wackyideas.SevenStart/contents/ui/orbs/orb.png",
         "io.gitgud.wackyideas.SevenStart/contents/ui/orbs/orb_small.png",
+        "contents/images/aero7-watermark.png",
+        "contents/images/watermark.png",
     ]:
         if required not in desktop_pkgbuild:
             fail(f"Aero7 Start branding is missing: {required}")
+
+    desktop_assets = REPO / "packages" / "aerothemeplasma-desktop-git"
+    expected_sizes = {
+        "aero7-start-orb.png": (46, 138),
+        "aero7-start-orb-small.png": (42, 126),
+        "aero7-watermark.png": (350, 50),
+    }
+    for asset, expected_size in expected_sizes.items():
+        actual_size = png_size(desktop_assets / asset)
+        if actual_size != expected_size:
+            fail(f"{asset} has size {actual_size}, expected {expected_size}")
 
     branded_packages = {
         "aero7-dolphin": ["Name=File Explorer"],

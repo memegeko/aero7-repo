@@ -15,8 +15,8 @@ repository assembly, and a fresh-VM install/rollback transaction.
 | Aero KolourPaint | `0a0debee63d9902b1dd6dafdddad41f21549c5b7` | `aero7-kolourpaint` | Full build, staged install, and startup pass with MIT SARibbon revision `540624e98a53cff47fc1b0531d9129ae3a7fe6b2` bundled |
 | Gadgets | Aero7-owned source | `aero7-gadgets` | Original Plasma 6 Clock, CPU Meter, and Notes widgets pass `qmllint` and a local Arch package build; the asset-heavy upstream bundle is not redistributed |
 | WinXplorer | `9d2fae647e1bd9fc7f1dd53f36f8d5e160f4fddc` | `winxplorer` | Full build, staged install, and startup pass after replacing bitmap controls with QML-drawn glass and removing the bundled navigation sound |
-| execbin | `6127849ad534b07d44b278b14f2246cf43ada3b9` | `execbin` | Full build, staged install, and startup pass with the current circular Aero7 7 emblem replacing both bundled icons |
-| LinVer | `087f2746703d9c885de2e1a4f6360314283703f4` | `linver` | Full qmake build and startup pass with every bundled version-branding resource replaced by the current circular Aero7 7 emblem |
+| execbin | `6127849ad534b07d44b278b14f2246cf43ada3b9` | `execbin` | Full build, staged install, and startup pass with the refreshed circular Aero7 7 emblem replacing both bundled icons |
+| LinVer | `087f2746703d9c885de2e1a4f6360314283703f4` | `linver` | Full qmake build and startup pass with every bundled version-branding resource replaced by the refreshed circular Aero7 7 emblem |
 | Sevulet | unavailable | none | Disabled: anonymous source access requests credentials and no redistributable license is available |
 
 ## Licensed compatibility layer

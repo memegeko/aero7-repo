@@ -16,8 +16,9 @@ Imported recipes:
 
 The package recipes carry narrowly scoped Aero7 compatibility and integration
 patches documented beside each PKGBUILD. The AeroThemePlasma desktop recipe
-also replaces the SevenStart orb sprites with project-owner-supplied Aero7
-artwork while retaining the upstream QML implementation and AGPL license.
+also replaces the SevenStart orb sprites and Welcome/logout watermark with
+project-owner-supplied Aero7 artwork while retaining the upstream QML
+implementation and AGPL license.
 
 Do not add proprietary Microsoft artwork, logos, sounds, fonts, icons, or other
 copyrighted assets.

@@ -1,34 +1,10 @@
-diff --git a/plasma/look-and-feel/authui7/contents/logout/Logout.qml b/plasma/look-and-feel/authui7/contents/logout/Logout.qml
-index 378f186..5fc37fd 100644
---- a/plasma/look-and-feel/authui7/contents/logout/Logout.qml
-+++ b/plasma/look-and-feel/authui7/contents/logout/Logout.qml
-@@ -119,7 +119,7 @@ PlasmaCore.Dialog {
-                             root.cancelRequested();
-                             break;
-                         case(4):
--                            executable.exec("kstart ksysguard");
-+                            executable.exec("tux-manager");
-                             break;
-                     }
-                 }
-diff --git a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/config/main.xml b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/config/main.xml
-index 6cceea0..50f5440 100644
---- a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/config/main.xml
-+++ b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/config/main.xml
-@@ -42,7 +42,7 @@
-     </entry>
- 
-     <entry name="defaultRunnerApp" type="String">
--      <default>krunner --replace</default>
-+      <default>execbin</default>
-     </entry>
-     <entry name="appNameFormat" type="Int">
-       <default>0</default>
 diff --git a/plasma/color_scheme/Aero.colors b/plasma/color_scheme/Aero.colors
-index 465e49c..23e5b91 100644
+index 72bdb04..1e14f96 100644
 --- a/plasma/color_scheme/Aero.colors
 +++ b/plasma/color_scheme/Aero.colors
-@@ -35,13 +35,13 @@
+@@ -33,18 +33,18 @@ ForegroundPositive=39,174,96
+ ForegroundVisited=128,0,128
+ 
  [Colors:Complementary]
 -BackgroundAlternate=59,64,69
 -BackgroundNormal=49,54,59
@@ -51,18 +27,14 @@ index 465e49c..23e5b91 100644
  ForegroundPositive=46,204,113
 -ForegroundVisited=61,174,230
 +ForegroundVisited=128,0,128
-diff --git a/plasma/look-and-feel/authui7/contents/defaults b/plasma/look-and-feel/authui7/contents/defaults
-index 584c49f..c380a31 100644
---- a/plasma/look-and-feel/authui7/contents/defaults
-+++ b/plasma/look-and-feel/authui7/contents/defaults
-@@ -14 +14 @@
--name=Seven-Black
-+name=breeze-light
+ 
+ [Colors:Selection]
+ BackgroundAlternate=51,153,255
 diff --git a/plasma/layout-templates/io.gitgud.wackyideas.taskbar/contents/layout.js b/plasma/layout-templates/io.gitgud.wackyideas.taskbar/contents/layout.js
-index 7d9d79a..4a03dcc 100644
+index 23a27a1..1debb4c 100644
 --- a/plasma/layout-templates/io.gitgud.wackyideas.taskbar/contents/layout.js
 +++ b/plasma/layout-templates/io.gitgud.wackyideas.taskbar/contents/layout.js
-@@ -1,2 +1,8 @@
+@@ -1,3 +1,9 @@
 +// Aero7 owns the taskbar layout. Remove the stock Plasma panel (and any stale
 +// Aero duplicates) before creating the one canonical Aero panel.
 +var existingPanels = panels();
@@ -71,24 +43,101 @@ index 7d9d79a..4a03dcc 100644
 +}
  var panel = new Panel("io.gitgud.wackyideas.panel");
  var panelScreen = panel.screen
-diff --git a/plasma/shells/io.gitgud.wackyideas.desktop/contents/layout.js b/plasma/shells/io.gitgud.wackyideas.desktop/contents/layout.js
-index 7d9d79a..4a03dcc 100644
---- a/plasma/shells/io.gitgud.wackyideas.desktop/contents/layout.js
-+++ b/plasma/shells/io.gitgud.wackyideas.desktop/contents/layout.js
-@@ -1,2 +1,8 @@
-+// Aero7 owns the taskbar layout. Remove the stock Plasma panel (and any stale
-+// Aero duplicates) before creating the one canonical Aero panel.
-+var existingPanels = panels();
-+for (var existingIndex = 0; existingIndex < existingPanels.length; ++existingIndex) {
-+    existingPanels[existingIndex].remove();
-+}
- var panel = new Panel("io.gitgud.wackyideas.panel");
- var panelScreen = panel.screen
+ 
+diff --git a/plasma/look-and-feel/authui7/contents/defaults b/plasma/look-and-feel/authui7/contents/defaults
+index 99142df..03188b5 100644
+--- a/plasma/look-and-feel/authui7/contents/defaults
++++ b/plasma/look-and-feel/authui7/contents/defaults
+@@ -11,7 +11,7 @@ widgetStyle=kvantum
+ LayoutName=thumbnail_aero
+ 
+ [plasmarc][Theme]
+-name=Seven-Black
++name=breeze-light
+ 
+ [kcminputrc][Mouse]
+ cursorTheme=aero-drop
+diff --git a/plasma/look-and-feel/authui7/contents/logout/Logout.qml b/plasma/look-and-feel/authui7/contents/logout/Logout.qml
+index 70d3c02..c1931ea 100644
+--- a/plasma/look-and-feel/authui7/contents/logout/Logout.qml
++++ b/plasma/look-and-feel/authui7/contents/logout/Logout.qml
+@@ -116,7 +116,7 @@ Image {
+                             root.cancelRequested();
+                             break;
+                         case(4):
+-                            executable.exec("kstart ksysguard");
++                            executable.exec("tux-manager");
+                             break;
+                     }
+                 }
+@@ -383,6 +383,6 @@ Image {
+             horizontalCenter: parent.horizontalCenter
+         }
+ 
+-        source: "../images/watermark.png"
++        source: "../images/aero7-watermark.png"
+     }
+ }
+diff --git a/plasma/look-and-feel/authui7/contents/splash/Splash.qml b/plasma/look-and-feel/authui7/contents/splash/Splash.qml
+index 0d84d07..2b8cc4f 100644
+--- a/plasma/look-and-feel/authui7/contents/splash/Splash.qml
++++ b/plasma/look-and-feel/authui7/contents/splash/Splash.qml
+@@ -78,7 +78,7 @@ Item {
+         Rectangle { Layout.fillWidth: true }
+         Image {
+             id: watermark
+-            source: "../images/watermark.png"
++            source: "../images/aero7-watermark.png"
+         }
+         Rectangle { Layout.fillWidth: true }
+     }
+diff --git a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/config/main.xml b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/config/main.xml
+index 3e53dc9..02065fb 100644
+--- a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/config/main.xml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/config/main.xml
+@@ -22,7 +22,7 @@
+       <default>true</default>
+     </entry>
+     <entry name="orbWidth" type="Int">
+-      <default>0</default>
++      <default>46</default>
+     </entry>
+     <entry name="enableShadow" type="Bool">
+       <default>false</default>
+@@ -42,7 +42,7 @@
+     </entry>
+ 
+     <entry name="defaultRunnerApp" type="String">
+-      <default>krunner --replace</default>
++      <default>execbin</default>
+     </entry>
+     <entry name="appNameFormat" type="Int">
+       <default>0</default>
+diff --git a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/SidePanelItemDelegate.qml b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/SidePanelItemDelegate.qml
+index b35c8ce..9f54857 100755
+--- a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/SidePanelItemDelegate.qml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/SidePanelItemDelegate.qml
+@@ -116,6 +116,7 @@ Item {
+         anchors.verticalCenterOffset: -1
+         style: Text.Sunken
+         styleColor: "transparent"
++        color: "#f7f7f7"
+         text: itemText
+     }
+     PlasmaComponents.Label {
+@@ -128,6 +129,7 @@ Item {
+         anchors.verticalCenterOffset: -1
+         style: Text.Sunken
+         styleColor: "transparent"
++        color: "#ffffff"
+         opacity: 0.66
+         text: itemText
+     }
 diff --git a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/SidePanelModels.qml b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/SidePanelModels.qml
-index 56fc39f..1e9a10a 100644
+index af324f6..c0049ff 100644
 --- a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/SidePanelModels.qml
 +++ b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/SidePanelModels.qml
-@@ -134,7 +134,7 @@ QtObject {
+@@ -134,7 +134,7 @@ Item {
              description: i18n("Change settings and customize the functionality of your computer."),
  			itemIcon: "preferences-system",
  			itemIconFallback: "preferences-desktop",
@@ -97,7 +146,7 @@ index 56fc39f..1e9a10a 100644
  			executeProgram: true,
              menuModel: null,
          },
-@@ -172,7 +172,7 @@ QtObject {
+@@ -172,7 +172,7 @@ Item {
              name: i18n("Run"),
  			itemText: i18n("Run..."),
              description: i18n("Opens a program, folder, document, or web site."),
@@ -107,10 +156,10 @@ index 56fc39f..1e9a10a 100644
  			executableString: Plasmoid.configuration.defaultRunnerApp,
  			executeProgram: true,
 diff --git a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/main.qml b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/main.qml
-index bcc94cd..fb6e170 100644
+index e87ff2f..5fac1cb 100755
 --- a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/main.qml
 +++ b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/main.qml
-@@ -100,14 +100,14 @@ PlasmoidItem {
+@@ -99,7 +99,7 @@ PlasmoidItem {
  
          appNameFormat: Plasmoid.configuration.appNameFormat
          flat: true
@@ -119,7 +168,7 @@ index bcc94cd..fb6e170 100644
          showSeparators: false
          appletInterface: kicker
  
-         paginate: false
+@@ -107,7 +107,7 @@ PlasmoidItem {
          pageSize: Plasmoid.configuration.numberColumns *  Plasmoid.configuration.numberRows
  
          showTopLevelItems: true
@@ -138,7 +187,7 @@ index bcc94cd..fb6e170 100644
              }
          }
 diff --git a/plasma/plasmoids/io.gitgud.wackyideas.seventasks/contents/ui/main.qml b/plasma/plasmoids/io.gitgud.wackyideas.seventasks/contents/ui/main.qml
-index 64b15a0..c2ebada 100644
+index 2a340c0..261d7fc 100644
 --- a/plasma/plasmoids/io.gitgud.wackyideas.seventasks/contents/ui/main.qml
 +++ b/plasma/plasmoids/io.gitgud.wackyideas.seventasks/contents/ui/main.qml
 @@ -66,7 +66,7 @@ PlasmoidItem {
@@ -150,3 +199,17 @@ index 64b15a0..c2ebada 100644
  
              }
          }
+diff --git a/plasma/shells/io.gitgud.wackyideas.desktop/contents/layout.js b/plasma/shells/io.gitgud.wackyideas.desktop/contents/layout.js
+index 23a27a1..1debb4c 100644
+--- a/plasma/shells/io.gitgud.wackyideas.desktop/contents/layout.js
++++ b/plasma/shells/io.gitgud.wackyideas.desktop/contents/layout.js
+@@ -1,3 +1,9 @@
++// Aero7 owns the taskbar layout. Remove the stock Plasma panel (and any stale
++// Aero duplicates) before creating the one canonical Aero panel.
++var existingPanels = panels();
++for (var existingIndex = 0; existingIndex < existingPanels.length; ++existingIndex) {
++    existingPanels[existingIndex].remove();
++}
+ var panel = new Panel("io.gitgud.wackyideas.panel");
+ var panelScreen = panel.screen
+ 

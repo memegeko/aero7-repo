@@ -55,9 +55,9 @@
       "source_revisions": {
         "https://github.com/aeroshell-desktop/aerothemeplasma": "6746c83e05b718cda8b28a8e25921b0d73a950f0"
       },
-      "pkgbuild_sha256": "c85f00978e4d70150d70e18e225a4ae7991331236a0e0f4fe52b40f606cb9306",
-      "srcinfo_sha256": "e2030266235b2be966029d1e72c72d75d4ec41eacfef62a4e36b8ab6b4f16926",
-      "reviewed_at": "2026-08-02T18:33:00Z"
+      "pkgbuild_sha256": "46173440af72947f323394125135b52c6d457d924688d215628c5c689f60eb97",
+      "srcinfo_sha256": "4f0b647d62d5d778979bf980d65a268b0067d756bddffdecbadb6cf05954c43c",
+      "reviewed_at": "2026-08-03T21:15:34Z"
     },
     "linux-devmgmt": {
       "aur_url": "https://aur.archlinux.org/linux-devmgmt.git",
@@ -138,18 +138,18 @@
       "source_revisions": {
         "https://gitgud.io/catpswin56/execbin": "6127849ad534b07d44b278b14f2246cf43ada3b9"
       },
-      "pkgbuild_sha256": "8a7d2578a4e3e93b2ca1e84d4e145e0bb0487e5df44949f64ad50218b5851b16",
-      "srcinfo_sha256": "20780d1d8586d1b6eef4f3cc4406e5e066bfe2a744d3e067d2df4a79a4350c83",
-      "reviewed_at": "2026-08-02T18:33:00Z"
+      "pkgbuild_sha256": "6e2e21b7a69b5a733b0e075e0194911b3dac214e4bc4946981da512e897cd986",
+      "srcinfo_sha256": "904c5466423e8ac734d176802607a14e3e5b3a2a6fe3710958c4924ec0b92a47",
+      "reviewed_at": "2026-08-03T21:15:34Z"
     },
     "linver": {
       "source_type": "pinned-vcs",
       "source_revisions": {
         "https://gitgud.io/wackyideas/linver": "087f2746703d9c885de2e1a4f6360314283703f4"
       },
-      "pkgbuild_sha256": "40c109eabc22e624b116f7d48969a6e3ab2b5f3fe70ed0800b094f952c8dd95a",
-      "srcinfo_sha256": "c8a3192cb87e9aea9ef537ba71c25053077ad056bf6147f2a579ccc64a5cd8a9",
-      "reviewed_at": "2026-08-02T18:33:00Z"
+      "pkgbuild_sha256": "23bd3e1c7a90a37c6300cc7d9ce58645d977cb7a0d81f3eebdd463de40c4b265",
+      "srcinfo_sha256": "6cc8c1997347f65cba149ae4de59c075386f3d98d9e4c61a187c2056c5a43fb2",
+      "reviewed_at": "2026-08-03T21:15:34Z"
     }
   }
 }

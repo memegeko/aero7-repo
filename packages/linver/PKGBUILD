@@ -1,6 +1,6 @@
 pkgname=linver
 pkgver=1.0.0
-pkgrel=5
+pkgrel=6
 pkgdesc='Aero7 system version and branding information utility'
 arch=('x86_64')
 url='https://gitgud.io/wackyideas/linver'
@@ -13,7 +13,7 @@ source=("linver::git+$url.git#commit=087f2746703d9c885de2e1a4f6360314283703f4"
         'org.aero7.linver.desktop')
 sha256sums=('SKIP'
             '082564ca3c892d8e2fecacb03b86f0420bca716ffb7cdbc63215859de7712b55'
-            'e6baaeb47988325d99602d92fe6f06495ef02a4605f64ff6877cf2cd61362d2b'
+            'd0803ba0db071263d15e673dcb2b17d9d2864e2cb9162161a82b44ed798b01af'
             '82e639f911e84db3cbb692034e250fad8df890cfb9e2c0fe329ab51e47b9aca6')
 
 prepare() {
