@@ -166,7 +166,6 @@ def validate_desktop_polish() -> None:
         'itemIcon: "system-run"',
         "<default>execbin</default>",
         "existingPanels[existingIndex].remove()",
-        "name=Aero7",
         "BackgroundNormal=240,240,240",
         'color: "#f7f7f7"',
         "<default>40</default>",
@@ -183,7 +182,7 @@ def validate_desktop_polish() -> None:
     ).read_text(encoding="utf-8")
     for required in [
         'url="https://github.com/memegeko/aerothemeplasma"',
-        "#commit=3afd6b6b250b3432af445b8e1bfd6c0c72a56107",
+        "#commit=e9a8505d1df3dfa64b0022f2295c17fb758caec9",
         '"${pkgname%}/LICENSE"',
         '"${pkgname%}/THIRD_PARTY.md"',
     ]:

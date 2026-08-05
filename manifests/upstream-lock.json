@@ -61,11 +61,11 @@
     "aerothemeplasma-desktop-git": {
       "source_type": "pinned-vcs",
       "source_revisions": {
-        "https://github.com/memegeko/aerothemeplasma": "3afd6b6b250b3432af445b8e1bfd6c0c72a56107"
+        "https://github.com/memegeko/aerothemeplasma": "e9a8505d1df3dfa64b0022f2295c17fb758caec9"
       },
-      "pkgbuild_sha256": "d1caa43815cfdf8895214b4887f7f8701dd63571d732cb0c0c3ec9eab522012a",
-      "srcinfo_sha256": "8d286ce9962f6b86aca7baa8ecf2da27ffe7ace8439eaad6b7fb1c67dbad3717",
-      "reviewed_at": "2026-08-05T18:22:32Z"
+      "pkgbuild_sha256": "565c637abfadb53512a6f8dbef5e8e61a9d454ccd71c74988ebdd438c4aeb5a0",
+      "srcinfo_sha256": "47de19a3f03c214ef0575b9a8843f3bfa2bcc6f0233273972ad5f0a71c87110c",
+      "reviewed_at": "2026-08-05T20:39:07Z"
     },
     "linux-devmgmt": {
       "aur_url": "https://aur.archlinux.org/linux-devmgmt.git",

@@ -44,19 +44,6 @@ index 23a27a1..1debb4c 100644
  var panel = new Panel("io.gitgud.wackyideas.panel");
  var panelScreen = panel.screen
  
-diff --git a/plasma/look-and-feel/authui7/contents/defaults b/plasma/look-and-feel/authui7/contents/defaults
-index 99142df..03188b5 100644
---- a/plasma/look-and-feel/authui7/contents/defaults
-+++ b/plasma/look-and-feel/authui7/contents/defaults
-@@ -11,7 +11,7 @@ widgetStyle=kvantum
- LayoutName=thumbnail_aero
- 
- [plasmarc][Theme]
--name=Seven-Black
-+name=Aero7
- 
- [kcminputrc][Mouse]
- cursorTheme=aero-drop
 diff --git a/plasma/look-and-feel/authui7/contents/logout/Logout.qml b/plasma/look-and-feel/authui7/contents/logout/Logout.qml
 index 70d3c02..c1931ea 100644
 --- a/plasma/look-and-feel/authui7/contents/logout/Logout.qml
