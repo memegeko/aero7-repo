@@ -169,7 +169,6 @@ def validate_desktop_polish() -> None:
         "name=breeze-light",
         "BackgroundNormal=240,240,240",
         'color: "#f7f7f7"',
-        'source: "../images/aero7-watermark.png"',
         "<default>46</default>",
     ]:
         if required not in launcher_patch:
@@ -183,16 +182,21 @@ def validate_desktop_polish() -> None:
         REPO / "packages" / "aerothemeplasma-desktop-git" / "PKGBUILD"
     ).read_text(encoding="utf-8")
     for required in [
+        'url="https://github.com/memegeko/aerothemeplasma"',
+        "#commit=335d09d4d22df4d4ec4bb1de6fd574f56cd53a8f",
+        '"${pkgname%}/LICENSE"',
+        '"${pkgname%}/THIRD_PARTY.md"',
+    ]:
+        if required not in desktop_pkgbuild:
+            fail(f"Aero7 desktop fork metadata is missing: {required}")
+
+    for obsolete in [
         "aero7-start-orb.png",
         "aero7-start-orb-small.png",
         "aero7-watermark.png",
-        "io.gitgud.wackyideas.SevenStart/contents/ui/orbs/orb.png",
-        "io.gitgud.wackyideas.SevenStart/contents/ui/orbs/orb_small.png",
-        "contents/images/aero7-watermark.png",
-        "contents/images/watermark.png",
     ]:
-        if required not in desktop_pkgbuild:
-            fail(f"Aero7 Start branding is missing: {required}")
+        if obsolete in desktop_pkgbuild:
+            fail(f"desktop branding is still overlaid during packaging: {obsolete}")
 
     desktop_assets = REPO / "packages" / "aerothemeplasma-desktop-git"
     expected_sizes = {
@@ -204,6 +208,22 @@ def validate_desktop_polish() -> None:
         actual_size = png_size(desktop_assets / asset)
         if actual_size != expected_size:
             fail(f"{asset} has size {actual_size}, expected {expected_size}")
+
+    retained_themes = {
+        "aerothemeplasma-icons-git": "96950b8028a5d960cb683280fe5f1d9e33e6b8a2",
+        "aerothemeplasma-sounds-git": "55d2f5fd15f53cccbbb13388941b930442db1159",
+    }
+    for package, commit in retained_themes.items():
+        pkgbuild = (REPO / "packages" / package / "PKGBUILD").read_text(
+            encoding="utf-8"
+        )
+        for required in [
+            f"#commit={commit}",
+            '"$pkgdir/usr/share/licenses/$pkgname/LICENSE"',
+            '"$pkgdir/usr/share/licenses/$pkgname/README.md"',
+        ]:
+            if required not in pkgbuild:
+                fail(f"{package} retention metadata is missing: {required}")
 
     branded_packages = {
         "aero7-dolphin": ["Name=File Explorer"],
@@ -249,7 +269,12 @@ def validate_no_secrets_or_assets() -> None:
             if pattern.search(text):
                 fail(f"secret-like content found in {relative}")
         for pattern in PROPRIETARY_ASSET_PATTERNS:
-            if pattern.search(str(relative)) or pattern.search(text):
+            if pattern.search(str(relative)):
+                fail(f"proprietary-asset reference found in {relative}")
+            # Legal and attribution documents must be able to identify the
+            # third-party material they discuss. Continue scanning all other
+            # source/configuration text for accidental asset references.
+            if path.suffix.lower() not in {".md", ".txt"} and pattern.search(text):
                 fail(f"proprietary-asset reference found in {relative}")
 
 

@@ -1,17 +1,16 @@
 # Maintainer: WackyIdeas <wackyideas@disroot.org>
 
 pkgname=('aerothemeplasma-icons-git')
-pkgver=8.rb8d5ce1
+pkgver=11.r96950b8
 pkgrel=1
 pkgdesc="Icon theme designed for AeroThemePlasma"
 license=('AGPL-3.0-or-later')
 arch=(any)
 url="https://gitgud.io/aeroshell/atp/aerothemeplasma-icons"
 makedepends=('git')
-options=('!strip')
-source=("${pkgname}::git+${url}.git")
+options=('!strip' '!debug')
+source=("${pkgname}::git+${url}.git#commit=96950b8028a5d960cb683280fe5f1d9e33e6b8a2")
 sha256sums=('SKIP')
-options=('!debug')
 conflicts=(aerothemeplasma-icons)
 provides=(aerothemeplasma-icons)
 groups=(aerothemeplasma)
@@ -21,14 +20,12 @@ pkgver() {
   echo "$(git rev-list --count HEAD).r$(git rev-parse --short HEAD)"
 }
 
-prepare() {
-  cd "$srcdir/${pkgname%}"
-  rm LICENSE
-  rm README.md
-}
-
-
 package() {
   install -dm 755 "$pkgdir"/usr/share/icons/
-  cp -r ${srcdir}/${pkgname%}/* ${pkgdir}/usr/share/icons/
+  find "$srcdir/${pkgname%}" -mindepth 1 -maxdepth 1 -type d \
+    -exec cp -r -- {} "$pkgdir/usr/share/icons/" \;
+  install -Dm644 "$srcdir/${pkgname%}/LICENSE" \
+    "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+  install -Dm644 "$srcdir/${pkgname%}/README.md" \
+    "$pkgdir/usr/share/licenses/$pkgname/README.md"
 }

@@ -73,6 +73,7 @@ Do not use `SigLevel = Never` or `TrustAll`.
 - [Publishing](docs/PUBLISHING.md)
 - [Recovery](docs/RECOVERY.md)
 - [Update policy](docs/UPDATE-POLICY.md)
+- [KDE stable downstream strategy](docs/KDE-DOWNSTREAM-STRATEGY.md)
 - [First build report](docs/FIRST-BUILD-REPORT.md)
 - [Companion application packaging audit](docs/COMPANION-APP-AUDIT.md)
 
@@ -81,3 +82,7 @@ Do not use `SigLevel = Never` or `TrustAll`.
 Repository scripts and documentation are licensed under the MIT License.
 Imported package recipes remain under their upstream packaging and project
 licenses; see [THIRD_PARTY.md](THIRD_PARTY.md).
+
+Aero7 is an independent project and is not affiliated with, authorized,
+sponsored, endorsed, or approved by Microsoft Corporation. Windows and other
+Microsoft product names are trademarks of the Microsoft group of companies.

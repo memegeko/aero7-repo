@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-21T17:54:48Z",
+  "generated_at": "2026-08-05T17:15:00Z",
   "packages": {
     "aeroshell-libplasma-git": {
       "aur_url": "https://aur.archlinux.org/aeroshell-libplasma-git.git",
@@ -23,18 +23,26 @@
       "reviewed_at": "2026-07-20T18:03:22Z"
     },
     "aerothemeplasma-icons-git": {
+      "source_type": "pinned-vcs",
       "aur_url": "https://aur.archlinux.org/aerothemeplasma-icons-git.git",
       "aur_commit": "b892bd70841d998d326b6980c15013384238ff2d",
-      "pkgbuild_sha256": "a4974a1b62728e24d4feee35de10bd052c075464d8a5fa0e2216ba621e4f0574",
-      "srcinfo_sha256": "85f71433b4cfededb92eef984ba407f837cc04556e23954264d8cd69fa0bdb67",
-      "reviewed_at": "2026-07-20T18:03:22Z"
+      "source_revisions": {
+        "https://gitgud.io/aeroshell/atp/aerothemeplasma-icons": "96950b8028a5d960cb683280fe5f1d9e33e6b8a2"
+      },
+      "pkgbuild_sha256": "8c88dc8217f8d11f1e1fdbbc36a9433a1572fd93c654d2231fdd8007c609d646",
+      "srcinfo_sha256": "266daf68025f3ca201f90898fd1eba3d40b03a55db2fa775ecce769e341b21fe",
+      "reviewed_at": "2026-08-05T17:15:00Z"
     },
     "aerothemeplasma-sounds-git": {
+      "source_type": "pinned-vcs",
       "aur_url": "https://aur.archlinux.org/aerothemeplasma-sounds-git.git",
       "aur_commit": "4c7155a47b402c4b4717d1c2f7376fdfb869ba07",
-      "pkgbuild_sha256": "b058f91077fd6946ff6c8265be7df645b17b8ea94f28d059660cb9e874b21721",
-      "srcinfo_sha256": "e6540fcd990c08cd68746e19baaa1d9e25add5eb852e42daed58b40f51aae474",
-      "reviewed_at": "2026-07-20T18:03:22Z"
+      "source_revisions": {
+        "https://gitgud.io/aeroshell/atp/aerothemeplasma-sounds": "55d2f5fd15f53cccbbb13388941b930442db1159"
+      },
+      "pkgbuild_sha256": "b5797d2369c66288e3909b02a94c83e6c35d556e2ec437d32562698083010e8e",
+      "srcinfo_sha256": "2a2919895b614812449d7a070a824197feabd5e0ae4a92b54e977d5c9f5716a4",
+      "reviewed_at": "2026-08-05T17:15:00Z"
     },
     "aeroshell-smod-git": {
       "aur_url": "https://aur.archlinux.org/aeroshell-smod-git.git",
@@ -53,11 +61,11 @@
     "aerothemeplasma-desktop-git": {
       "source_type": "pinned-vcs",
       "source_revisions": {
-        "https://github.com/aeroshell-desktop/aerothemeplasma": "6746c83e05b718cda8b28a8e25921b0d73a950f0"
+        "https://github.com/memegeko/aerothemeplasma": "335d09d4d22df4d4ec4bb1de6fd574f56cd53a8f"
       },
-      "pkgbuild_sha256": "46173440af72947f323394125135b52c6d457d924688d215628c5c689f60eb97",
-      "srcinfo_sha256": "4f0b647d62d5d778979bf980d65a268b0067d756bddffdecbadb6cf05954c43c",
-      "reviewed_at": "2026-08-03T21:15:34Z"
+      "pkgbuild_sha256": "a3be65f4acb2c06dc6c8e18e893d1a79a3fe3cb54ab91a073e4350415efc7579",
+      "srcinfo_sha256": "eaea51a3073c52c30a824bf8f911286f25103c1aae4e646a8186a3049040ca22",
+      "reviewed_at": "2026-08-05T17:15:00Z"
     },
     "linux-devmgmt": {
       "aur_url": "https://aur.archlinux.org/linux-devmgmt.git",

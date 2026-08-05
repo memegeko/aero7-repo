@@ -70,27 +70,6 @@ index 70d3c02..c1931ea 100644
                              break;
                      }
                  }
-@@ -383,6 +383,6 @@ Image {
-             horizontalCenter: parent.horizontalCenter
-         }
- 
--        source: "../images/watermark.png"
-+        source: "../images/aero7-watermark.png"
-     }
- }
-diff --git a/plasma/look-and-feel/authui7/contents/splash/Splash.qml b/plasma/look-and-feel/authui7/contents/splash/Splash.qml
-index 0d84d07..2b8cc4f 100644
---- a/plasma/look-and-feel/authui7/contents/splash/Splash.qml
-+++ b/plasma/look-and-feel/authui7/contents/splash/Splash.qml
-@@ -78,7 +78,7 @@ Item {
-         Rectangle { Layout.fillWidth: true }
-         Image {
-             id: watermark
--            source: "../images/watermark.png"
-+            source: "../images/aero7-watermark.png"
-         }
-         Rectangle { Layout.fillWidth: true }
-     }
 diff --git a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/config/main.xml b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/config/main.xml
 index 3e53dc9..02065fb 100644
 --- a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/config/main.xml
