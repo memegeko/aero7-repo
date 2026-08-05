@@ -166,10 +166,10 @@ def validate_desktop_polish() -> None:
         'itemIcon: "system-run"',
         "<default>execbin</default>",
         "existingPanels[existingIndex].remove()",
-        "name=breeze-light",
+        "name=Aero7",
         "BackgroundNormal=240,240,240",
         'color: "#f7f7f7"',
-        "<default>46</default>",
+        "<default>40</default>",
     ]:
         if required not in launcher_patch:
             fail(f"Aero launcher polish is missing: {required}")
@@ -183,7 +183,7 @@ def validate_desktop_polish() -> None:
     ).read_text(encoding="utf-8")
     for required in [
         'url="https://github.com/memegeko/aerothemeplasma"',
-        "#commit=335d09d4d22df4d4ec4bb1de6fd574f56cd53a8f",
+        "#commit=3afd6b6b250b3432af445b8e1bfd6c0c72a56107",
         '"${pkgname%}/LICENSE"',
         '"${pkgname%}/THIRD_PARTY.md"',
     ]:
