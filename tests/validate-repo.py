@@ -182,7 +182,7 @@ def validate_desktop_polish() -> None:
     ).read_text(encoding="utf-8")
     for required in [
         'url="https://github.com/memegeko/aerothemeplasma"',
-        "#commit=24e0b67757fd2ebb929d66eb15eca592d8cf82ca",
+        "#commit=2610376f77c95377be3feca1bdff215900ce81d5",
         '"${pkgname%}/LICENSE"',
         '"${pkgname%}/THIRD_PARTY.md"',
     ]:
