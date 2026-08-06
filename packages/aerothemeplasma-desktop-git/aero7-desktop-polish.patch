@@ -125,25 +125,7 @@ diff --git a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/main.q
 index e87ff2f..5fac1cb 100755
 --- a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/main.qml
 +++ b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/main.qml
-@@ -99,7 +99,7 @@ PlasmoidItem {
- 
-         appNameFormat: Plasmoid.configuration.appNameFormat
-         flat: true
--        sorted: false
-+        sorted: true
-         showSeparators: false
-         appletInterface: kicker
- 
-@@ -107,7 +107,7 @@ PlasmoidItem {
-         pageSize: Plasmoid.configuration.numberColumns *  Plasmoid.configuration.numberRows
- 
-         showTopLevelItems: true
--        showAllApps: false
-+        showAllApps: true
-         showAllAppsCategorized: false
-         showRecentApps: false
-         showRecentDocs: false
-@@ -249,7 +249,7 @@ PlasmoidItem {
+@@ -299,7 +299,7 @@ PlasmoidItem {
              text: i18n("Task Manager")
              icon.name: "ksysguardd"
              onTriggered: {

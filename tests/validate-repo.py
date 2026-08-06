@@ -159,9 +159,6 @@ def validate_desktop_polish() -> None:
         / "aero7-desktop-polish.patch"
     ).read_text(encoding="utf-8")
     for required in [
-        "sorted: true",
-        "showAllApps: true",
-        "showAllAppsCategorized: false",
         'executableString: "control"',
         'itemIcon: "system-run"',
         "<default>execbin</default>",
@@ -182,12 +179,22 @@ def validate_desktop_polish() -> None:
     ).read_text(encoding="utf-8")
     for required in [
         'url="https://github.com/memegeko/aerothemeplasma"',
-        "#commit=7ad72526d762d23b9678efa8ab777f3477956792",
+        "#commit=009cb62dbaf290edab0cf4856d1e907cbb30e4b7",
         '"${pkgname%}/LICENSE"',
         '"${pkgname%}/THIRD_PARTY.md"',
     ]:
         if required not in desktop_pkgbuild:
             fail(f"Aero7 desktop fork metadata is missing: {required}")
+
+    for required_dependency in [
+        "qterminal",
+        "vlc",
+        "spectacle",
+        "kcalc",
+        "featherpad",
+    ]:
+        if required_dependency not in desktop_pkgbuild:
+            fail(f"Aero7 desktop application dependency is missing: {required_dependency}")
 
     for obsolete in [
         "aero7-start-orb.png",

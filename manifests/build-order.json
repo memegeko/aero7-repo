@@ -654,6 +654,11 @@
         "kpackage",
         "kwidgetsaddons",
         "plasma-desktop",
+        "qterminal",
+        "vlc",
+        "spectacle",
+        "kcalc",
+        "featherpad",
         "qt6-base"
       ],
       "makedepends": [
