@@ -61,10 +61,10 @@
     "aerothemeplasma-desktop-git": {
       "source_type": "pinned-vcs",
       "source_revisions": {
-        "https://github.com/memegeko/aerothemeplasma": "2610376f77c95377be3feca1bdff215900ce81d5"
+        "https://github.com/memegeko/aerothemeplasma": "7ad72526d762d23b9678efa8ab777f3477956792"
       },
-      "pkgbuild_sha256": "25ea0dffd8208c8e55da210b711fc24ba3c68389d8707781891e93ff29f25444",
-      "srcinfo_sha256": "83bdc66761e591c989ff4404985e0015fe57e5885c30d69462a2bd322dd757e4",
+      "pkgbuild_sha256": "56b378add1c18fa61a43756ee1eeb0582d47612615797a4be991084531b87e80",
+      "srcinfo_sha256": "029e934fbd1818a56da304964ad6de1b6209ea557ea1e81866c8ed5f724462a0",
       "reviewed_at": "2026-08-06T17:09:40Z"
     },
     "linux-devmgmt": {
