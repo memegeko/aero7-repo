@@ -98,6 +98,30 @@ export AERO7_MAKEFLAGS_JOBS=8
 
 If the first build hits memory pressure or OOM, reduce to 4 and retry once.
 
+## Storage Retention
+
+Every full build now runs `scripts/prune-builder.sh` before compilation and
+again after successful finalization. The policy preserves the active build and
+the two newest completed staging builds, removes disposable source worktrees,
+and trims obsolete host package-cache entries. A failed build's source tree is
+kept for diagnosis until the next build starts.
+
+By default, a build refuses to start when the builder filesystem has less than
+20 GiB free. These values can be adjusted deliberately for a larger builder:
+
+```bash
+export AERO7_KEEP_STAGING_BUILDS=2
+export AERO7_MIN_FREE_GIB=20
+```
+
+Do not disable the free-space check on the production runner. To inspect the
+current footprint without touching signing material or runner state:
+
+```bash
+df -h /
+sudo du -xhd1 /srv/aero7-builder | sort -h
+```
+
 ## Runner Security
 
 The builder VM must be dedicated to this repository. Do not mount host

@@ -26,15 +26,16 @@ else
   printf 'verify-sources: makepkg not installed; skipping .SRCINFO regeneration check\n' >&2
 fi
 
-for script in scripts/*.sh; do
+for script in scripts/*.sh tests/*.sh; do
   bash -n "$script"
 done
 
 if command -v shellcheck >/dev/null 2>&1; then
-  shellcheck scripts/*.sh
+  shellcheck scripts/*.sh tests/*.sh
 else
   printf 'verify-sources: shellcheck not installed; skipping ShellCheck\n' >&2
 fi
 
+tests/test-prune-builder.sh
 python -m py_compile scripts/dependency-order.py tests/validate-repo.py
 printf 'verify-sources: ok\n'

@@ -136,6 +136,7 @@ def validate_workflows() -> None:
         "inputs.resume_build_id == ''",
         "inputs.resume_build_id != ''",
         'scripts/finalize-build.sh "$RESUME_BUILD_ID"',
+        'scripts/prune-builder.sh \\',
     ]:
         if resume_guard not in text:
             fail(f"build workflow missing guarded resume behavior: {resume_guard}")
@@ -143,6 +144,12 @@ def validate_workflows() -> None:
     build_all = (REPO / "scripts" / "build-all.sh").read_text(encoding="utf-8")
     if '"$repo/scripts/finalize-build.sh" "$build_id"' not in build_all:
         fail("fresh builds do not use the shared finalization path")
+    for retention_guard in [
+        '"$repo/scripts/prune-builder.sh" --current-build-id "$build_id"',
+        "--remove-current-sources",
+    ]:
+        if retention_guard not in build_all:
+            fail(f"fresh builds are missing storage retention guard: {retention_guard}")
 
     sign_packages = (REPO / "scripts" / "sign-packages.sh").read_text(
         encoding="utf-8"
