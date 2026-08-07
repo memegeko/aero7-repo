@@ -15,6 +15,7 @@ fi
 
 mkdir -p -- "$staging"
 printf '%s\n' "$build_id" > "$builder_root/current-build-id"
+"$repo/scripts/prune-builder.sh" --current-build-id "$build_id"
 python "$repo/scripts/dependency-order.py" --repo "$repo" --write
 mapfile -t packages < <(python - "$repo/manifests/build-order.json" <<'PY'
 import json
@@ -29,5 +30,8 @@ for package in "${packages[@]}"; do
 done
 
 "$repo/scripts/finalize-build.sh" "$build_id"
+"$repo/scripts/prune-builder.sh" \
+  --current-build-id "$build_id" \
+  --remove-current-sources
 
 printf 'build-all: staged complete build %s at %s\n' "$build_id" "$staging"

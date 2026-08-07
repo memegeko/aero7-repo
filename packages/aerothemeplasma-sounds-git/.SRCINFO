@@ -9,8 +9,9 @@ pkgbase = aerothemeplasma-sounds-git
 	makedepends = git
 	provides = aerothemeplasma-sounds
 	conflicts = aerothemeplasma-sounds
+	options = !strip
 	options = !debug
-	source = aerothemeplasma-sounds-git::git+https://gitgud.io/aeroshell/atp/aerothemeplasma-sounds.git
+	source = aerothemeplasma-sounds-git::git+https://gitgud.io/aeroshell/atp/aerothemeplasma-sounds.git#commit=55d2f5fd15f53cccbbb13388941b930442db1159
 	sha256sums = SKIP
 
 pkgname = aerothemeplasma-sounds-git

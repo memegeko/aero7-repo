@@ -1,5 +1,20 @@
 # Recovery
 
+## Builder Storage Pressure
+
+Stop or allow the active package job to fail before cleaning its workspaces.
+Then run the same guarded retention policy used by normal builds:
+
+```bash
+build_id="$(cat /srv/aero7-builder/current-build-id)"
+scripts/prune-builder.sh --current-build-id "$build_id"
+df -h /
+```
+
+The script never removes the runner, signing key, clean chroot, logs, or
+non-build directories. Completed staging builds remain available for a guarded
+resume. Do not manually delete broad paths under `/srv/aero7-builder`.
+
 ## Roll Back Repository
 
 ```bash

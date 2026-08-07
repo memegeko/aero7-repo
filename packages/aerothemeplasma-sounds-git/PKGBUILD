@@ -8,10 +8,9 @@ license=('AGPL-3.0-or-later')
 arch=(any)
 url="https://gitgud.io/aeroshell/atp/aerothemeplasma-sounds"
 makedepends=('git')
-options=('!strip')
-source=("${pkgname}::git+${url}.git")
+options=('!strip' '!debug')
+source=("${pkgname}::git+${url}.git#commit=55d2f5fd15f53cccbbb13388941b930442db1159")
 sha256sums=('SKIP')
-options=('!debug')
 conflicts=(aerothemeplasma-sounds)
 provides=(aerothemeplasma-sounds)
 groups=(aerothemeplasma)
@@ -21,14 +20,12 @@ pkgver() {
   echo "$(git rev-list --count HEAD).r$(git rev-parse --short HEAD)"
 }
 
-prepare() {
-  cd "$srcdir/${pkgname%}"
-  rm LICENSE
-  rm README.md
-}
-
-
 package() {
   install -dm 755 "$pkgdir"/usr/share/sounds/
-  cp -r ${srcdir}/${pkgname%}/* ${pkgdir}/usr/share/sounds/
+  find "$srcdir/${pkgname%}" -mindepth 1 -maxdepth 1 -type d \
+    -exec cp -r -- {} "$pkgdir/usr/share/sounds/" \;
+  install -Dm644 "$srcdir/${pkgname%}/LICENSE" \
+    "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+  install -Dm644 "$srcdir/${pkgname%}/README.md" \
+    "$pkgdir/usr/share/licenses/$pkgname/README.md"
 }

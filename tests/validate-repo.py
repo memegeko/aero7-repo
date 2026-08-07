@@ -136,6 +136,7 @@ def validate_workflows() -> None:
         "inputs.resume_build_id == ''",
         "inputs.resume_build_id != ''",
         'scripts/finalize-build.sh "$RESUME_BUILD_ID"',
+        'scripts/prune-builder.sh \\',
     ]:
         if resume_guard not in text:
             fail(f"build workflow missing guarded resume behavior: {resume_guard}")
@@ -143,6 +144,12 @@ def validate_workflows() -> None:
     build_all = (REPO / "scripts" / "build-all.sh").read_text(encoding="utf-8")
     if '"$repo/scripts/finalize-build.sh" "$build_id"' not in build_all:
         fail("fresh builds do not use the shared finalization path")
+    for retention_guard in [
+        '"$repo/scripts/prune-builder.sh" --current-build-id "$build_id"',
+        "--remove-current-sources",
+    ]:
+        if retention_guard not in build_all:
+            fail(f"fresh builds are missing storage retention guard: {retention_guard}")
 
     sign_packages = (REPO / "scripts" / "sign-packages.sh").read_text(
         encoding="utf-8"
@@ -159,18 +166,13 @@ def validate_desktop_polish() -> None:
         / "aero7-desktop-polish.patch"
     ).read_text(encoding="utf-8")
     for required in [
-        "sorted: true",
-        "showAllApps: true",
-        "showAllAppsCategorized: false",
         'executableString: "control"',
         'itemIcon: "system-run"',
         "<default>execbin</default>",
         "existingPanels[existingIndex].remove()",
-        "name=breeze-light",
         "BackgroundNormal=240,240,240",
         'color: "#f7f7f7"',
-        'source: "../images/aero7-watermark.png"',
-        "<default>46</default>",
+        "<default>40</default>",
     ]:
         if required not in launcher_patch:
             fail(f"Aero launcher polish is missing: {required}")
@@ -183,16 +185,31 @@ def validate_desktop_polish() -> None:
         REPO / "packages" / "aerothemeplasma-desktop-git" / "PKGBUILD"
     ).read_text(encoding="utf-8")
     for required in [
+        'url="https://github.com/memegeko/aerothemeplasma"',
+        "#commit=9c2d850f0907cd7d33c81e8a3fcc00abae3abb9b",
+        '"${pkgname%}/LICENSE"',
+        '"${pkgname%}/THIRD_PARTY.md"',
+    ]:
+        if required not in desktop_pkgbuild:
+            fail(f"Aero7 desktop fork metadata is missing: {required}")
+
+    for required_dependency in [
+        "qterminal",
+        "vlc",
+        "spectacle",
+        "kcalc",
+        "featherpad",
+    ]:
+        if required_dependency not in desktop_pkgbuild:
+            fail(f"Aero7 desktop application dependency is missing: {required_dependency}")
+
+    for obsolete in [
         "aero7-start-orb.png",
         "aero7-start-orb-small.png",
         "aero7-watermark.png",
-        "io.gitgud.wackyideas.SevenStart/contents/ui/orbs/orb.png",
-        "io.gitgud.wackyideas.SevenStart/contents/ui/orbs/orb_small.png",
-        "contents/images/aero7-watermark.png",
-        "contents/images/watermark.png",
     ]:
-        if required not in desktop_pkgbuild:
-            fail(f"Aero7 Start branding is missing: {required}")
+        if obsolete in desktop_pkgbuild:
+            fail(f"desktop branding is still overlaid during packaging: {obsolete}")
 
     desktop_assets = REPO / "packages" / "aerothemeplasma-desktop-git"
     expected_sizes = {
@@ -204,6 +221,22 @@ def validate_desktop_polish() -> None:
         actual_size = png_size(desktop_assets / asset)
         if actual_size != expected_size:
             fail(f"{asset} has size {actual_size}, expected {expected_size}")
+
+    retained_themes = {
+        "aerothemeplasma-icons-git": "96950b8028a5d960cb683280fe5f1d9e33e6b8a2",
+        "aerothemeplasma-sounds-git": "55d2f5fd15f53cccbbb13388941b930442db1159",
+    }
+    for package, commit in retained_themes.items():
+        pkgbuild = (REPO / "packages" / package / "PKGBUILD").read_text(
+            encoding="utf-8"
+        )
+        for required in [
+            f"#commit={commit}",
+            '"$pkgdir/usr/share/licenses/$pkgname/LICENSE"',
+            '"$pkgdir/usr/share/licenses/$pkgname/README.md"',
+        ]:
+            if required not in pkgbuild:
+                fail(f"{package} retention metadata is missing: {required}")
 
     branded_packages = {
         "aero7-dolphin": ["Name=File Explorer"],
@@ -221,8 +254,8 @@ def validate_desktop_polish() -> None:
     run_desktop = (
         REPO / "packages" / "execbin" / "org.aero7.execbin.desktop"
     ).read_text(encoding="utf-8")
-    if "Icon=org.aero7.execbin" not in run_desktop:
-        fail("Run dialog does not use the current Aero7 application icon")
+    if "Icon=system-run" not in run_desktop:
+        fail("Run desktop entry does not use the matching system Run icon")
 
     glass_frame = (
         REPO / "companions" / "aero7-qt" / "include" / "Aero7Qt" / "glassframe.h"
@@ -249,7 +282,12 @@ def validate_no_secrets_or_assets() -> None:
             if pattern.search(text):
                 fail(f"secret-like content found in {relative}")
         for pattern in PROPRIETARY_ASSET_PATTERNS:
-            if pattern.search(str(relative)) or pattern.search(text):
+            if pattern.search(str(relative)):
+                fail(f"proprietary-asset reference found in {relative}")
+            # Legal and attribution documents must be able to identify the
+            # third-party material they discuss. Continue scanning all other
+            # source/configuration text for accidental asset references.
+            if path.suffix.lower() not in {".md", ".txt"} and pattern.search(text):
                 fail(f"proprietary-asset reference found in {relative}")
 
 

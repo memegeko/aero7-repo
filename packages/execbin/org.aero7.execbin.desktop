@@ -3,6 +3,6 @@ Type=Application
 Name=Run
 Comment=Open a program, folder, document, or Internet resource
 Exec=execbin
-Icon=org.aero7.execbin
+Icon=system-run
 Categories=Qt;KDE;Utility;
 StartupNotify=true

@@ -44,19 +44,6 @@ index 23a27a1..1debb4c 100644
  var panel = new Panel("io.gitgud.wackyideas.panel");
  var panelScreen = panel.screen
  
-diff --git a/plasma/look-and-feel/authui7/contents/defaults b/plasma/look-and-feel/authui7/contents/defaults
-index 99142df..03188b5 100644
---- a/plasma/look-and-feel/authui7/contents/defaults
-+++ b/plasma/look-and-feel/authui7/contents/defaults
-@@ -11,7 +11,7 @@ widgetStyle=kvantum
- LayoutName=thumbnail_aero
- 
- [plasmarc][Theme]
--name=Seven-Black
-+name=breeze-light
- 
- [kcminputrc][Mouse]
- cursorTheme=aero-drop
 diff --git a/plasma/look-and-feel/authui7/contents/logout/Logout.qml b/plasma/look-and-feel/authui7/contents/logout/Logout.qml
 index 70d3c02..c1931ea 100644
 --- a/plasma/look-and-feel/authui7/contents/logout/Logout.qml
@@ -70,27 +57,6 @@ index 70d3c02..c1931ea 100644
                              break;
                      }
                  }
-@@ -383,6 +383,6 @@ Image {
-             horizontalCenter: parent.horizontalCenter
-         }
- 
--        source: "../images/watermark.png"
-+        source: "../images/aero7-watermark.png"
-     }
- }
-diff --git a/plasma/look-and-feel/authui7/contents/splash/Splash.qml b/plasma/look-and-feel/authui7/contents/splash/Splash.qml
-index 0d84d07..2b8cc4f 100644
---- a/plasma/look-and-feel/authui7/contents/splash/Splash.qml
-+++ b/plasma/look-and-feel/authui7/contents/splash/Splash.qml
-@@ -78,7 +78,7 @@ Item {
-         Rectangle { Layout.fillWidth: true }
-         Image {
-             id: watermark
--            source: "../images/watermark.png"
-+            source: "../images/aero7-watermark.png"
-         }
-         Rectangle { Layout.fillWidth: true }
-     }
 diff --git a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/config/main.xml b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/config/main.xml
 index 3e53dc9..02065fb 100644
 --- a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/config/main.xml
@@ -100,7 +66,7 @@ index 3e53dc9..02065fb 100644
      </entry>
      <entry name="orbWidth" type="Int">
 -      <default>0</default>
-+      <default>46</default>
++      <default>40</default>
      </entry>
      <entry name="enableShadow" type="Bool">
        <default>false</default>
@@ -159,25 +125,7 @@ diff --git a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/main.q
 index e87ff2f..5fac1cb 100755
 --- a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/main.qml
 +++ b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/main.qml
-@@ -99,7 +99,7 @@ PlasmoidItem {
- 
-         appNameFormat: Plasmoid.configuration.appNameFormat
-         flat: true
--        sorted: false
-+        sorted: true
-         showSeparators: false
-         appletInterface: kicker
- 
-@@ -107,7 +107,7 @@ PlasmoidItem {
-         pageSize: Plasmoid.configuration.numberColumns *  Plasmoid.configuration.numberRows
- 
-         showTopLevelItems: true
--        showAllApps: false
-+        showAllApps: true
-         showAllAppsCategorized: false
-         showRecentApps: false
-         showRecentDocs: false
-@@ -249,7 +249,7 @@ PlasmoidItem {
+@@ -299,7 +299,7 @@ PlasmoidItem {
              text: i18n("Task Manager")
              icon.name: "ksysguardd"
              onTriggered: {
