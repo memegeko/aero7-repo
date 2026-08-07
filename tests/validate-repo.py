@@ -179,7 +179,7 @@ def validate_desktop_polish() -> None:
     ).read_text(encoding="utf-8")
     for required in [
         'url="https://github.com/memegeko/aerothemeplasma"',
-        "#commit=9d16f38b399e87aec0405d196a9441ae8348c11c",
+        "#commit=9c2d850f0907cd7d33c81e8a3fcc00abae3abb9b",
         '"${pkgname%}/LICENSE"',
         '"${pkgname%}/THIRD_PARTY.md"',
     ]:
@@ -247,8 +247,8 @@ def validate_desktop_polish() -> None:
     run_desktop = (
         REPO / "packages" / "execbin" / "org.aero7.execbin.desktop"
     ).read_text(encoding="utf-8")
-    if "Icon=org.aero7.execbin" not in run_desktop:
-        fail("Run dialog does not use the current Aero7 application icon")
+    if "Icon=system-run" not in run_desktop:
+        fail("Run desktop entry does not use the matching system Run icon")
 
     glass_frame = (
         REPO / "companions" / "aero7-qt" / "include" / "Aero7Qt" / "glassframe.h"

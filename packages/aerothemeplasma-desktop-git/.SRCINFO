@@ -1,6 +1,6 @@
 pkgbase = aerothemeplasma-desktop-git
 	pkgdesc = An alternative shell for KDE Plasma that aims to replicate the look and feel of Windows 7
-	pkgver = 6.7.0_741.r9d16f38
+	pkgver = 6.7.0_742.r9c2d850
 	pkgrel = 1
 	url = https://github.com/memegeko/aerothemeplasma
 	arch = x86_64
@@ -75,7 +75,7 @@ pkgbase = aerothemeplasma-desktop-git
 	provides = aerothemeplasma-desktop
 	conflicts = aerothemeplasma-desktop
 	options = !debug
-	source = aerothemeplasma-desktop-git::git+https://github.com/memegeko/aerothemeplasma.git#commit=9d16f38b399e87aec0405d196a9441ae8348c11c
+	source = aerothemeplasma-desktop-git::git+https://github.com/memegeko/aerothemeplasma.git#commit=9c2d850f0907cd7d33c81e8a3fcc00abae3abb9b
 	source = aero7-desktop-polish.patch
 	sha256sums = SKIP
 	sha256sums = 1b208163d0b0e78d588195d739338b27b648ebcf857ef10da4099638cdceab9f
