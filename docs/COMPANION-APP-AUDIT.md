@@ -56,7 +56,7 @@ are deleted in each package's `prepare()` step before compilation.
 - The three original Gadgets pass `qmllint`.
 - Local `makepkg` builds pass for all nine companion packages. The
   Aero KolourPaint package is built without a temporary SARibbon RUNPATH, and
-  the final main package archives contain no build-root path references.
+  the final package archives contain no build-root path references.
 - Repository validation, lock checks, dependency ordering, `.SRCINFO`
   freshness checks, and shell syntax checks pass for all 19 packages.
 
