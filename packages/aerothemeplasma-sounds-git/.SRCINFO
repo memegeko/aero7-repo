@@ -1,7 +1,7 @@
 pkgbase = aerothemeplasma-sounds-git
-	pkgdesc = Collection of sound themes designed for AeroThemePlasma
+	pkgdesc = Aero7 sound theme collection for KDE Plasma
 	pkgver = 4.r55d2f5f
-	pkgrel = 1
+	pkgrel = 2
 	url = https://gitgud.io/aeroshell/atp/aerothemeplasma-sounds
 	arch = any
 	groups = aerothemeplasma

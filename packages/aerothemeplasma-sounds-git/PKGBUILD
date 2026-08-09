@@ -2,8 +2,8 @@
 
 pkgname=('aerothemeplasma-sounds-git')
 pkgver=4.r55d2f5f
-pkgrel=1
-pkgdesc="Collection of sound themes designed for AeroThemePlasma"
+pkgrel=2
+pkgdesc="Aero7 sound theme collection for KDE Plasma"
 license=('AGPL-3.0-or-later')
 arch=(any)
 url="https://gitgud.io/aeroshell/atp/aerothemeplasma-sounds"
@@ -24,6 +24,32 @@ package() {
   install -dm 755 "$pkgdir"/usr/share/sounds/
   find "$srcdir/${pkgname%}" -mindepth 1 -maxdepth 1 -type d \
     -exec cp -r -- {} "$pkgdir/usr/share/sounds/" \;
+
+  # Brand every user-visible theme, directory, and legacy source filename as
+  # Aero7. Event IDs and audio data stay unchanged so Plasma resolves the same
+  # notifications as before.
+  local path base renamed theme theme_name
+  while IFS= read -r -d '' path; do
+    base="${path##*/}"
+    renamed="${base//Windows 7/Aero7}"
+    renamed="${renamed//Windows/Aero7}"
+    [[ "$base" == "$renamed" ]] || mv -- "$path" "${path%/*}/$renamed"
+  done < <(find "$pkgdir/usr/share/sounds" -depth -name '*Windows*' -print0)
+
+  while IFS= read -r -d '' theme; do
+    theme_name="$(basename -- "${theme%/index.theme}")"
+    printf '%s\n' \
+      '[Sound Theme]' \
+      "Name=$theme_name" \
+      "Comment=$theme_name sound theme for Aero7" \
+      'Directories=stereo' \
+      'Example=theme-demo' \
+      '' \
+      '[stereo]' \
+      'OutputProfile=stereo' \
+      >"$theme"
+  done < <(find "$pkgdir/usr/share/sounds" -mindepth 2 -maxdepth 2 -type f -name index.theme -print0)
+
   install -Dm644 "$srcdir/${pkgname%}/LICENSE" \
     "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
   install -Dm644 "$srcdir/${pkgname%}/README.md" \

@@ -238,6 +238,17 @@ def validate_desktop_polish() -> None:
             if required not in pkgbuild:
                 fail(f"{package} retention metadata is missing: {required}")
 
+    sound_pkgbuild = (
+        REPO / "packages" / "aerothemeplasma-sounds-git" / "PKGBUILD"
+    ).read_text(encoding="utf-8")
+    for required in [
+        "${base//Windows 7/Aero7}",
+        "${renamed//Windows/Aero7}",
+        "Comment=$theme_name sound theme for Aero7",
+    ]:
+        if required not in sound_pkgbuild:
+            fail(f"Aero7 sound-theme branding is missing: {required}")
+
     branded_packages = {
         "aero7-dolphin": ["Name=File Explorer"],
         "aero7-gwenview": ["Name=Photo Viewer", "Icon=multimedia-photo-viewer"],

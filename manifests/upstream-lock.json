@@ -40,8 +40,8 @@
       "source_revisions": {
         "https://gitgud.io/aeroshell/atp/aerothemeplasma-sounds": "55d2f5fd15f53cccbbb13388941b930442db1159"
       },
-      "pkgbuild_sha256": "b5797d2369c66288e3909b02a94c83e6c35d556e2ec437d32562698083010e8e",
-      "srcinfo_sha256": "2a2919895b614812449d7a070a824197feabd5e0ae4a92b54e977d5c9f5716a4",
+      "pkgbuild_sha256": "4e1fe564c0f43f4d97cef3017e93fd9d7b5d5bdcc137d285691772cbab010acf",
+      "srcinfo_sha256": "dba450c41af40f4ddc0c091853290c25c1ae0e3afd5466b89801a30ba7683db1",
       "reviewed_at": "2026-08-05T17:15:00Z"
     },
     "aeroshell-smod-git": {
