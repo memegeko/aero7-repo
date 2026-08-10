@@ -109,11 +109,11 @@
     "linux-control-panel": {
       "source_type": "pinned-vcs",
       "source_revisions": {
-        "https://github.com/actuallyaridan/linux-control": "280a1bda565faf085df5a48dd9ee03a44d127977"
+        "https://github.com/memegeko/aero7-control-panel-": "d3d1e3984e75a33478bdd086855821e3296cb0e1"
       },
-      "pkgbuild_sha256": "dc377bf51afadd9b5c2894771518e6f4b25e2625dcbd2638aaa98b1f969bd9cb",
-      "srcinfo_sha256": "a01028dd47242b4049e1085ae2f35d4555aba964f7c8d432736fdd1ec957366b",
-      "reviewed_at": "2026-07-31T00:00:00Z"
+      "pkgbuild_sha256": "1ec57febc84388dbccce4d6f0a55eba5e3ae46893c38ccc360de5ec7b2b3f218",
+      "srcinfo_sha256": "c39ca29fb17efe1a9271a6ca7d2c220aaaf5d97eb05dc4e3823437f16f531786",
+      "reviewed_at": "2026-08-10T00:00:00Z"
     },
     "aero7-kolourpaint": {
       "source_type": "pinned-vcs",

@@ -1,8 +1,8 @@
 pkgbase = linux-control-panel
 	pkgdesc = Aero7 system settings hub for Linux and Plasma 6
 	pkgver = 0.1.0
-	pkgrel = 2
-	url = https://github.com/actuallyaridan/linux-control
+	pkgrel = 3
+	url = https://github.com/memegeko/aero7-control-panel-
 	arch = x86_64
 	license = GPL-3.0-or-later
 	makedepends = aero7-qt
@@ -17,9 +17,14 @@ pkgbase = linux-control-panel
 	depends = qt6-base
 	depends = qt6-multimedia
 	depends = zlib
-	source = linux-control::git+https://github.com/actuallyaridan/linux-control.git#commit=280a1bda565faf085df5a48dd9ee03a44d127977
-	source = aero7.patch
+	depends = plasma-desktop
+	depends = plasma-nm
+	depends = polkit
+	depends = ufw
+	depends = hunspell
+	depends = hunspell-en_us
+	depends = hunspell-nl
+	source = linux-control::git+https://github.com/memegeko/aero7-control-panel-.git#commit=d3d1e3984e75a33478bdd086855821e3296cb0e1
 	sha256sums = SKIP
-	sha256sums = a65b5bbad1e1d09650c77f3a88b6a56a1be8c69d8cc6f6e0865d40f0cd0d9b78
 
 pkgname = linux-control-panel

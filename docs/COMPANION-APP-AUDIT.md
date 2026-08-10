@@ -1,6 +1,6 @@
 # Companion Application Packaging Audit
 
-Audit date: 2026-07-31
+Audit date: 2026-08-10
 
 This audit tracks applications requested for the Aero7 ISO. Source revisions,
 licenses, replacement assets, patches, and package metadata are kept in this
@@ -11,7 +11,7 @@ repository assembly, and a fresh-VM install/rollback transaction.
 | --- | --- | --- | --- |
 | Aero Dolphin | `f0500fae7c4aadf75df23300557c0288404c6575` | `aero7-dolphin` | Full Qt 6/KF6 build, staged install, and isolated startup pass with licensed `aero7-qt`; provides and conflicts with `dolphin` |
 | Aero Gwenview | `33e15a58e3017ab9a4e01070cc1e3b0138b3892d` | `aero7-gwenview` | Full build, staged install, and startup pass; the custom bitmap control strip was replaced with original code-drawn glass and theme icons |
-| Linux Control Panel | `280a1bda565faf085df5a48dd9ee03a44d127977` | `linux-control-panel` | Full build, staged install, and startup pass with licensed glass, navigation, and application styling |
+| Linux Control Panel | `d3d1e3984e75a33478bdd086855821e3296cb0e1` | `linux-control-panel` | Aero7 fork with licensed glass, native navigation, UFW logging controls, Network Management and spelling integration; Wallet support is intentionally excluded |
 | Aero KolourPaint | `0a0debee63d9902b1dd6dafdddad41f21549c5b7` | `aero7-kolourpaint` | Full build, staged install, and startup pass with MIT SARibbon revision `540624e98a53cff47fc1b0531d9129ae3a7fe6b2` bundled |
 | Gadgets | Aero7-owned source | `aero7-gadgets` | Original Plasma 6 Clock, CPU Meter, and Notes widgets pass `qmllint` and a local Arch package build; the asset-heavy upstream bundle is not redistributed |
 | WinXplorer | `9d2fae647e1bd9fc7f1dd53f36f8d5e160f4fddc` | `winxplorer` | Full build, staged install, and startup pass after replacing bitmap controls with QML-drawn glass and removing the bundled navigation sound |

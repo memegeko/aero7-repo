@@ -567,7 +567,14 @@
         "openssl",
         "qt6-base",
         "qt6-multimedia",
-        "zlib"
+        "zlib",
+        "plasma-desktop",
+        "plasma-nm",
+        "polkit",
+        "ufw",
+        "hunspell",
+        "hunspell-en_us",
+        "hunspell-nl"
       ],
       "makedepends": [
         "aero7-qt",
