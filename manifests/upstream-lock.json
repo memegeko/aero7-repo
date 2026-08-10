@@ -109,10 +109,10 @@
     "linux-control-panel": {
       "source_type": "pinned-vcs",
       "source_revisions": {
-        "https://github.com/memegeko/aero7-control-panel-": "d3d1e3984e75a33478bdd086855821e3296cb0e1"
+        "https://github.com/memegeko/aero7-control-panel-": "ce32231f8327e4354c77e1a228fadc231abd6ea7"
       },
-      "pkgbuild_sha256": "1ec57febc84388dbccce4d6f0a55eba5e3ae46893c38ccc360de5ec7b2b3f218",
-      "srcinfo_sha256": "c39ca29fb17efe1a9271a6ca7d2c220aaaf5d97eb05dc4e3823437f16f531786",
+      "pkgbuild_sha256": "30c596448ad6d4785616f086c16600c7763df5244edb95ddb1cc7ffb7d123708",
+      "srcinfo_sha256": "d967feaf48aeea3491f981c71017cd75c28c38521a6bfe67b772cf70469d1e07",
       "reviewed_at": "2026-08-10T00:00:00Z"
     },
     "aero7-kolourpaint": {

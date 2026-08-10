@@ -574,7 +574,14 @@
         "ufw",
         "hunspell",
         "hunspell-en_us",
-        "hunspell-nl"
+        "hunspell-nl",
+        "accountsservice",
+        "networkmanager",
+        "pipewire-pulse",
+        "wireplumber",
+        "upower",
+        "power-profiles-daemon",
+        "shadow"
       ],
       "makedepends": [
         "aero7-qt",
