@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-05T17:15:00Z",
+  "generated_at": "2026-08-11T00:00:00Z",
   "packages": {
     "aeroshell-libplasma-git": {
       "aur_url": "https://aur.archlinux.org/aeroshell-libplasma-git.git",
@@ -63,9 +63,9 @@
       "source_revisions": {
         "https://github.com/memegeko/aerothemeplasma": "9c2d850f0907cd7d33c81e8a3fcc00abae3abb9b"
       },
-      "pkgbuild_sha256": "f4dd734b471b7057ee2f0041e8cc7a24a8097c33a122e340dc22c32425e59018",
-      "srcinfo_sha256": "2b65b953560eb35394fdae1515be25314e35ad019c1e1ea52e1c06e248164cb4",
-      "reviewed_at": "2026-08-07T12:54:25Z"
+      "pkgbuild_sha256": "d88a8988e098d10b21b33f88b223e0a942d9db1ac1bd409e8ed2ad45eafb8a30",
+      "srcinfo_sha256": "fff42029009e3e3fb57a96660040c0a0c5cbc8c8855dcb3085b7ccd137105e0e",
+      "reviewed_at": "2026-08-11T00:00:00Z"
     },
     "linux-devmgmt": {
       "aur_url": "https://aur.archlinux.org/linux-devmgmt.git",
@@ -109,11 +109,11 @@
     "linux-control-panel": {
       "source_type": "pinned-vcs",
       "source_revisions": {
-        "https://github.com/memegeko/aero7-control-panel-": "ce32231f8327e4354c77e1a228fadc231abd6ea7"
+        "https://github.com/memegeko/aero7-control-panel-": "61325411de9c9705183b5160606df4696a832061"
       },
-      "pkgbuild_sha256": "30c596448ad6d4785616f086c16600c7763df5244edb95ddb1cc7ffb7d123708",
-      "srcinfo_sha256": "d967feaf48aeea3491f981c71017cd75c28c38521a6bfe67b772cf70469d1e07",
-      "reviewed_at": "2026-08-10T00:00:00Z"
+      "pkgbuild_sha256": "49a82fc63e080ed836d0a36a4f19081898e4451303333069885eebdb7c73b045",
+      "srcinfo_sha256": "09cce1f128e6220485a253d2eeadc88f8283ea2c8054e9b122f96da11b5e0d6b",
+      "reviewed_at": "2026-08-11T00:00:00Z"
     },
     "aero7-kolourpaint": {
       "source_type": "pinned-vcs",

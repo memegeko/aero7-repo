@@ -173,6 +173,10 @@ def validate_desktop_polish() -> None:
         "BackgroundNormal=240,240,240",
         'color: "#f7f7f7"',
         "<default>40</default>",
+        'source: Qt.resolvedUrl("Assets/aero7-branding.png")',
+        'model: [i18n("Programs"), i18n("Settings")]',
+        'connectSource("/usr/bin/control --list-settings-json")',
+        'settingsLauncher.exec("/usr/bin/control --setting " + key)',
     ]:
         if required not in launcher_patch:
             fail(f"Aero launcher polish is missing: {required}")
@@ -206,10 +210,15 @@ def validate_desktop_polish() -> None:
     for obsolete in [
         "aero7-start-orb.png",
         "aero7-start-orb-small.png",
-        "aero7-watermark.png",
     ]:
         if obsolete in desktop_pkgbuild:
             fail(f"desktop branding is still overlaid during packaging: {obsolete}")
+    for required in [
+        "'aero7-watermark.png'",
+        'Assets/aero7-branding.png',
+    ]:
+        if required not in desktop_pkgbuild:
+            fail(f"Aero7 SDDM branding package integration is missing: {required}")
 
     desktop_assets = REPO / "packages" / "aerothemeplasma-desktop-git"
     expected_sizes = {
