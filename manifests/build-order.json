@@ -571,6 +571,7 @@
         "plasma-desktop",
         "plasma-nm",
         "polkit",
+        "iptables",
         "ufw",
         "hunspell",
         "hunspell-en_us",

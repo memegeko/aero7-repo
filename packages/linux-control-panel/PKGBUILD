@@ -1,17 +1,17 @@
 pkgname=linux-control-panel
 pkgver=0.1.0
-pkgrel=5
+pkgrel=6
 pkgdesc='Aero7 system settings hub for Linux and Plasma 6'
 arch=('x86_64')
 url='https://github.com/memegeko/aero7-control-panel-'
 license=('GPL-3.0-or-later')
 depends=('cups' 'glibc' 'kwidgetsaddons' 'kwindowsystem' 'openssl' 'qt6-base'
-         'qt6-multimedia' 'zlib' 'plasma-desktop' 'plasma-nm' 'polkit' 'ufw'
+         'qt6-multimedia' 'zlib' 'plasma-desktop' 'plasma-nm' 'polkit' 'iptables' 'ufw'
          'hunspell' 'hunspell-en_us' 'hunspell-nl' 'accountsservice'
          'networkmanager' 'pipewire-pulse' 'wireplumber' 'upower'
          'power-profiles-daemon' 'shadow')
 makedepends=('aero7-qt' 'cmake' 'git' 'ninja')
-source=("linux-control::git+$url.git#commit=61325411de9c9705183b5160606df4696a832061")
+source=("linux-control::git+$url.git#commit=c5c2ce72c656dde172fe2196f3d55f2633643edc")
 sha256sums=('SKIP')
 
 build() {
