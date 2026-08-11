@@ -233,6 +233,8 @@ def validate_desktop_polish() -> None:
         '"${pkgname%}/LICENSE"',
         '"${pkgname%}/THIRD_PARTY.md"',
         "aero7-search-sections.patch",
+        "aero7-kwalletrc",
+        '"$pkgdir/etc/xdg/kwalletrc"',
     ]:
         if required not in desktop_pkgbuild:
             fail(f"Aero7 desktop fork metadata is missing: {required}")
@@ -261,6 +263,10 @@ def validate_desktop_polish() -> None:
             fail(f"Aero7 SDDM branding package integration is missing: {required}")
 
     desktop_assets = REPO / "packages" / "aerothemeplasma-desktop-git"
+    kwallet_defaults = (desktop_assets / "aero7-kwalletrc").read_text(encoding="utf-8")
+    for required in ["[Wallet]", "Enabled=false", "First Use=false"]:
+        if required not in kwallet_defaults:
+            fail(f"KWallet system default is missing: {required}")
     expected_sizes = {
         "aero7-start-orb.png": (46, 138),
         "aero7-start-orb-small.png": (42, 126),
