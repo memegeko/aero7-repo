@@ -228,7 +228,9 @@
       "depends": [
         "qt6-base",
         "systemd",
-        "udisks2"
+        "udisks2",
+        "polkit",
+        "shadow"
       ],
       "makedepends": [
         "cmake",
