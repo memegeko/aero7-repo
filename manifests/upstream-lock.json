@@ -63,8 +63,17 @@
       "source_revisions": {
         "https://github.com/memegeko/aerothemeplasma": "9c2d850f0907cd7d33c81e8a3fcc00abae3abb9b"
       },
-      "pkgbuild_sha256": "d76e6dd246451fc633491c4889a325bd54a7d2b3a4d852b0e4ab1230f43cdf65",
-      "srcinfo_sha256": "57178bf25b2796832de42fa11a5e151139b1948d7b3b4e62f29efceb9a5ed39c",
+      "pkgbuild_sha256": "7a8a0c2af6d1201606af1d3947370c7cf4eb725cb660d0daa6a3aac78bdd565e",
+      "srcinfo_sha256": "5f20b892450f943e50a90372c37345f7c9fa23573c1f6e9fe70a708fdcfa6417",
+      "reviewed_at": "2026-08-11T00:00:00Z"
+    },
+    "aero7-computer-management-git": {
+      "source_type": "pinned-vcs",
+      "source_revisions": {
+        "https://github.com/memegeko/aero7-computer-management": "edf5817345d459884878d38fcea8beaf54b9ffa2"
+      },
+      "pkgbuild_sha256": "73870758144a1b7714b129823d7947d2790a013bd00934f2e52977f48f0b8b0a",
+      "srcinfo_sha256": "067ce63cd536077e3f0069d7c0f27f2d44d20eae944c2e41dfffa5a04b8a9c25",
       "reviewed_at": "2026-08-11T00:00:00Z"
     },
     "linux-devmgmt": {

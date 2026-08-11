@@ -22,7 +22,7 @@ PROPRIETARY_ASSET_PATTERNS = [
     re.compile(r"microsoft[ _-]?(logo|wallpaper|font|sound|icon)", re.IGNORECASE),
 ]
 PRIVATE_KEY_SUFFIXES = {".key", ".p12", ".pfx", ".pem"}
-EXPECTED_PACKAGE_COUNT = 19
+EXPECTED_PACKAGE_COUNT = 20
 
 
 def fail(message: str) -> None:
@@ -210,10 +210,17 @@ def validate_desktop_polish() -> None:
     ]:
         if required not in search_sections_patch:
             fail(f"Aero launcher section search is missing: {required}")
-    if search_sections_patch.index(
-        'appendCatalog(controlPanelCatalog, query, "control-panel");'
-    ) > search_sections_patch.index("if (unfilteredRunnerModel)"):
-        fail("Control Panel settings must appear before file and web search groups")
+    applications_first = "appendRunnerResults(true);"
+    control_panel_second = 'appendCatalog(controlPanelCatalog, query, "control-panel");'
+    remaining_results_last = "appendRunnerResults(false);"
+    if not (
+        search_sections_patch.index(applications_first)
+        < search_sections_patch.index(control_panel_second)
+        < search_sections_patch.index(remaining_results_last)
+    ):
+        fail("search results must order Applications, Control Panel, then other groups")
+    if '+        appendCatalog(computerManagementCatalog, query, "computer-management");' in search_sections_patch:
+        fail("Computer Management pages would duplicate their application entries")
     if launcher_patch.count('executable.exec("tux-manager")') < 3:
         fail("Task Manager launcher actions are not consistently wired")
 

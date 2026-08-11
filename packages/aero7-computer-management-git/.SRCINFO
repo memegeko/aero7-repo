@@ -1,0 +1,22 @@
+pkgbase = aero7-computer-management-git
+	pkgdesc = Aero7-native Computer Management console for Linux
+	pkgver = 0.1.0.r6.gedf5817
+	pkgrel = 1
+	url = https://github.com/memegeko/aero7-computer-management
+	arch = x86_64
+	license = MIT
+	makedepends = cmake
+	makedepends = ninja
+	makedepends = git
+	depends = qt6-base
+	depends = systemd
+	depends = udisks2
+	optdepends = samba: Shared Folders status
+	optdepends = linux-devmgmt: Device Manager integration
+	provides = aero7-computer-management
+	conflicts = aero7-computer-management
+	options = !debug
+	source = aero7-computer-management::git+https://github.com/memegeko/aero7-computer-management.git#commit=edf5817345d459884878d38fcea8beaf54b9ffa2
+	sha256sums = SKIP
+
+pkgname = aero7-computer-management-git

@@ -23,6 +23,7 @@ these package names:
 - `aeroshell-smod-git`
 - `uac-polkit-agent-git`
 - `aerothemeplasma-desktop-git`
+- `aero7-computer-management-git`
 - `linux-devmgmt`
 - `tuxmanager`
 - `aero7-qt`
@@ -39,13 +40,15 @@ It does not build or publish X11 Plasma packages.
 
 ## Current Status
 
-The complete 19-package beta set has been built in a clean Arch chroot, signed,
-deployed to GitHub Pages, and verified again from the live repository endpoint.
+The 20-package beta manifest includes the separate Aero7 Computer Management
+console and its searchable administration-module shortcuts. Releases are built
+in a clean Arch chroot, signed, deployed to GitHub Pages, and verified again
+from the live repository endpoint.
 
-Nine companion application recipes are included in the signed beta set. Their
+The reviewed companion application recipes are included in the signed beta set. Their
 exact upstream revisions are pinned, all source patches apply cleanly, and all
-seven compiled GUI applications pass isolated startup tests. All nine
-companion packages pass local `makepkg` builds without sudo, a packaged-binary
+compiled GUI applications pass isolated startup tests. All companion packages
+pass local `makepkg` builds without sudo, a packaged-binary
 path scan, and the repository's clean-chroot build and signing checks.
 
 Sevulet is intentionally not packaged because its source and redistributable

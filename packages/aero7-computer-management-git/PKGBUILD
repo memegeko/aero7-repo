@@ -1,0 +1,33 @@
+pkgname=aero7-computer-management-git
+pkgver=0.1.0.r6.gedf5817
+pkgrel=1
+pkgdesc='Aero7-native Computer Management console for Linux'
+arch=('x86_64')
+url='https://github.com/memegeko/aero7-computer-management'
+license=('MIT')
+depends=('qt6-base' 'systemd' 'udisks2')
+makedepends=('cmake' 'ninja' 'git')
+optdepends=('samba: Shared Folders status'
+            'linux-devmgmt: Device Manager integration')
+provides=('aero7-computer-management')
+conflicts=('aero7-computer-management')
+options=('!debug')
+source=("aero7-computer-management::git+$url.git#commit=edf5817345d459884878d38fcea8beaf54b9ffa2")
+sha256sums=('SKIP')
+
+build() {
+  cmake -S aero7-computer-management -B build -G Ninja \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX=/usr
+  cmake --build build
+}
+
+check() {
+  QT_QPA_PLATFORM=offscreen ctest --test-dir build --output-on-failure
+}
+
+package() {
+  DESTDIR="$pkgdir" cmake --install build
+  install -Dm644 aero7-computer-management/LICENSE \
+    "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}

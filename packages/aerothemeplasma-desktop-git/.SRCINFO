@@ -1,7 +1,7 @@
 pkgbase = aerothemeplasma-desktop-git
 	pkgdesc = An Aero-inspired classic desktop shell for KDE Plasma
 	pkgver = 6.7.0_742.r9c2d850
-	pkgrel = 3
+	pkgrel = 4
 	url = https://github.com/memegeko/aerothemeplasma
 	arch = x86_64
 	groups = aerothemeplasma
@@ -70,6 +70,7 @@ pkgbase = aerothemeplasma-desktop-git
 	depends = kcalc
 	depends = featherpad
 	depends = qt6-base
+	depends = aero7-computer-management
 	optdepends = uac-polkit-agent
 	optdepends = qrca
 	provides = aerothemeplasma-desktop
@@ -81,7 +82,7 @@ pkgbase = aerothemeplasma-desktop-git
 	source = aero7-watermark.png
 	sha256sums = SKIP
 	sha256sums = a5401b0b49372afc08658be7681d00d4ba15d13ad180fd00b27aff71d0cb2435
-	sha256sums = 534f81ad4a9ed2b521ce9ec66c41c8f538eda1e052b986507e0c025c946333c0
+	sha256sums = ea67172ac7c927ff079d3571ba621712bdede2577c6765697b966421e17224f0
 	sha256sums = fb2f77fa6b3dd7bb0f1f096c4b0f5aba8b32344f8a6dbada1f094e8e5e283ef4
 
 pkgname = aerothemeplasma-desktop-git

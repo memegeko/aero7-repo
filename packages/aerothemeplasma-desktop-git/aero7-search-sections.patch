@@ -53,7 +53,7 @@ index a527420..d3f4eff 100755
  
      function normalized(value) {
          return String(value || "").trim().toLocaleLowerCase();
-@@ -53,44 +53,82 @@ Item {
+@@ -53,44 +53,94 @@ Item {
              if (haystack.indexOf(query) === -1) {
                  continue;
              }
@@ -82,6 +82,38 @@ index a527420..d3f4eff 100755
 +        return model.data(model.index(row, 0), role);
 +    }
 +
++    function appendRunnerResults(applicationsOnly) {
++        if (!unfilteredRunnerModel) {
++            return;
++        }
++        const resultCount = filteredRunnerModel.rowCount();
++        for (let row = 0; row < resultCount; ++row) {
++            const groupName = String(modelData(filteredRunnerModel, row, 258)
++                || i18n("Programs"));
++            const isApplication = groupName === i18n("Applications")
++                || groupName === i18n("Programs");
++            if (isApplication !== applicationsOnly) {
++                continue;
++            }
++            const displayName = modelData(filteredRunnerModel, row, Qt.DisplayRole);
++            combinedResultsModel.append({
++                "key": "",
++                "provider": "runner",
++                "sourceRow": row,
++                "name": String(displayName || ""),
++                "display": String(displayName || ""),
++                "decoration": modelData(filteredRunnerModel, row, Qt.DecorationRole),
++                "description": String(modelData(filteredRunnerModel, row, 257) || ""),
++                "group": groupName,
++                "favoriteId": String(modelData(filteredRunnerModel, row, 259) || ""),
++                "hasActionList": Boolean(modelData(filteredRunnerModel, row, 264)),
++                "actionList": modelData(filteredRunnerModel, row, 265) || [],
++                "url": String(modelData(filteredRunnerModel, row, 266) || "")
++            });
++        }
++        runnerResultCount = resultCount;
++    }
++
 +    function rebuildCombinedResults() {
 +        combinedResultsModel.clear();
 +        runnerResultCount = 0;
@@ -90,33 +122,13 @@ index a527420..d3f4eff 100755
              return;
          }
 +
-+        // Keep all results in one list, but put Aero7 settings first so an
-+        // exact settings search is useful immediately. KRunner's application,
-+        // file, image, window, and other separators remain intact below it.
++        // One unified list: applications first, Aero7 Control Panel settings
++        // second, and files, images, windows, and other runners afterwards.
++        // Computer Management pages are normal application desktop entries,
++        // so they naturally appear in the first group without duplicates.
++        appendRunnerResults(true);
 +        appendCatalog(controlPanelCatalog, query, "control-panel");
-+        appendCatalog(computerManagementCatalog, query, "computer-management");
-+
-+        if (unfilteredRunnerModel) {
-+            const resultCount = filteredRunnerModel.rowCount();
-+            for (let row = 0; row < resultCount; ++row) {
-+                const displayName = modelData(filteredRunnerModel, row, Qt.DisplayRole);
-+                combinedResultsModel.append({
-+                    "key": "",
-+                    "provider": "runner",
-+                    "sourceRow": row,
-+                    "name": String(displayName || ""),
-+                    "display": String(displayName || ""),
-+                    "decoration": modelData(filteredRunnerModel, row, Qt.DecorationRole),
-+                    "description": String(modelData(filteredRunnerModel, row, 257) || ""),
-+                    "group": String(modelData(filteredRunnerModel, row, 258) || i18n("Programs")),
-+                    "favoriteId": String(modelData(filteredRunnerModel, row, 259) || ""),
-+                    "hasActionList": Boolean(modelData(filteredRunnerModel, row, 264)),
-+                    "actionList": modelData(filteredRunnerModel, row, 265) || [],
-+                    "url": String(modelData(filteredRunnerModel, row, 266) || "")
-+                });
-+            }
-+            runnerResultCount = resultCount;
-+        }
++        appendRunnerResults(false);
 +
 -        appendCatalog(controlPanelCatalog, query, "control-panel");
 -        appendCatalog(computerManagementCatalog, query, "computer-management");
@@ -147,7 +159,7 @@ index a527420..d3f4eff 100755
              if (result.provider === "computer-management") {
                  settingsLauncher.exec("/usr/bin/aero7-compmgmt --open " + result.key);
              } else {
-@@ -115,7 +149,7 @@ Item {
+@@ -115,7 +161,7 @@ Item {
                  console.warn("SevenStart could not read Control Panel settings:", error);
                  controlPanelCatalog = [];
              }
@@ -156,7 +168,7 @@ index a527420..d3f4eff 100755
          }
          Component.onCompleted: connectSource("/usr/bin/control --list-settings-json")
      }
-@@ -135,7 +169,7 @@ Item {
+@@ -135,7 +181,7 @@ Item {
                  console.warn("SevenStart could not read Computer Management settings:", error);
                  computerManagementCatalog = [];
              }
@@ -165,7 +177,7 @@ index a527420..d3f4eff 100755
          }
          Component.onCompleted: connectSource("/usr/bin/aero7-compmgmt --list-settings-json")
      }
-@@ -182,7 +216,7 @@ Item {
+@@ -182,7 +228,7 @@ Item {
      function refreshResultsModel() {
          unfilteredRunnerModel = runnerModel.count ? runnerModel.modelForRow(0) : null;
          filteredRunnerModel.invalidateFilter();
@@ -174,7 +186,7 @@ index a527420..d3f4eff 100755
      }
  
      function inhibitMouse() {
-@@ -213,13 +247,11 @@ Item {
+@@ -213,13 +259,11 @@ Item {
          queryFinished = false;
          runnerModel.query = searchField.text;
          unfilteredRunnerModel = null;
@@ -190,7 +202,7 @@ index a527420..d3f4eff 100755
          }
      }
      function openContextMenu() {
-@@ -230,7 +262,7 @@ Item {
+@@ -230,7 +274,7 @@ Item {
  
      Connections {
          function onCountChanged() {
@@ -199,7 +211,7 @@ index a527420..d3f4eff 100755
                  refreshResultsModel();
              }
          }
-@@ -238,86 +270,32 @@ Item {
+@@ -238,86 +282,32 @@ Item {
              if (runnerModel.count) {
                  refreshResultsModel();
                  queryFinished = true;

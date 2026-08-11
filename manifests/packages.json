@@ -10,6 +10,7 @@
     "aeroshell-smod-git",
     "uac-polkit-agent-git",
     "aerothemeplasma-desktop-git",
+    "aero7-computer-management-git",
     "linux-devmgmt",
     "tuxmanager",
     "aero7-qt",
@@ -55,6 +56,9 @@
     ],
     "aerothemeplasma-desktop-git": [
       "aerothemeplasma-desktop"
+    ],
+    "aero7-computer-management-git": [
+      "aero7-computer-management"
     ],
     "aero7-dolphin": [
       "dolphin"

@@ -12,6 +12,7 @@ repository assembly, and a fresh-VM install/rollback transaction.
 | Aero Dolphin | `f0500fae7c4aadf75df23300557c0288404c6575` | `aero7-dolphin` | Full Qt 6/KF6 build, staged install, and isolated startup pass with licensed `aero7-qt`; provides and conflicts with `dolphin` |
 | Aero Gwenview | `33e15a58e3017ab9a4e01070cc1e3b0138b3892d` | `aero7-gwenview` | Full build, staged install, and startup pass; the custom bitmap control strip was replaced with original code-drawn glass and theme icons |
 | Linux Control Panel | `c5c2ce72c656dde172fe2196f3d55f2633643edc` | `linux-control-panel` | Aero7 fork with native NetworkManager, account, appearance, PipeWire/PulseAudio and UPower workflows, UFW logging controls, stale-kernel firewall diagnostics, Network Management and spelling integration; Wallet support is intentionally excluded |
+| Computer Management | `edf5817345d459884878d38fcea8beaf54b9ffa2` | `aero7-computer-management-git` | Separate MIT administration console; all six tests pass and every selectable module installs a searchable application shortcut with its matching theme icon |
 | Aero KolourPaint | `0a0debee63d9902b1dd6dafdddad41f21549c5b7` | `aero7-kolourpaint` | Full build, staged install, and startup pass with MIT SARibbon revision `540624e98a53cff47fc1b0531d9129ae3a7fe6b2` bundled |
 | Gadgets | Aero7-owned source | `aero7-gadgets` | Original Plasma 6 Clock, CPU Meter, and Notes widgets pass `qmllint` and a local Arch package build; the asset-heavy upstream bundle is not redistributed |
 | WinXplorer | `9d2fae647e1bd9fc7f1dd53f36f8d5e160f4fddc` | `winxplorer` | Full build, staged install, and startup pass after replacing bitmap controls with QML-drawn glass and removing the bundled navigation sound |
@@ -58,14 +59,14 @@ are deleted in each package's `prepare()` step before compilation.
   Aero KolourPaint package is built without a temporary SARibbon RUNPATH, and
   the final package archives contain no build-root path references.
 - Repository validation, lock checks, dependency ordering, `.SRCINFO`
-  freshness checks, and shell syntax checks pass for all 19 packages.
+  freshness checks, and shell syntax checks pass for all 20 packages.
 
 `namcap` and the privileged clean-chroot builder were not run on this host
 because `namcap` is not installed and this pass intentionally used no sudo.
 
 ## Remaining release gate
 
-Run the normal builder workflow, sign the 19-package repository, and install
+Run the normal builder workflow, sign the 20-package repository, and install
 it in a fresh Aero7 VM. In that VM, verify replacement transactions and
 rollback for Dolphin, Gwenview, and KolourPaint; launch all companion desktop
 entries under Plasma 6 Wayland; add and remove each Gadget; and confirm that

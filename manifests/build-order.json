@@ -6,6 +6,7 @@
     "aerothemeplasma-sounds-git",
     "aeroshell-smod-git",
     "uac-polkit-agent-git",
+    "aero7-computer-management-git",
     "linux-devmgmt",
     "tuxmanager",
     "aero7-qt",
@@ -45,6 +46,9 @@
     ],
     "uac-polkit-agent-git": [],
     "aerothemeplasma-desktop-git": [],
+    "aero7-computer-management-git": [
+      "aerothemeplasma-desktop-git"
+    ],
     "linux-devmgmt": [],
     "tuxmanager": [],
     "aero7-qt": [
@@ -214,6 +218,28 @@
       ],
       "conflicts": [
         "uac-polkit-agent"
+      ],
+      "replaces": []
+    },
+    "aero7-computer-management-git": {
+      "arch": [
+        "x86_64"
+      ],
+      "depends": [
+        "qt6-base",
+        "systemd",
+        "udisks2"
+      ],
+      "makedepends": [
+        "cmake",
+        "ninja",
+        "git"
+      ],
+      "provides": [
+        "aero7-computer-management"
+      ],
+      "conflicts": [
+        "aero7-computer-management"
       ],
       "replaces": []
     },
@@ -674,7 +700,8 @@
         "spectacle",
         "kcalc",
         "featherpad",
-        "qt6-base"
+        "qt6-base",
+        "aero7-computer-management"
       ],
       "makedepends": [
         "git",
