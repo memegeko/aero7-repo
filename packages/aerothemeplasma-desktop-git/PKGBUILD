@@ -2,7 +2,7 @@
 
 pkgname=('aerothemeplasma-desktop-git')
 pkgver=6.7.0_742.r9c2d850
-pkgrel=5
+pkgrel=6
 pkgdesc="An Aero-inspired classic desktop shell for KDE Plasma"
 arch=(x86_64)
 url="https://github.com/memegeko/aerothemeplasma"
@@ -82,7 +82,7 @@ source=("${pkgname}::git+${url}.git#commit=9c2d850f0907cd7d33c81e8a3fcc00abae3ab
         'aero7-kwalletrc')
 sha256sums=('SKIP'
             'a5401b0b49372afc08658be7681d00d4ba15d13ad180fd00b27aff71d0cb2435'
-            'ea67172ac7c927ff079d3571ba621712bdede2577c6765697b966421e17224f0'
+            'b927b6a485d914e12601327dc3b5ae2c0d85394779f935a47ddf050ec702d9f6'
             'fb2f77fa6b3dd7bb0f1f096c4b0f5aba8b32344f8a6dbada1f094e8e5e283ef4'
             '10512740e425d40a16d6d3dee52e5b87301b60446649a56c98237be9aeb6bdf7')
 conflicts=(aerothemeplasma-desktop)

@@ -63,25 +63,27 @@
       "source_revisions": {
         "https://github.com/memegeko/aerothemeplasma": "9c2d850f0907cd7d33c81e8a3fcc00abae3abb9b"
       },
-      "pkgbuild_sha256": "294bfb8b1290fd2cf1f54c6eab67019a2aab995bf0fd923a29cad427159a1c6b",
-      "srcinfo_sha256": "6771a852c660a6763fac228329e85f697772b18b88de1e233a32b83ba3210085",
-      "reviewed_at": "2026-08-11T00:00:00Z"
+      "pkgbuild_sha256": "233175e628f28072ee997f83e892b19914962a1297555df0451d4d54fc1a7a87",
+      "srcinfo_sha256": "171b63292118a98ac99c612ba9000f80210843310d148e83ae5a1d11d224079b",
+      "reviewed_at": "2026-08-11T22:39:00Z"
     },
     "aero7-computer-management-git": {
       "source_type": "pinned-vcs",
       "source_revisions": {
-        "https://github.com/memegeko/aero7-computer-management": "fd5da379f73e326252bfa6de943bce6cd555e6be"
+        "https://github.com/memegeko/aero7-computer-management": "0f2fc4b4512f44076b6598b09aa0e56ef2b53e63"
       },
-      "pkgbuild_sha256": "e5072f732ee4eee35d1dd596c526546035aedb406b726d4a6560d53c02eea4ce",
-      "srcinfo_sha256": "e2defa393e2d70cd141068219664e397f4caa230b3e271e59d08a2309ac9e514",
-      "reviewed_at": "2026-08-11T21:09:04Z"
+      "pkgbuild_sha256": "4dd10bf84dfbd35fcfa2815e8dca62fd3db782450698547246fe3ec9a41f046b",
+      "srcinfo_sha256": "3b529b9750808063aa1fcfe9332260fcb6217843ef4bca3ec763a6b23ffec8cd",
+      "reviewed_at": "2026-08-11T22:39:00Z"
     },
     "linux-devmgmt": {
-      "aur_url": "https://aur.archlinux.org/linux-devmgmt.git",
-      "aur_commit": "2044b10d7d4a81998a63c190ea42f2e67ce91375",
-      "pkgbuild_sha256": "c3d421f514c98acd72b41460c25d86c803139d6133161b10d7c4d9bdbea78e83",
-      "srcinfo_sha256": "ee3b1d7f914fce44cdd329cde4df1ed64afc66be41f0ef74c0966dc3b73a8d71",
-      "reviewed_at": "2026-07-21T17:54:48Z"
+      "pkgbuild_sha256": "9d692643c6097cdbc8caf24a80c365aff708e81578d0ae96ccf2ae864dd11eb0",
+      "srcinfo_sha256": "d5a6922a163032440d7bac758f3266ea32a5d6b004d969a7e8145f59eb2ad9e3",
+      "reviewed_at": "2026-08-11T22:54:26Z",
+      "source_type": "pinned-vcs",
+      "source_revisions": {
+        "https://github.com/memegeko/linux-devmgmt": "b1452862ccb5548390aecaf8771a70b20aa48f28"
+      }
     },
     "tuxmanager": {
       "aur_url": "https://aur.archlinux.org/tuxmanager.git",

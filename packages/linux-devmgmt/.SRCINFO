@@ -1,15 +1,16 @@
 pkgbase = linux-devmgmt
-	pkgdesc = A faithful recreation of the Windows Device Manager
-	pkgver = 2.0.4.1
+	pkgdesc = Aero7 Device Manager with real Linux hardware backends
+	pkgver = 2.2.1
 	pkgrel = 1
-	url = https://github.com/actuallyaridan/linux-devmgmt
+	url = https://github.com/memegeko/linux-devmgmt
 	arch = x86_64
 	arch = aarch64
-	license = MIT
+	license = GPL-3.0-only
 	makedepends = cmake
 	makedepends = ninja
 	depends = qt6-base
-	source = linux-devmgmt-2.0.4.1.tar.gz::https://github.com/actuallyaridan/linux-devmgmt/archive/refs/tags/v2.0.4.1.tar.gz
-	sha256sums = e7dec7bcd7530cae63930eecd0466e9c0c8c4bcfe0f2de3b09b3ee38235f6e3b
+	options = !debug
+	source = linux-devmgmt-b1452862ccb5548390aecaf8771a70b20aa48f28.tar.gz::https://github.com/memegeko/linux-devmgmt/archive/b1452862ccb5548390aecaf8771a70b20aa48f28.tar.gz
+	sha256sums = 2a9687fde187199ad2af9b51bd22e817b23bbde42c1884f59dcac5f86f8def68
 
 pkgname = linux-devmgmt

@@ -1,5 +1,5 @@
 diff --git a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/GenericItem.qml b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/GenericItem.qml
-index 6def13b..078ed99 100644
+index 6def13b5118b5f16cbb1dc341a18e265321f93a4..078ed99aafe03b4fed0f5998a689de548f52ba11 100644
 --- a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/GenericItem.qml
 +++ b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/GenericItem.qml
 @@ -85,7 +85,9 @@ Item {
@@ -22,22 +22,11 @@ index 6def13b..078ed99 100644
            if ("pluginName" in model) {
              dragHelper.startDrag(kicker, model.url, model.decoration,
                  "text/x-plasmoidservicename", model.pluginName);
-diff --git a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/SectionDelegate.qml b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/SectionDelegate.qml
-index 3320d66..bc91a6e 100755
---- a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/SectionDelegate.qml
-+++ b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/SectionDelegate.qml
-@@ -27,5 +27,6 @@ import org.kde.kirigami as Kirigami
- Item {
-     id: sectionDelegate
-+    required property string section
-     width: parent.width
-     height: Kirigami.Units.iconSizes.medium-1 //childrenRect.height
-     objectName: "SectionDelegate"
 diff --git a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/SearchView.qml b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/SearchView.qml
-index a527420..d3f4eff 100755
+index a52742077a18c460ca2a10224ad7cacb72b1be93..c18fc2042a9bc445afc984d7c8ba0a8205a3e9d4 100755
 --- a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/SearchView.qml
 +++ b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/SearchView.qml
-@@ -33,13 +33,13 @@ import org.kde.kirigami as Kirigami
+@@ -33,19 +33,20 @@ import org.kde.kirigami as Kirigami
  Item {
      id: searchViewContainer
  
@@ -49,11 +38,19 @@ index a527420..d3f4eff 100755
      property var controlPanelCatalog: []
      property var computerManagementCatalog: []
 -    property int currentTab: 0
++    property var deviceManagerCatalog: []
 +    property int runnerResultCount: 0
  
      function normalized(value) {
          return String(value || "").trim().toLocaleLowerCase();
-@@ -53,44 +53,94 @@ Item {
+     }
+ 
+-    function appendCatalog(catalog, query, provider) {
++    function appendCatalog(catalog, query, provider, sectionLabel) {
+         for (let i = 0; i < catalog.length; ++i) {
+             const setting = catalog[i];
+             const haystack = normalized(setting.name + " " + setting.description
+@@ -53,46 +54,99 @@ Item {
              if (haystack.indexOf(query) === -1) {
                  continue;
              }
@@ -67,7 +64,7 @@ index a527420..d3f4eff 100755
                  "decoration": setting.icon || "preferences-system",
                  "description": setting.description,
 -                "group": setting.section || i18n("Control Panel"),
-+                "group": i18n("Control Panel"),
++                "group": sectionLabel,
                  "favoriteId": "",
                  "hasActionList": false,
 +                "actionList": [],
@@ -121,17 +118,18 @@ index a527420..d3f4eff 100755
          if (!query) {
              return;
          }
+-        appendCatalog(controlPanelCatalog, query, "control-panel");
+-        appendCatalog(computerManagementCatalog, query, "computer-management");
 +
-+        // One unified list: applications first, Aero7 Control Panel settings
-+        // second, and files, images, windows, and other runners afterwards.
++        // One unified list: applications first, Aero7 Control Panel and
++        // Device Manager sections next, then files and other runners.
 +        // Computer Management pages are normal application desktop entries,
 +        // so they naturally appear in the first group without duplicates.
 +        appendRunnerResults(true);
-+        appendCatalog(controlPanelCatalog, query, "control-panel");
++        appendCatalog(controlPanelCatalog, query, "control-panel", i18n("Control Panel"));
++        appendCatalog(deviceManagerCatalog, query, "device-manager", i18n("Device Manager"));
 +        appendRunnerResults(false);
 +
--        appendCatalog(controlPanelCatalog, query, "control-panel");
--        appendCatalog(computerManagementCatalog, query, "computer-management");
      }
  
      ListModel {
@@ -158,8 +156,12 @@ index a527420..d3f4eff 100755
 +            }
              if (result.provider === "computer-management") {
                  settingsLauncher.exec("/usr/bin/aero7-compmgmt --open " + result.key);
++            } else if (result.provider === "device-manager") {
++                settingsLauncher.exec("/usr/bin/devmgmt --open " + result.key);
              } else {
-@@ -115,7 +161,7 @@ Item {
+                 settingsLauncher.exec("/usr/bin/control --setting " + result.key);
+             }
+@@ -115,7 +169,7 @@ Item {
                  console.warn("SevenStart could not read Control Panel settings:", error);
                  controlPanelCatalog = [];
              }
@@ -168,7 +170,7 @@ index a527420..d3f4eff 100755
          }
          Component.onCompleted: connectSource("/usr/bin/control --list-settings-json")
      }
-@@ -135,7 +181,7 @@ Item {
+@@ -135,11 +189,31 @@ Item {
                  console.warn("SevenStart could not read Computer Management settings:", error);
                  computerManagementCatalog = [];
              }
@@ -177,7 +179,31 @@ index a527420..d3f4eff 100755
          }
          Component.onCompleted: connectSource("/usr/bin/aero7-compmgmt --list-settings-json")
      }
-@@ -182,7 +228,7 @@ Item {
+ 
++    Plasma5Support.DataSource {
++        id: deviceManagerCatalogLoader
++        engine: "executable"
++        connectedSources: []
++        onNewData: (sourceName, data) => {
++            disconnectSource(sourceName);
++            if (data["exit code"] !== 0) {
++                return;
++            }
++            try {
++                deviceManagerCatalog = JSON.parse(data["stdout"] || "[]");
++            } catch (error) {
++                console.warn("SevenStart could not read Device Manager sections:", error);
++                deviceManagerCatalog = [];
++            }
++            rebuildCombinedResults();
++        }
++        Component.onCompleted: connectSource("/usr/bin/devmgmt --list-settings-json")
++    }
++
+     Plasma5Support.DataSource {
+         id: settingsLauncher
+         engine: "executable"
+@@ -182,7 +256,7 @@ Item {
      function refreshResultsModel() {
          unfilteredRunnerModel = runnerModel.count ? runnerModel.modelForRow(0) : null;
          filteredRunnerModel.invalidateFilter();
@@ -186,7 +212,7 @@ index a527420..d3f4eff 100755
      }
  
      function inhibitMouse() {
-@@ -213,13 +259,11 @@ Item {
+@@ -213,13 +287,11 @@ Item {
          queryFinished = false;
          runnerModel.query = searchField.text;
          unfilteredRunnerModel = null;
@@ -202,7 +228,7 @@ index a527420..d3f4eff 100755
          }
      }
      function openContextMenu() {
-@@ -230,7 +274,7 @@ Item {
+@@ -230,7 +302,7 @@ Item {
  
      Connections {
          function onCountChanged() {
@@ -211,7 +237,7 @@ index a527420..d3f4eff 100755
                  refreshResultsModel();
              }
          }
-@@ -238,86 +282,32 @@ Item {
+@@ -238,86 +310,32 @@ Item {
              if (runnerModel.count) {
                  refreshResultsModel();
                  queryFinished = true;
@@ -263,21 +289,9 @@ index a527420..d3f4eff 100755
 -                        cursorShape: Qt.PointingHandCursor
 -                        onClicked: currentTab = index
 -                    }
-+        triggerModel: combinedResultsModel
-+        actionModel: combinedActionModel
-+
-+        MouseArea {
-+            id: mouseInhibitor
-+            anchors.fill: parent
-+            z: 99
-+            hoverEnabled: true
-+            visible: resultsGrid.inhibitMouseEvents > 0
-+            onPositionChanged: {
-+                if(resultsGrid.inhibitMouseEvents > 0) {
-+                    resultsGrid.inhibitMouseEvents--;
-                 }
-             }
-         }
+-                }
+-            }
+-        }
 -
 -        Item {
 -            Layout.fillWidth: true
@@ -299,8 +313,20 @@ index a527420..d3f4eff 100755
 -                        if(runnerGrid.inhibitMouseEvents > 0)
 -                            runnerGrid.inhibitMouseEvents--;
 -                    }
--                }
--            }
++        triggerModel: combinedResultsModel
++        actionModel: combinedActionModel
++
++        MouseArea {
++            id: mouseInhibitor
++            anchors.fill: parent
++            z: 99
++            hoverEnabled: true
++            visible: resultsGrid.inhibitMouseEvents > 0
++            onPositionChanged: {
++                if(resultsGrid.inhibitMouseEvents > 0) {
++                    resultsGrid.inhibitMouseEvents--;
+                 }
+             }
 -
 -            NavGrid {
 -                id: settingsGrid
@@ -310,11 +336,23 @@ index a527420..d3f4eff 100755
 -                actionModel: settingsActionModel
 -                allowDrag: false
 -            }
--        }
+         }
      }
  }
+diff --git a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/SectionDelegate.qml b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/SectionDelegate.qml
+index 6a6903b40b75abd648745f69df22a71570b569b7..07e06e42022d140bcca3b012c02ba4c5846f1750 100755
+--- a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/SectionDelegate.qml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/SectionDelegate.qml
+@@ -26,6 +26,7 @@ import org.kde.kirigami as Kirigami
+ 
+ Item {
+     id: sectionDelegate
++    required property string section
+     width: parent.width
+     height: Kirigami.Units.iconSizes.medium-1 //childrenRect.height
+     objectName: "SectionDelegate"
 diff --git a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/main.qml b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/main.qml
-index cdc3683..1f5544d 100755
+index cdc3683fb96c4c1a3c1ecb7864925ffb710a6187..1f5544dfecf107c2a4100e07b1fb0170a851c643 100755
 --- a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/main.qml
 +++ b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/main.qml
 @@ -61,7 +61,8 @@ PlasmoidItem {

@@ -199,7 +199,10 @@ def validate_desktop_polish() -> None:
         / "aero7-search-sections.patch"
     ).read_text(encoding="utf-8")
     for required in [
-        '"group": i18n("Control Panel")',
+        'appendCatalog(controlPanelCatalog, query, "control-panel", i18n("Control Panel"))',
+        'appendCatalog(deviceManagerCatalog, query, "device-manager", i18n("Device Manager"))',
+        'connectSource("/usr/bin/devmgmt --list-settings-json")',
+        'settingsLauncher.exec("/usr/bin/devmgmt --open " + result.key)',
         "id: combinedResultsModel",
         "id: combinedActionModel",
         "id: resultsGrid",
@@ -211,14 +214,16 @@ def validate_desktop_polish() -> None:
         if required not in search_sections_patch:
             fail(f"Aero launcher section search is missing: {required}")
     applications_first = "appendRunnerResults(true);"
-    control_panel_second = 'appendCatalog(controlPanelCatalog, query, "control-panel");'
+    control_panel_second = 'appendCatalog(controlPanelCatalog, query, "control-panel", i18n("Control Panel"));'
+    device_manager_third = 'appendCatalog(deviceManagerCatalog, query, "device-manager", i18n("Device Manager"));'
     remaining_results_last = "appendRunnerResults(false);"
     if not (
         search_sections_patch.index(applications_first)
         < search_sections_patch.index(control_panel_second)
+        < search_sections_patch.index(device_manager_third)
         < search_sections_patch.index(remaining_results_last)
     ):
-        fail("search results must order Applications, Control Panel, then other groups")
+        fail("search results must order Applications, Control Panel, Device Manager, then other groups")
     if '+        appendCatalog(computerManagementCatalog, query, "computer-management");' in search_sections_patch:
         fail("Computer Management pages would duplicate their application entries")
     if launcher_patch.count('executable.exec("tux-manager")') < 3:
