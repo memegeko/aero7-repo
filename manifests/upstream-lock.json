@@ -63,8 +63,8 @@
       "source_revisions": {
         "https://github.com/memegeko/aerothemeplasma": "9c2d850f0907cd7d33c81e8a3fcc00abae3abb9b"
       },
-      "pkgbuild_sha256": "d88a8988e098d10b21b33f88b223e0a942d9db1ac1bd409e8ed2ad45eafb8a30",
-      "srcinfo_sha256": "fff42029009e3e3fb57a96660040c0a0c5cbc8c8855dcb3085b7ccd137105e0e",
+      "pkgbuild_sha256": "d76e6dd246451fc633491c4889a325bd54a7d2b3a4d852b0e4ab1230f43cdf65",
+      "srcinfo_sha256": "57178bf25b2796832de42fa11a5e151139b1948d7b3b4e62f29efceb9a5ed39c",
       "reviewed_at": "2026-08-11T00:00:00Z"
     },
     "linux-devmgmt": {
@@ -109,10 +109,10 @@
     "linux-control-panel": {
       "source_type": "pinned-vcs",
       "source_revisions": {
-        "https://github.com/memegeko/aero7-control-panel-": "c5c2ce72c656dde172fe2196f3d55f2633643edc"
+        "https://github.com/memegeko/aero7-control-panel-": "c6f178288379c0c499b65bdc113313c5ffcf75f6"
       },
-      "pkgbuild_sha256": "b87a01fa7fd7b7e46c361997db74e1c97bbd7e9ad6d6572f7f3b4a34c34ff37d",
-      "srcinfo_sha256": "329c4b14b993d0e5256c0042e82a4828f042d367140c423249db9722f8c9fb88",
+      "pkgbuild_sha256": "84584455eb78d622d902e97184c3f29a46cff02966f4f854ad2f5331642eaa35",
+      "srcinfo_sha256": "9235cd92430a2b6adcc5601928072b78a893b27d285279a99c950ffa9bebd68b",
       "reviewed_at": "2026-08-11T00:00:00Z"
     },
     "aero7-kolourpaint": {

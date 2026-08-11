@@ -2,7 +2,7 @@
 
 pkgname=('aerothemeplasma-desktop-git')
 pkgver=6.7.0_742.r9c2d850
-pkgrel=2
+pkgrel=3
 pkgdesc="An Aero-inspired classic desktop shell for KDE Plasma"
 arch=(x86_64)
 url="https://github.com/memegeko/aerothemeplasma"
@@ -76,9 +76,11 @@ makedepends=(git
 options=('!debug')
 source=("${pkgname}::git+${url}.git#commit=9c2d850f0907cd7d33c81e8a3fcc00abae3abb9b"
         'aero7-desktop-polish.patch'
+        'aero7-search-sections.patch'
         'aero7-watermark.png')
 sha256sums=('SKIP'
-            '4ab3fdb31a04f44f1b27ac15640693c5bc7376d5c80a9004b3d665d76b4718db'
+            'a5401b0b49372afc08658be7681d00d4ba15d13ad180fd00b27aff71d0cb2435'
+            '534f81ad4a9ed2b521ce9ec66c41c8f538eda1e052b986507e0c025c946333c0'
             'fb2f77fa6b3dd7bb0f1f096c4b0f5aba8b32344f8a6dbada1f094e8e5e283ef4')
 conflicts=(aerothemeplasma-desktop)
 provides=(aerothemeplasma-desktop)
@@ -91,6 +93,7 @@ pkgver() {
 
 prepare() {
   patch -d "${pkgname%}" -Np1 < aero7-desktop-polish.patch
+  patch -d "${pkgname%}" -Np1 < aero7-search-sections.patch
 }
 
 build() {
@@ -106,5 +109,5 @@ package() {
     install -Dm644 "${pkgname%}/THIRD_PARTY.md" \
       "$pkgdir/usr/share/licenses/$pkgname/THIRD_PARTY.md"
     install -Dm644 "$srcdir/aero7-watermark.png" \
-      "$pkgdir/usr/share/sddm/themes/sddm-theme-mod/Assets/aero7-branding.png"
+      "$pkgdir/usr/share/sddm/themes/sddm-theme-mod/Assets/aero7-branding-r3.png"
 }

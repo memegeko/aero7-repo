@@ -1,0 +1,317 @@
+diff --git a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/GenericItem.qml b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/GenericItem.qml
+index 6def13b..078ed99 100644
+--- a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/GenericItem.qml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/GenericItem.qml
+@@ -85,7 +85,9 @@ Item {
+       }
+     }
+ 
+-    Tools.fillActionMenu(i18n, actionMenu, actionList, ListView.view.model.favoritesModel, model.favoriteId);
++    Tools.fillActionMenu(i18n, actionMenu, actionList,
++        triggerModel && triggerModel.favoritesModel ? triggerModel.favoritesModel : null,
++        model.favoriteId);
+   }
+ 
+   function openActionMenu(x, y) {
+@@ -210,7 +212,7 @@ Item {
+       }
+       onPositionChanged: {
+         isDraging = pressed
+-        if (pressed && canDrag){
++        if (pressed && canDrag && model.url){
+           if ("pluginName" in model) {
+             dragHelper.startDrag(kicker, model.url, model.decoration,
+                 "text/x-plasmoidservicename", model.pluginName);
+diff --git a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/SectionDelegate.qml b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/SectionDelegate.qml
+index 3320d66..bc91a6e 100755
+--- a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/SectionDelegate.qml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/SectionDelegate.qml
+@@ -27,5 +27,6 @@ import org.kde.kirigami as Kirigami
+ Item {
+     id: sectionDelegate
++    required property string section
+     width: parent.width
+     height: Kirigami.Units.iconSizes.medium-1 //childrenRect.height
+     objectName: "SectionDelegate"
+diff --git a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/SearchView.qml b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/SearchView.qml
+index a527420..d3f4eff 100755
+--- a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/SearchView.qml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/SearchView.qml
+@@ -33,13 +33,13 @@ import org.kde.kirigami as Kirigami
+ Item {
+     id: searchViewContainer
+ 
+-    property Item itemGrid: currentTab === 1 ? settingsGrid : runnerGrid
++    property Item itemGrid: resultsGrid
+     property bool queryFinished: false
+     property int repeaterModelIndex: 0
+     property var unfilteredRunnerModel: null
+     property var controlPanelCatalog: []
+     property var computerManagementCatalog: []
+-    property int currentTab: 0
++    property int runnerResultCount: 0
+ 
+     function normalized(value) {
+         return String(value || "").trim().toLocaleLowerCase();
+@@ -53,44 +53,82 @@ Item {
+             if (haystack.indexOf(query) === -1) {
+                 continue;
+             }
+-            settingsResultsModel.append({
++            combinedResultsModel.append({
+                 "key": setting.key,
+                 "provider": provider,
++                "sourceRow": -1,
+                 "name": setting.name,
+                 "display": setting.name,
+                 "decoration": setting.icon || "preferences-system",
+                 "description": setting.description,
+-                "group": setting.section || i18n("Control Panel"),
++                "group": i18n("Control Panel"),
+                 "favoriteId": "",
+                 "hasActionList": false,
++                "actionList": [],
+                 "url": ""
+             });
+         }
+     }
+ 
+-    function rebuildSettingsResults() {
+-        settingsResultsModel.clear();
++    function modelData(model, row, role) {
++        return model.data(model.index(row, 0), role);
++    }
++
++    function rebuildCombinedResults() {
++        combinedResultsModel.clear();
++        runnerResultCount = 0;
+         const query = normalized(searchField.text);
+         if (!query) {
+             return;
+         }
++
++        // Keep all results in one list, but put Aero7 settings first so an
++        // exact settings search is useful immediately. KRunner's application,
++        // file, image, window, and other separators remain intact below it.
++        appendCatalog(controlPanelCatalog, query, "control-panel");
++        appendCatalog(computerManagementCatalog, query, "computer-management");
++
++        if (unfilteredRunnerModel) {
++            const resultCount = filteredRunnerModel.rowCount();
++            for (let row = 0; row < resultCount; ++row) {
++                const displayName = modelData(filteredRunnerModel, row, Qt.DisplayRole);
++                combinedResultsModel.append({
++                    "key": "",
++                    "provider": "runner",
++                    "sourceRow": row,
++                    "name": String(displayName || ""),
++                    "display": String(displayName || ""),
++                    "decoration": modelData(filteredRunnerModel, row, Qt.DecorationRole),
++                    "description": String(modelData(filteredRunnerModel, row, 257) || ""),
++                    "group": String(modelData(filteredRunnerModel, row, 258) || i18n("Programs")),
++                    "favoriteId": String(modelData(filteredRunnerModel, row, 259) || ""),
++                    "hasActionList": Boolean(modelData(filteredRunnerModel, row, 264)),
++                    "actionList": modelData(filteredRunnerModel, row, 265) || [],
++                    "url": String(modelData(filteredRunnerModel, row, 266) || "")
++                });
++            }
++            runnerResultCount = resultCount;
++        }
++
+-        appendCatalog(controlPanelCatalog, query, "control-panel");
+-        appendCatalog(computerManagementCatalog, query, "computer-management");
+     }
+ 
+     ListModel {
+-        id: settingsResultsModel
++        id: combinedResultsModel
++        dynamicRoles: true
+     }
+ 
+     QtObject {
+-        id: settingsActionModel
+-        property var favoritesModel: null
++        id: combinedActionModel
++        property var favoritesModel: filteredRunnerModel.favoritesModel
+ 
+         function trigger(index, actionId, actionArgument) {
+-            if (index < 0 || index >= settingsResultsModel.count) {
++            if (index < 0 || index >= combinedResultsModel.count) {
+                 return false;
+             }
+-            const result = settingsResultsModel.get(index);
++            const result = combinedResultsModel.get(index);
++            if (result.provider === "runner") {
++                return filteredRunnerModel.trigger(result.sourceRow, actionId, actionArgument);
++            }
+             if (result.provider === "computer-management") {
+                 settingsLauncher.exec("/usr/bin/aero7-compmgmt --open " + result.key);
+             } else {
+@@ -115,7 +149,7 @@ Item {
+                 console.warn("SevenStart could not read Control Panel settings:", error);
+                 controlPanelCatalog = [];
+             }
+-            rebuildSettingsResults();
++            rebuildCombinedResults();
+         }
+         Component.onCompleted: connectSource("/usr/bin/control --list-settings-json")
+     }
+@@ -135,7 +169,7 @@ Item {
+                 console.warn("SevenStart could not read Computer Management settings:", error);
+                 computerManagementCatalog = [];
+             }
+-            rebuildSettingsResults();
++            rebuildCombinedResults();
+         }
+         Component.onCompleted: connectSource("/usr/bin/aero7-compmgmt --list-settings-json")
+     }
+@@ -182,7 +216,7 @@ Item {
+     function refreshResultsModel() {
+         unfilteredRunnerModel = runnerModel.count ? runnerModel.modelForRow(0) : null;
+         filteredRunnerModel.invalidateFilter();
+-        runnerGrid.model = unfilteredRunnerModel ? filteredRunnerModel : null;
++        rebuildCombinedResults();
+     }
+ 
+     function inhibitMouse() {
+@@ -213,13 +247,11 @@ Item {
+         queryFinished = false;
+         runnerModel.query = searchField.text;
+         unfilteredRunnerModel = null;
+-        runnerGrid.model = null;
+         filteredRunnerModel.invalidateFilter();
+-        rebuildSettingsResults();
+-        currentTab = 0;
++        rebuildCombinedResults();
+         if (!searchField.text) {
+             unfilteredRunnerModel = null;
+-            runnerGrid.model = null;
++            combinedResultsModel.clear();
+         }
+     }
+     function openContextMenu() {
+@@ -230,7 +262,7 @@ Item {
+ 
+     Connections {
+         function onCountChanged() {
+-            if (runnerModel.count && !runnerGrid.model) {
++            if (runnerModel.count && !unfilteredRunnerModel) {
+                 refreshResultsModel();
+             }
+         }
+@@ -238,86 +270,32 @@ Item {
+             if (runnerModel.count) {
+                 refreshResultsModel();
+                 queryFinished = true;
+-                var listView = runnerGrid.flickableItem;
++                var listView = resultsGrid.flickableItem;
+                 if(listView.count > 0) listView.currentIndex = 0;
+                 //console.log(runnerModel.modelForRow(0).modelForRow(0))
+             }
+-            if (runnerGrid.count === 0 && settingsGrid.count > 0) {
+-                currentTab = 1;
+-                settingsGrid.currentIndex = 0;
+-            }
+         }
+ 
+         target: runnerModel
+     }
+ 
+-    ColumnLayout {
++    NavGrid {
++        id: resultsGrid
+         anchors.fill: parent
+-        spacing: 3
+-
+-        RowLayout {
+-            Layout.fillWidth: true
+-            Layout.preferredHeight: 25
+-            spacing: 2
+-
+-            Repeater {
+-                model: [i18n("Programs"), i18n("Control Panel")]
+-                delegate: Rectangle {
+-                    required property int index
+-                    required property string modelData
+-                    Layout.fillWidth: true
+-                    Layout.fillHeight: true
+-                    color: currentTab === index ? "#e8f3ff" : "#f7f7f7"
+-                    border.color: currentTab === index ? "#6aa7dc" : "#b7b7b7"
+-                    radius: 2
+-
+-                    PlasmaComponents.Label {
+-                        anchors.centerIn: parent
+-                        text: modelData + " (" + (index === 0
+-                            ? runnerGrid.count : settingsGrid.count) + ")"
+-                        color: "#111111"
+-                        font.bold: currentTab === index
+-                    }
+-                    MouseArea {
+-                        anchors.fill: parent
+-                        cursorShape: Qt.PointingHandCursor
+-                        onClicked: currentTab = index
+-                    }
++        triggerModel: combinedResultsModel
++        actionModel: combinedActionModel
++
++        MouseArea {
++            id: mouseInhibitor
++            anchors.fill: parent
++            z: 99
++            hoverEnabled: true
++            visible: resultsGrid.inhibitMouseEvents > 0
++            onPositionChanged: {
++                if(resultsGrid.inhibitMouseEvents > 0) {
++                    resultsGrid.inhibitMouseEvents--;
+                 }
+             }
+         }
+-
+-        Item {
+-            Layout.fillWidth: true
+-            Layout.fillHeight: true
+-
+-            NavGrid {
+-                id: runnerGrid
+-                anchors.fill: parent
+-                visible: currentTab === 0
+-                property alias model: runnerGrid.triggerModel
+-                triggerModel: null
+-                MouseArea {
+-                    id: mouseInhibitor
+-                    anchors.fill: parent
+-                    z: 99
+-                    hoverEnabled: true
+-                    visible: runnerGrid.inhibitMouseEvents > 0
+-                    onPositionChanged: {
+-                        if(runnerGrid.inhibitMouseEvents > 0)
+-                            runnerGrid.inhibitMouseEvents--;
+-                    }
+-                }
+-            }
+-
+-            NavGrid {
+-                id: settingsGrid
+-                anchors.fill: parent
+-                visible: currentTab === 1
+-                triggerModel: settingsResultsModel
+-                actionModel: settingsActionModel
+-                allowDrag: false
+-            }
+-        }
+     }
+ }
+diff --git a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/main.qml b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/main.qml
+index cdc3683..1f5544d 100755
+--- a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/main.qml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/main.qml
+@@ -61,7 +61,8 @@ PlasmoidItem {
+         "Qt Widgets Designer"
+     ]
+     readonly property var fullyHiddenApplicationNames: [
+-        "Emoji Selector"
++        "Emoji Selector",
++        "System Settings"
+     ]
+ 
+     function normalizedApplicationName(value) {

@@ -1,7 +1,7 @@
 pkgbase = linux-control-panel
 	pkgdesc = Aero7 system settings hub for Linux and Plasma 6
 	pkgver = 0.1.0
-	pkgrel = 6
+	pkgrel = 7
 	url = https://github.com/memegeko/aero7-control-panel-
 	arch = x86_64
 	license = GPL-3.0-or-later
@@ -32,7 +32,7 @@ pkgbase = linux-control-panel
 	depends = upower
 	depends = power-profiles-daemon
 	depends = shadow
-	source = linux-control::git+https://github.com/memegeko/aero7-control-panel-.git#commit=c5c2ce72c656dde172fe2196f3d55f2633643edc
+	source = linux-control::git+https://github.com/memegeko/aero7-control-panel-.git#commit=c6f178288379c0c499b65bdc113313c5ffcf75f6
 	sha256sums = SKIP
 
 pkgname = linux-control-panel

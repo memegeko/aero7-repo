@@ -173,15 +173,47 @@ def validate_desktop_polish() -> None:
         "BackgroundNormal=240,240,240",
         'color: "#f7f7f7"',
         "<default>40</default>",
-        'source: Qt.resolvedUrl("Assets/aero7-branding.png")',
-        'model: [i18n("Programs"), i18n("Settings")]',
+        'source: Qt.resolvedUrl("Assets/aero7-branding-r3.png")',
         'connectSource("/usr/bin/control --list-settings-json")',
-        'settingsLauncher.exec("/usr/bin/control --setting " + key)',
+        'connectSource("/usr/bin/aero7-compmgmt --list-settings-json")',
+        'settingsLauncher.exec("/usr/bin/control --setting " + result.key)',
+        '"krunner_services", "krunner_shell", "calculator"',
+        '"windows", "krunner_kwin"',
     ]:
         if required not in launcher_patch:
             fail(f"Aero launcher polish is missing: {required}")
     if "model: rootModel.modelForRow(1)" in launcher_patch:
         fail("All Programs still points at a nonexistent child model")
+    for forbidden_runner in [
+        '"krunner_systemsettings"',
+        '"krunner_keys"',
+        '"krunner_powerdevil"',
+    ]:
+        if forbidden_runner in launcher_patch:
+            fail(f"Programs search still enables a confusing KDE runner: {forbidden_runner}")
+
+    search_sections_patch = (
+        REPO
+        / "packages"
+        / "aerothemeplasma-desktop-git"
+        / "aero7-search-sections.patch"
+    ).read_text(encoding="utf-8")
+    for required in [
+        '"group": i18n("Control Panel")',
+        "id: combinedResultsModel",
+        "id: combinedActionModel",
+        "id: resultsGrid",
+        '"provider": "runner"',
+        '"System Settings"',
+        "required property string section",
+        '-                model: [i18n("Programs"), i18n("Control Panel")]',
+    ]:
+        if required not in search_sections_patch:
+            fail(f"Aero launcher section search is missing: {required}")
+    if search_sections_patch.index(
+        'appendCatalog(controlPanelCatalog, query, "control-panel");'
+    ) > search_sections_patch.index("if (unfilteredRunnerModel)"):
+        fail("Control Panel settings must appear before file and web search groups")
     if launcher_patch.count('executable.exec("tux-manager")') < 3:
         fail("Task Manager launcher actions are not consistently wired")
 
@@ -193,6 +225,7 @@ def validate_desktop_polish() -> None:
         "#commit=9c2d850f0907cd7d33c81e8a3fcc00abae3abb9b",
         '"${pkgname%}/LICENSE"',
         '"${pkgname%}/THIRD_PARTY.md"',
+        "aero7-search-sections.patch",
     ]:
         if required not in desktop_pkgbuild:
             fail(f"Aero7 desktop fork metadata is missing: {required}")
@@ -215,7 +248,7 @@ def validate_desktop_polish() -> None:
             fail(f"desktop branding is still overlaid during packaging: {obsolete}")
     for required in [
         "'aero7-watermark.png'",
-        'Assets/aero7-branding.png',
+        'Assets/aero7-branding-r3.png',
     ]:
         if required not in desktop_pkgbuild:
             fail(f"Aero7 SDDM branding package integration is missing: {required}")

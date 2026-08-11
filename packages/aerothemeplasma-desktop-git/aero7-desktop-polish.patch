@@ -83,6 +83,25 @@ index 4a9cf1a..f632d6c 100644
      }
    
      onCurrentIndexChanged: {
+diff --git a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/main.qml b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/main.qml
+--- a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/main.qml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/main.qml
+@@ -144,6 +144,15 @@ Item {
+ 
+         appletInterface: kicker
+         favoritesModel: globalFavorites
++        // Keep the Programs tab application-focused. KDE's System Settings,
++        // Power, and Global Shortcuts runners duplicate Aero7 Control Panel
++        // results and make ordinary application searches confusing.
++        runners: [
++            "krunner_services", "krunner_shell", "calculator",
++            "krunner_placesrunner", "locations", "baloosearch",
++            "krunner_recentdocuments", "krunner_bookmarksrunner",
++            "windows", "krunner_kwin"
++        ]
+         mergeResults: true
+     }
+     Kicker.RootModel {
 diff --git a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/SearchView.qml b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/SearchView.qml
 index 5a34a8a..ae7aa98 100755
 --- a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/SearchView.qml
@@ -100,7 +119,7 @@ index 5a34a8a..ae7aa98 100755
  
  import org.kde.plasma.private.kicker as Kicker
  import org.kde.kitemmodels as KItemModels
-@@ -31,10 +33,93 @@ import org.kde.kirigami as Kirigami
+@@ -31,10 +33,124 @@ import org.kde.kirigami as Kirigami
  Item {
      id: searchViewContainer
  
@@ -109,11 +128,35 @@ index 5a34a8a..ae7aa98 100755
      property bool queryFinished: false
      property int repeaterModelIndex: 0
      property var unfilteredRunnerModel: null
-+    property var settingsCatalog: []
++    property var controlPanelCatalog: []
++    property var computerManagementCatalog: []
 +    property int currentTab: 0
 +
 +    function normalized(value) {
 +        return String(value || "").trim().toLocaleLowerCase();
++    }
++
++    function appendCatalog(catalog, query, provider) {
++        for (let i = 0; i < catalog.length; ++i) {
++            const setting = catalog[i];
++            const haystack = normalized(setting.name + " " + setting.description
++                + " " + setting.section + " " + setting.keywords);
++            if (haystack.indexOf(query) === -1) {
++                continue;
++            }
++            settingsResultsModel.append({
++                "key": setting.key,
++                "provider": provider,
++                "name": setting.name,
++                "display": setting.name,
++                "decoration": setting.icon || "preferences-system",
++                "description": setting.description,
++                "group": setting.section || i18n("Control Panel"),
++                "favoriteId": "",
++                "hasActionList": false,
++                "url": ""
++            });
++        }
 +    }
 +
 +    function rebuildSettingsResults() {
@@ -122,25 +165,8 @@ index 5a34a8a..ae7aa98 100755
 +        if (!query) {
 +            return;
 +        }
-+        for (let i = 0; i < settingsCatalog.length; ++i) {
-+            const setting = settingsCatalog[i];
-+            const haystack = normalized(setting.name + " " + setting.description
-+                + " " + setting.section + " " + setting.keywords);
-+            if (haystack.indexOf(query) === -1) {
-+                continue;
-+            }
-+            settingsResultsModel.append({
-+                "key": setting.key,
-+                "name": setting.name,
-+                "display": setting.name,
-+                "decoration": setting.icon || "preferences-system",
-+                "description": setting.description,
-+                "group": setting.section || i18n("Settings"),
-+                "favoriteId": "",
-+                "hasActionList": false,
-+                "url": ""
-+            });
-+        }
++        appendCatalog(controlPanelCatalog, query, "control-panel");
++        appendCatalog(computerManagementCatalog, query, "computer-management");
 +    }
 +
 +    ListModel {
@@ -155,8 +181,12 @@ index 5a34a8a..ae7aa98 100755
 +            if (index < 0 || index >= settingsResultsModel.count) {
 +                return false;
 +            }
-+            const key = settingsResultsModel.get(index).key;
-+            settingsLauncher.exec("/usr/bin/control --setting " + key);
++            const result = settingsResultsModel.get(index);
++            if (result.provider === "computer-management") {
++                settingsLauncher.exec("/usr/bin/aero7-compmgmt --open " + result.key);
++            } else {
++                settingsLauncher.exec("/usr/bin/control --setting " + result.key);
++            }
 +            return true;
 +        }
 +    }
@@ -171,14 +201,34 @@ index 5a34a8a..ae7aa98 100755
 +                return;
 +            }
 +            try {
-+                settingsCatalog = JSON.parse(data["stdout"] || "[]");
++                controlPanelCatalog = JSON.parse(data["stdout"] || "[]");
 +            } catch (error) {
-+                console.warn("SevenStart could not read Aero7 settings:", error);
-+                settingsCatalog = [];
++                console.warn("SevenStart could not read Control Panel settings:", error);
++                controlPanelCatalog = [];
 +            }
 +            rebuildSettingsResults();
 +        }
 +        Component.onCompleted: connectSource("/usr/bin/control --list-settings-json")
++    }
++
++    Plasma5Support.DataSource {
++        id: computerManagementCatalogLoader
++        engine: "executable"
++        connectedSources: []
++        onNewData: (sourceName, data) => {
++            disconnectSource(sourceName);
++            if (data["exit code"] !== 0) {
++                return;
++            }
++            try {
++                computerManagementCatalog = JSON.parse(data["stdout"] || "[]");
++            } catch (error) {
++                console.warn("SevenStart could not read Computer Management settings:", error);
++                computerManagementCatalog = [];
++            }
++            rebuildSettingsResults();
++        }
++        Component.onCompleted: connectSource("/usr/bin/aero7-compmgmt --list-settings-json")
 +    }
 +
 +    Plasma5Support.DataSource {
@@ -195,7 +245,7 @@ index 5a34a8a..ae7aa98 100755
  
      KItemModels.KSortFilterProxyModel {
          id: filteredRunnerModel
-@@ -70,14 +155,14 @@ Item {
+@@ -70,14 +186,14 @@ Item {
      }
  
      function inhibitMouse() {
@@ -213,7 +263,7 @@ index 5a34a8a..ae7aa98 100755
          if(listView.currentIndex-1 < 0) {
              listView.currentIndex = listView.count - 1;
          } else {
-@@ -86,7 +171,7 @@ Item {
+@@ -86,7 +202,7 @@ Item {
      }
      function incrementCurrentIndex() {
          inhibitMouse();
@@ -222,7 +272,7 @@ index 5a34a8a..ae7aa98 100755
          if(listView.currentIndex+1 >= listView.count) {
              listView.currentIndex = 0;
          } else {
-@@ -96,7 +181,11 @@ Item {
+@@ -96,7 +212,11 @@ Item {
      function onQueryChanged() {
          queryFinished = false;
          runnerModel.query = searchField.text;
@@ -234,7 +284,7 @@ index 5a34a8a..ae7aa98 100755
          if (!searchField.text) {
              unfilteredRunnerModel = null;
              runnerGrid.model = null;
-@@ -122,29 +211,82 @@ Item {
+@@ -122,29 +242,82 @@ Item {
                  if(listView.count > 0) listView.currentIndex = 0;
                  //console.log(runnerModel.modelForRow(0).modelForRow(0))
              }
@@ -270,7 +320,7 @@ index 5a34a8a..ae7aa98 100755
 +            spacing: 2
 +
 +            Repeater {
-+                model: [i18n("Programs"), i18n("Settings")]
++                model: [i18n("Programs"), i18n("Control Panel")]
 +                delegate: Rectangle {
 +                    required property int index
 +                    required property string modelData
@@ -340,7 +390,7 @@ index 59fe192..f8ce887 100755
          anchors.bottomMargin: 23
          anchors.horizontalCenter: parent.horizontalCenter
 -        source: Qt.resolvedUrl("Assets/branding-white.png")
-+        source: Qt.resolvedUrl("Assets/aero7-branding.png")
++        source: Qt.resolvedUrl("Assets/aero7-branding-r3.png")
 +        // The source canvas preserves the historical 350x50 theme slot, but
 +        // the actual Aero7 wordmark occupies its first 225 pixels. Crop that
 +        // transparent tail so the visible logo, rather than its canvas, is
