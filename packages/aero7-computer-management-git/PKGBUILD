@@ -1,5 +1,5 @@
 pkgname=aero7-computer-management-git
-pkgver=0.2.0.r14.g54cb94b
+pkgver=0.2.0.r16.g08217a8
 pkgrel=1
 pkgdesc='Aero7-native Computer Management console for Linux'
 arch=('x86_64')
@@ -16,7 +16,7 @@ optdepends=('samba: Shared Folders status'
 provides=('aero7-computer-management')
 conflicts=('aero7-computer-management')
 options=('!debug')
-source=("aero7-computer-management::git+$url.git#commit=54cb94bec46e7eb2083074e1dcaa8d0a47a2ec1c")
+source=("aero7-computer-management::git+$url.git#commit=08217a888b93ba5b4947e765b3a583dd1f74ffef")
 sha256sums=('SKIP')
 
 build() {

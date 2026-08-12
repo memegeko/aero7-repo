@@ -1,6 +1,6 @@
 pkgbase = aero7-computer-management-git
 	pkgdesc = Aero7-native Computer Management console for Linux
-	pkgver = 0.2.0.r14.g54cb94b
+	pkgver = 0.2.0.r16.g08217a8
 	pkgrel = 1
 	url = https://github.com/memegeko/aero7-computer-management
 	arch = x86_64
@@ -24,7 +24,7 @@ pkgbase = aero7-computer-management-git
 	provides = aero7-computer-management
 	conflicts = aero7-computer-management
 	options = !debug
-	source = aero7-computer-management::git+https://github.com/memegeko/aero7-computer-management.git#commit=54cb94bec46e7eb2083074e1dcaa8d0a47a2ec1c
+	source = aero7-computer-management::git+https://github.com/memegeko/aero7-computer-management.git#commit=08217a888b93ba5b4947e765b3a583dd1f74ffef
 	sha256sums = SKIP
 
 pkgname = aero7-computer-management-git
