@@ -230,7 +230,9 @@
         "systemd",
         "udisks2",
         "polkit",
-        "shadow"
+        "shadow",
+        "dosfstools",
+        "e2fsprogs"
       ],
       "makedepends": [
         "cmake",

@@ -70,11 +70,11 @@
     "aero7-computer-management-git": {
       "source_type": "pinned-vcs",
       "source_revisions": {
-        "https://github.com/memegeko/aero7-computer-management": "0f2fc4b4512f44076b6598b09aa0e56ef2b53e63"
+        "https://github.com/memegeko/aero7-computer-management": "646af7daef1fb15d8e2185991a31a6142273c6f2"
       },
-      "pkgbuild_sha256": "4dd10bf84dfbd35fcfa2815e8dca62fd3db782450698547246fe3ec9a41f046b",
-      "srcinfo_sha256": "3b529b9750808063aa1fcfe9332260fcb6217843ef4bca3ec763a6b23ffec8cd",
-      "reviewed_at": "2026-08-11T22:39:00Z"
+      "pkgbuild_sha256": "0a054a821ea53144c43586f52bccef74db276c1b874b53ee8e20b18c316e0940",
+      "srcinfo_sha256": "c5a14d2ed512fe14d42200d6935b973bd45f2436d08a08df842b2f87e29f6d1e",
+      "reviewed_at": "2026-08-12T12:50:00Z"
     },
     "linux-devmgmt": {
       "pkgbuild_sha256": "9d692643c6097cdbc8caf24a80c365aff708e81578d0ae96ccf2ae864dd11eb0",
