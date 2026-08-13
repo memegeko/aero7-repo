@@ -1,5 +1,5 @@
 pkgname=aero7-computer-management-git
-pkgver=0.2.0.r16.g08217a8
+pkgver=0.2.0.r17.gd4fb666
 pkgrel=1
 pkgdesc='Aero7-native Computer Management console for Linux'
 arch=('x86_64')
@@ -9,14 +9,14 @@ depends=('qt6-base' 'systemd' 'udisks2' 'polkit' 'shadow' 'dosfstools' 'e2fsprog
 makedepends=('cmake' 'ninja' 'git')
 optdepends=('samba: Shared Folders status'
             'linux-devmgmt: Device Manager integration'
-            'ntfs-3g: create and extend NTFS volumes'
+            'ntfs-3g: create and resize NTFS volumes'
             'exfatprogs: create exFAT volumes'
-            'btrfs-progs: create and extend Btrfs volumes'
-            'xfsprogs: create and extend XFS volumes')
+            'btrfs-progs: create and resize Btrfs volumes'
+            'xfsprogs: create and resize XFS volumes')
 provides=('aero7-computer-management')
 conflicts=('aero7-computer-management')
 options=('!debug')
-source=("aero7-computer-management::git+$url.git#commit=08217a888b93ba5b4947e765b3a583dd1f74ffef")
+source=("aero7-computer-management::git+$url.git#commit=d4fb6667502423c0af8cc3cd4d44a0aefd187d31")
 sha256sums=('SKIP')
 
 build() {
