@@ -41,9 +41,10 @@ It does not build or publish X11 Plasma packages.
 ## Current Status
 
 The 20-package beta manifest includes the separate Aero7 Computer Management
-console and its searchable administration-module shortcuts. Releases are built
-in a clean Arch chroot, signed, deployed to GitHub Pages, and verified again
-from the live repository endpoint.
+console and its searchable administration-module shortcuts. Packages are built
+in a clean Arch chroot, signed, and validated as one complete repository set.
+The existing Beta 1 endpoint remains online, while publication of newer builds
+is frozen until the explicitly approved final release.
 
 The reviewed companion application recipes are included in the signed beta set. Their
 exact upstream revisions are pinned, all source patches apply cleanly, and all

@@ -1,29 +1,34 @@
 # Publishing
 
-Publishing is alpha-only. The first complete signed package set is live on
-GitHub Pages, and future builds should continue to use the artifact-driven
-Pages workflow.
+The currently published Beta 1 repository remains available, but publication
+of newer packages is frozen until Aero7's explicitly approved final release.
+Normal `build-packages` runs compile, sign, test, and retain a private staging
+build. They upload only its validation manifest and cannot change GitHub Pages.
 
-Expected flow:
+The final release has two deliberate manual gates:
 
-```bash
-scripts/build-all.sh
-scripts/promote-build.sh <build-id>
-```
+1. Dispatch `build-packages` for the reviewed commit with
+   `final_release_confirmation` set exactly to `PUBLISH-AERO7-FINAL`. This is
+   the only mode that promotes staging into `public/` and uploads the private
+   `aero7-pacman-repository` Actions artifact.
+2. Inspect that build and record its Actions run ID. Dispatch `deploy-pages`
+   with that run ID and the same exact confirmation phrase.
 
-The `public/` directory is the Pages payload. It is ignored by Git and should
-be deployed through GitHub Pages artifacts, not committed to the `beta` branch.
-The `build-packages` workflow prepares and uploads the `aero7-pacman-repository`
-artifact. A successful workflow run can trigger `deploy-pages` automatically;
-or run `deploy-pages` manually with the completed build workflow run ID.
+There is no `workflow_run` deployment trigger. A successful test build alone
+must never publish packages. `tests/test-release-gates.py` enforces these
+conditions in CI.
+
+The `public/` directory is the Pages payload. It is ignored by Git and is
+deployed through GitHub Pages artifacts, never committed to `beta`.
 
 When all packages are staged but finalization failed, dispatch
 `build-packages` again with the staging ID in `resume_build_id`. This guarded
-recovery path runs the normal signing and repository tests before promotion and
-artifact upload; it cannot publish a missing or incomplete package set.
-Finalization also stamps `repository-manifest.json` with that staging build ID,
-and validation refuses to publish when the manifest and staging ID differ.
+recovery path runs the normal signing and repository tests before manifest
+upload. Leave the final-release confirmation blank during recovery; the
+workflow cannot publish a missing or incomplete package set. Finalization also
+stamps `repository-manifest.json` with that staging build ID, and validation
+refuses to use a build when the manifest and staging ID differ.
 
-If GitHub Pages rejects the artifact due to size, keep the staged build intact,
-publish an alpha GitHub Release artifact for testing, and document the storage
-problem. Do not delete packages or weaken validation to make Pages pass.
+If GitHub Pages rejects the final artifact due to size, keep the staged build
+intact and document the storage problem. Do not create a substitute public
+release, delete packages, or weaken validation to make Pages pass.

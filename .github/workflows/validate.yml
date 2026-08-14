@@ -30,8 +30,9 @@ jobs:
 
       - name: Python validation
         run: |
-          python3 -m py_compile scripts/dependency-order.py tests/validate-repo.py
+          python3 -m py_compile scripts/dependency-order.py tests/test-release-gates.py tests/validate-repo.py
           python3 scripts/dependency-order.py --write
+          python3 tests/test-release-gates.py
           python3 tests/validate-repo.py
 
       - name: JSON validity

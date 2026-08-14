@@ -3,16 +3,13 @@ name: build-packages
 on:
   workflow_dispatch:
     inputs:
-      promote:
-        description: Promote the build into public/ after validation
-        required: true
-        default: "false"
-        type: choice
-        options:
-          - "false"
-          - "true"
       resume_build_id:
-        description: Existing complete staging build to sign and publish without recompiling
+        description: Existing complete staging build to sign and validate without recompiling
+        required: false
+        default: ""
+        type: string
+      final_release_confirmation:
+        description: Leave blank for testing; enter PUBLISH-AERO7-FINAL only for the approved final release
         required: false
         default: ""
         type: string
@@ -54,19 +51,28 @@ jobs:
             --current-build-id "$RESUME_BUILD_ID" \
             --remove-current-sources
 
-      - name: Prepare repository artifact
+      - name: Capture validated staging build
+        id: staged
         run: |
           build_id="$(cat /srv/aero7-builder/current-build-id)"
-          scripts/promote-build.sh "$build_id"
+          [[ "$build_id" =~ ^[0-9]{8}T[0-9]{6}Z-[0-9a-f]{12}$ ]]
+          test -f "/srv/aero7-builder/staging/$build_id/build-manifest.json"
+          printf 'build_id=%s\n' "$build_id" >>"$GITHUB_OUTPUT"
+
+      - name: Prepare final repository artifact
+        if: inputs.final_release_confirmation == 'PUBLISH-AERO7-FINAL'
+        run: |
+          scripts/promote-build.sh "${{ steps.staged.outputs.build_id }}"
 
       - name: Upload staging report
         uses: actions/upload-artifact@v4
         with:
           name: aero7-build-report
-          path: /srv/aero7-builder/staging/*/build-manifest.json
+          path: /srv/aero7-builder/staging/${{ steps.staged.outputs.build_id }}/build-manifest.json
           if-no-files-found: error
 
-      - name: Upload repository artifact
+      - name: Upload final repository artifact
+        if: inputs.final_release_confirmation == 'PUBLISH-AERO7-FINAL'
         uses: actions/upload-artifact@v4
         with:
           name: aero7-pacman-repository

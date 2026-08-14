@@ -1,15 +1,14 @@
 name: deploy-pages
 
 on:
-  workflow_run:
-    workflows:
-      - build-packages
-    types:
-      - completed
   workflow_dispatch:
     inputs:
       run_id:
-        description: Actions run ID containing the aero7-pacman-repository artifact
+        description: Approved final build run ID containing the aero7-pacman-repository artifact
+        required: true
+        type: string
+      final_release_confirmation:
+        description: Enter PUBLISH-AERO7-FINAL to deploy the approved final repository
         required: true
         type: string
 
@@ -25,7 +24,7 @@ concurrency:
 
 jobs:
   deploy:
-    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    if: inputs.final_release_confirmation == 'PUBLISH-AERO7-FINAL'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
@@ -34,12 +33,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Validate approved build run ID
+        env:
+          RUN_ID: ${{ inputs.run_id }}
+        run: [[ "$RUN_ID" =~ ^[0-9]+$ ]]
+
       - name: Download repository artifact
         uses: actions/download-artifact@v4
         with:
           name: aero7-pacman-repository
           path: public
-          run-id: ${{ github.event.workflow_run.id || inputs.run_id }}
+          run-id: ${{ inputs.run_id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Refuse missing repository payload
