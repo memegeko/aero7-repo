@@ -36,7 +36,8 @@ jobs:
       - name: Validate approved build run ID
         env:
           RUN_ID: ${{ inputs.run_id }}
-        run: [[ "$RUN_ID" =~ ^[0-9]+$ ]]
+        run: |
+          [[ "$RUN_ID" =~ ^[0-9]+$ ]]
 
       - name: Download repository artifact
         uses: actions/download-artifact@v4

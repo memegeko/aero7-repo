@@ -33,6 +33,7 @@ if "      promote:" in build:
 
 require(deploy, "workflow_dispatch:", str(deploy_path))
 require(deploy, "final_release_confirmation:", str(deploy_path))
+require(deploy, 'run: |\n          [[ "$RUN_ID" =~ ^[0-9]+$ ]]', str(deploy_path))
 require(
     deploy,
     f"if: inputs.final_release_confirmation == '{FINAL_PHRASE}'",
