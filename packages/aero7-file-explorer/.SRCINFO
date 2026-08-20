@@ -1,20 +1,18 @@
-pkgbase = aero7-dolphin
-	pkgdesc = Aero7-styled KDE file manager
+pkgbase = aero7-file-explorer
+	pkgdesc = Aero7 File Explorer with Windows 7 shell behavior and appearance
 	pkgver = 25.12.3
-	pkgrel = 2
-	url = https://gitgud.io/atmk/dolphin-aero
+	pkgrel = 29
+	url = https://github.com/aero7-open-project/aero7-file-explorer
 	arch = x86_64
-	license = LGPL-2.0-or-later
+	license = GPL-2.0-or-later
 	makedepends = aero7-qt
 	makedepends = extra-cmake-modules
 	makedepends = git
-	makedepends = kdoctools
 	makedepends = ninja
 	depends = baloo
 	depends = baloo-widgets
 	depends = glibc
 	depends = kbookmarks
-	depends = kcmutils
 	depends = kcodecs
 	depends = kcolorscheme
 	depends = kcompletion
@@ -44,10 +42,11 @@ pkgbase = aero7-dolphin
 	depends = qt6-multimedia
 	depends = solid
 	provides = dolphin=25.12.3
+	provides = aero7-dolphin
 	conflicts = dolphin
-	source = aero-dolphin::git+https://gitgud.io/atmk/dolphin-aero.git#commit=f0500fae7c4aadf75df23300557c0288404c6575
-	source = aero7.patch
+	conflicts = aero7-dolphin
+	replaces = aero7-dolphin
+	source = aero7-file-explorer::git+https://github.com/aero7-open-project/aero7-file-explorer.git#commit=37e51bbc3af0e09fd86c995eccdba1cd1879dd0a
 	sha256sums = SKIP
-	sha256sums = c8fb291d51411662c41ca6394be0d9af2574a7902d481846a1f0a67b206ab444
 
-pkgname = aero7-dolphin
+pkgname = aero7-file-explorer

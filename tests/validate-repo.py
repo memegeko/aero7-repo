@@ -310,7 +310,10 @@ def validate_desktop_polish() -> None:
             fail(f"Aero7 sound-theme branding is missing: {required}")
 
     branded_packages = {
-        "aero7-dolphin": ["Name=File Explorer"],
+        "aero7-file-explorer": [
+            "pkgdesc='Aero7 File Explorer",
+            'ln -s aero7-file-explorer "$pkgdir/usr/bin/dolphin"',
+        ],
         "aero7-gwenview": ["Name=Photo Viewer", "Icon=multimedia-photo-viewer"],
         "tuxmanager": ["Name=Task Manager", "Icon=ksysguardd"],
     }

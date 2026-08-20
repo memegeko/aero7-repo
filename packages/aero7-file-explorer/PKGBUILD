@@ -1,0 +1,41 @@
+pkgname=aero7-file-explorer
+pkgver=25.12.3
+pkgrel=29
+pkgdesc='Aero7 File Explorer with Windows 7 shell behavior and appearance'
+arch=('x86_64')
+url='https://github.com/aero7-open-project/aero7-file-explorer'
+license=('GPL-2.0-or-later')
+depends=('baloo' 'baloo-widgets' 'glibc' 'kbookmarks' 'kcodecs'
+         'kcolorscheme' 'kcompletion' 'kconfig' 'kconfigwidgets' 'kcoreaddons'
+         'kcrash' 'kdbusaddons' 'kfilemetadata' 'kguiaddons' 'ki18n' 'kiconthemes'
+         'kio' 'kio-extras' 'kjobwidgets' 'knewstuff' 'knotifications' 'kparts'
+         'kservice' 'ktextwidgets' 'kuserfeedback' 'kwidgetsaddons' 'kwindowsystem'
+         'kxmlgui' 'libstdc++' 'qt6-base' 'qt6-multimedia' 'solid')
+makedepends=('aero7-qt' 'extra-cmake-modules' 'git' 'ninja')
+provides=("dolphin=$pkgver" 'aero7-dolphin')
+conflicts=('dolphin' 'aero7-dolphin')
+replaces=('aero7-dolphin')
+_commit=37e51bbc3af0e09fd86c995eccdba1cd1879dd0a
+source=("aero7-file-explorer::git+$url.git#commit=$_commit")
+sha256sums=('SKIP')
+
+build() {
+  cmake -S aero7-file-explorer -B build -G Ninja \
+    -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr \
+    -DCMAKE_INSTALL_LIBEXECDIR=lib -DBUILD_TESTING=OFF
+  cmake --build build
+}
+
+package() {
+  DESTDIR="$pkgdir" cmake --install build
+
+  # Keep historical launch routes working while the real executable and
+  # desktop identity remain Aero7-owned.
+  ln -s aero7-file-explorer "$pkgdir/usr/bin/dolphin"
+  ln -s aero7-file-explorer "$pkgdir/usr/bin/aero7-dolphin"
+
+  install -Dm644 aero7-file-explorer/COPYING \
+    "$pkgdir/usr/share/licenses/$pkgname/COPYING"
+  install -Dm644 aero7-file-explorer/COPYING.DOC \
+    "$pkgdir/usr/share/licenses/$pkgname/COPYING.DOC"
+}

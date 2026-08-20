@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-11T00:00:00Z",
+  "generated_at": "2026-08-20T21:53:06Z",
   "packages": {
     "aeroshell-libplasma-git": {
       "aur_url": "https://aur.archlinux.org/aeroshell-libplasma-git.git",
@@ -99,14 +99,14 @@
       "srcinfo_sha256": "18d76040c0920588a559df8c3e40fb81f8c62e26833af5a482d50fcad54780f7",
       "reviewed_at": "2026-07-31T00:00:00Z"
     },
-    "aero7-dolphin": {
+    "aero7-file-explorer": {
       "source_type": "pinned-vcs",
       "source_revisions": {
-        "https://gitgud.io/atmk/dolphin-aero": "f0500fae7c4aadf75df23300557c0288404c6575"
+        "https://github.com/aero7-open-project/aero7-file-explorer": "37e51bbc3af0e09fd86c995eccdba1cd1879dd0a"
       },
-      "pkgbuild_sha256": "cc47d614e10f2f2512b2eeaba7ef9ed0c0f25bf3a412434a1eaf1b6ad9276c04",
-      "srcinfo_sha256": "8b899bad19a22ca424659c12d7b0946b6688f5551ee83803b38c083afc125019",
-      "reviewed_at": "2026-07-31T00:00:00Z"
+      "pkgbuild_sha256": "acb4ecd1e78cb6c8bac9ef1350782a18b7b1aa66dbe317efdd9b4b1bd6417679",
+      "srcinfo_sha256": "66501e06bd1c913b6bcfcb85e1d1c6816d7d5baf91451f8b2d6e17b38f99a9b3",
+      "reviewed_at": "2026-08-20T21:53:06Z"
     },
     "aero7-gwenview": {
       "source_type": "pinned-vcs",

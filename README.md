@@ -27,7 +27,7 @@ these package names:
 - `linux-devmgmt`
 - `tuxmanager`
 - `aero7-qt`
-- `aero7-dolphin` (provides `dolphin`)
+- `aero7-file-explorer` (provides `dolphin` and the `aero7-dolphin` compatibility launcher)
 - `aero7-gwenview` (provides `gwenview`)
 - `linux-control-panel`
 - `aero7-kolourpaint` (provides `kolourpaint`)

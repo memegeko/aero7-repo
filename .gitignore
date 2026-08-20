@@ -22,7 +22,7 @@
 /packages/*/pkg/
 /packages/*/src/
 # makepkg VCS source mirrors (the reviewed revisions live in upstream-lock.json)
-/packages/aero7-dolphin/aero-dolphin/
+/packages/aero7-file-explorer/aero7-file-explorer/
 /packages/aero7-computer-management-git/aero7-computer-management/
 /packages/aero7-gwenview/aero-gwenview/
 /packages/aero7-kolourpaint/aero-kolourpaint/
