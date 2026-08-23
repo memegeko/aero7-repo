@@ -1,0 +1,68 @@
+pkgname=aero7-desktop
+pkgver=0.2.0
+pkgrel=12
+pkgdesc='Aero7-owned Wayland desktop session, recovery, migration, and shell integration'
+arch=('x86_64')
+url='https://github.com/aero7-open-project/aero7-desktop'
+license=('MIT')
+depends=(
+  'bash'
+  'python'
+  'systemd'
+  'kwin'
+  'plasma-workspace'
+  'qt6-declarative'
+  'networkmanager'
+  'pipewire-pulse'
+  'aero7-file-explorer'
+  'aero7-gadgets'
+  'ark'
+  'aerothemeplasma-desktop'
+  'linux-control-panel'
+  'linux-devmgmt'
+  'aero7-computer-management-git'
+)
+makedepends=('cmake' 'ninja' 'gettext' 'git')
+_commit=843fafc0400fd2df0e26b429a6c26e133d4aec05
+source=("$pkgname::git+$url.git#commit=$_commit")
+sha256sums=('SKIP')
+
+build() {
+  cmake -S "$srcdir/$pkgname" -B build -G Ninja \
+    -DCMAKE_BUILD_TYPE=None \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DCMAKE_INSTALL_LIBEXECDIR=lib \
+    -DBUILD_TESTING=OFF
+  cmake --build build
+}
+
+check() {
+  cmake -S "$srcdir/$pkgname" -B test-build -G Ninja \
+    -DCMAKE_BUILD_TYPE=None \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DBUILD_TESTING=ON
+  cmake --build test-build
+  ctest --test-dir test-build --output-on-failure
+}
+
+package() {
+  DESTDIR="$pkgdir" cmake --install build
+
+  # The maintained File Explorer package owns the executable and desktop
+  # identity.  The session source retains a compatibility wrapper for
+  # standalone development installs, but the repository package must not
+  # overlap files owned by aero7-file-explorer.
+  rm -f "$pkgdir/usr/bin/aero7-file-explorer"
+  rm -f "$pkgdir/usr/share/applications/org.aero7.fileexplorer.desktop"
+
+  install -Dm644 "$srcdir/$pkgname/LICENSE" \
+    "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+  install -Dm644 "$srcdir/$pkgname/docs/RECOVERY.md" \
+    "$pkgdir/usr/share/doc/$pkgname/RECOVERY.md"
+  install -d "$pkgdir/usr/lib/systemd/user/graphical-session.target.wants"
+  local unit
+  for unit in aero7-session-setup aero7-shell; do
+    ln -s "../$unit.service" \
+      "$pkgdir/usr/lib/systemd/user/graphical-session.target.wants/$unit.service"
+  done
+}

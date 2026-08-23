@@ -22,7 +22,8 @@ PROPRIETARY_ASSET_PATTERNS = [
     re.compile(r"microsoft[ _-]?(logo|wallpaper|font|sound|icon)", re.IGNORECASE),
 ]
 PRIVATE_KEY_SUFFIXES = {".key", ".p12", ".pfx", ".pem"}
-EXPECTED_PACKAGE_COUNT = 20
+COMPRESSED_BUILD_SUFFIXES = {".gz", ".zst"}
+EXPECTED_PACKAGE_COUNT = 21
 
 
 def fail(message: str) -> None:
@@ -346,11 +347,19 @@ def validate_no_secrets_or_assets() -> None:
     for path in REPO.rglob("*"):
         if ".git" in path.parts:
             continue
-        if path.is_dir():
+        if path.is_dir() or path.is_symlink():
             continue
         relative = path.relative_to(REPO)
+        if (len(relative.parts) >= 3
+                and relative.parts[0] in {"packages", "retired-packages"}
+                and relative.parts[2] in {"pkg", "src", "build"}):
+            continue
         if path.suffix in PRIVATE_KEY_SUFFIXES:
             fail(f"private-key-like file is tracked: {relative}")
+        # Generated source/package archives are binary build products. Their
+        # recipes, revisions, and checksums are validated above.
+        if path.suffix in COMPRESSED_BUILD_SUFFIXES:
+            continue
         text = path.read_text(encoding="utf-8", errors="ignore")
         for pattern in SECRET_PATTERNS:
             if pattern.search(text):

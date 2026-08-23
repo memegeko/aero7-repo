@@ -1,0 +1,15 @@
+_remove_legacy_gallery_autostart() {
+  local legacy=/etc/xdg/autostart/aero7-gadget-gallery.desktop
+  [[ -f "$legacy" ]] || return 0
+  grep -Fxq 'Exec=aero7-gadget-gallery' "$legacy" || return 0
+  pacman -Qo "$legacy" >/dev/null 2>&1 && return 0
+  rm -f -- "$legacy"
+}
+
+post_install() {
+  _remove_legacy_gallery_autostart
+}
+
+post_upgrade() {
+  _remove_legacy_gallery_autostart
+}

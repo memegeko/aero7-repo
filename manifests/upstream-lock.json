@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-20T21:53:06Z",
+  "generated_at": "2026-08-23T23:47:14Z",
   "packages": {
     "aeroshell-libplasma-git": {
       "aur_url": "https://aur.archlinux.org/aeroshell-libplasma-git.git",
@@ -137,11 +137,22 @@
       "reviewed_at": "2026-07-31T00:00:00Z"
     },
     "aero7-gadgets": {
-      "source_type": "local",
-      "source_revisions": {},
-      "pkgbuild_sha256": "8e58251b7a2220f8e755db813ea280fcac2bf5c35c6e7ac8d6ece8089d06fd1f",
-      "srcinfo_sha256": "20c0e6659bf2945d5a7116b79620a2c6b55949f596a7cda6cff8e4f96429f3a0",
-      "reviewed_at": "2026-07-31T00:00:00Z"
+      "source_type": "pinned-vcs",
+      "source_revisions": {
+        "https://github.com/aero7-open-project/aero7-desktop": "843fafc0400fd2df0e26b429a6c26e133d4aec05"
+      },
+      "pkgbuild_sha256": "51a08a3c82e1c9e59b748a4512e2e58308808503b07c38e7c71c10f6b50718d7",
+      "srcinfo_sha256": "0af5b96f884dec2226828c86b1a632f47410d690612e495dad10d2d4bff9d693",
+      "reviewed_at": "2026-08-23T23:47:14Z"
+    },
+    "aero7-desktop": {
+      "source_type": "pinned-vcs",
+      "source_revisions": {
+        "https://github.com/aero7-open-project/aero7-desktop": "843fafc0400fd2df0e26b429a6c26e133d4aec05"
+      },
+      "pkgbuild_sha256": "c23bd1e9c5923fbc1d57ec1774d4c41b4637de07b3f740d01e9400c8afdcd6ff",
+      "srcinfo_sha256": "e1171d0f0276bd485d5716a58cadfd6f9c4f7d4c8ec1bb369d42539bbadbb210",
+      "reviewed_at": "2026-08-23T23:47:14Z"
     },
     "winxplorer": {
       "source_type": "pinned-vcs",

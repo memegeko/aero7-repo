@@ -58,15 +58,17 @@ are deleted in each package's `prepare()` step before compilation.
 - Local `makepkg` builds pass for all nine companion packages. The
   Aero KolourPaint package is built without a temporary SARibbon RUNPATH, and
   the final package archives contain no build-root path references.
-- Repository validation, lock checks, dependency ordering, `.SRCINFO`
-  freshness checks, and shell syntax checks pass for all 20 packages.
+- The original companion audit's repository validation, lock checks,
+  dependency ordering, `.SRCINFO` freshness checks, and shell syntax checks
+  passed for its 20-package set. The later Aero7 Desktop/Gadgets update raises
+  the source manifest to 21 packages and has its own validation record.
 
 `namcap` and the privileged clean-chroot builder were not run on this host
 because `namcap` is not installed and this pass intentionally used no sudo.
 
 ## Remaining release gate
 
-Run the normal builder workflow, sign the 20-package repository, and install
+Run the normal builder workflow, sign the 21-package repository, and install
 it in a fresh Aero7 VM. In that VM, verify replacement transactions and
 rollback for Dolphin, Gwenview, and KolourPaint; launch all companion desktop
 entries under Plasma 6 Wayland; add and remove each Gadget; and confirm that

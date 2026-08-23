@@ -1,12 +1,14 @@
 {
   "repository": "aero7",
-  "status": "beta-ready",
+  "status": "beta-source-update-pending-build",
   "published_url": "https://memegeko.github.io/aero7-repo/$arch",
   "signing_fingerprint": "72C79ABBBBE96446DD3324042694BFE1090F4FD6",
   "public_key": "keys/aero7-repository.asc",
-  "package_set_complete": true,
+  "package_set_complete": false,
   "last_successful_build": "20260731T213342Z-d4c1b8978de0",
   "notes": [
-    "Signed beta package set contains all 20 required Aero7 packages for installer integration testing."
+    "The live signed endpoint still contains the previous 20-package Beta 1 set.",
+    "The beta source manifest now contains 21 recipes, including updateable Aero7 Desktop and Gadgets 3 packages pinned to the maintained desktop repository.",
+    "A new signed Pages payload remains gated on the normal builder and explicit final-release approval."
   ]
 }
