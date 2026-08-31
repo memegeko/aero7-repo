@@ -1,6 +1,6 @@
 pkgname=linux-control-panel
 pkgver=0.1.0
-pkgrel=7
+pkgrel=24
 pkgdesc='Aero7 system settings hub for Linux and Plasma 6'
 arch=('x86_64')
 url='https://github.com/memegeko/aero7-control-panel-'
@@ -9,16 +9,21 @@ depends=('cups' 'glibc' 'kwidgetsaddons' 'kwindowsystem' 'openssl' 'qt6-base'
          'qt6-multimedia' 'zlib' 'plasma-desktop' 'plasma-nm' 'polkit' 'iptables' 'ufw'
          'hunspell' 'hunspell-en_us' 'hunspell-nl' 'accountsservice'
          'networkmanager' 'pipewire-pulse' 'wireplumber' 'upower'
-         'power-profiles-daemon' 'shadow')
-makedepends=('aero7-qt' 'cmake' 'git' 'ninja')
-source=("linux-control::git+$url.git#commit=c6f178288379c0c499b65bdc113313c5ffcf75f6")
-sha256sums=('SKIP')
+         'power-profiles-daemon' 'shadow' 'layer-shell-qt')
+optdepends=('bluez-utils: Bluetooth discovery, pairing and connection management')
+makedepends=('aero7-qt' 'cmake' 'ninja')
+source=('linux-control-panel-0.1.0-r24.tar.gz')
+sha256sums=('c688c94029d9c4f6ef7f505e5dc3a34f5fa3ab68a72761fb96a42f89cb5569aa')
 
 build() {
   cmake -S linux-control -B build -G Ninja \
     -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr \
-    -DBUILD_TESTING=OFF
+    -DBUILD_TESTING=ON
   cmake --build build
+}
+
+check() {
+  ctest --test-dir build --output-on-failure
 }
 
 package() {

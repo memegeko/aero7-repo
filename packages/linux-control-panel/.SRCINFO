@@ -1,13 +1,12 @@
 pkgbase = linux-control-panel
 	pkgdesc = Aero7 system settings hub for Linux and Plasma 6
 	pkgver = 0.1.0
-	pkgrel = 7
+	pkgrel = 24
 	url = https://github.com/memegeko/aero7-control-panel-
 	arch = x86_64
 	license = GPL-3.0-or-later
 	makedepends = aero7-qt
 	makedepends = cmake
-	makedepends = git
 	makedepends = ninja
 	depends = cups
 	depends = glibc
@@ -32,7 +31,9 @@ pkgbase = linux-control-panel
 	depends = upower
 	depends = power-profiles-daemon
 	depends = shadow
-	source = linux-control::git+https://github.com/memegeko/aero7-control-panel-.git#commit=c6f178288379c0c499b65bdc113313c5ffcf75f6
-	sha256sums = SKIP
+	depends = layer-shell-qt
+	optdepends = bluez-utils: Bluetooth discovery, pairing and connection management
+	source = linux-control-panel-0.1.0-r24.tar.gz
+	sha256sums = c688c94029d9c4f6ef7f505e5dc3a34f5fa3ab68a72761fb96a42f89cb5569aa
 
 pkgname = linux-control-panel
