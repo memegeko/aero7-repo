@@ -1,0 +1,533 @@
+diff --git a/plasma/plasmoids/io.gitgud.wackyideas.desktopcontainment/contents/ui/main.qml b/plasma/plasmoids/io.gitgud.wackyideas.desktopcontainment/contents/ui/main.qml
+index f0f1c10..561bba5 100644
+--- a/plasma/plasmoids/io.gitgud.wackyideas.desktopcontainment/contents/ui/main.qml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.desktopcontainment/contents/ui/main.qml
+@@ -29,6 +29,15 @@ ContainmentItem {
+         controlPanelLauncher.exec("/usr/bin/control --setting " + setting)
+     }
+ 
++    function enforceAero7NoEditMode() {
++        if (appletsLayout?.editMode) {
++            appletsLayout.editMode = false;
++        }
++        if (Plasmoid.containment?.corona?.editMode) {
++            Plasmoid.containment.corona.editMode = false;
++        }
++    }
++
+     switchWidth: { switchSize(); }
+     switchHeight: { switchSize(); }
+ 
+@@ -281,7 +290,7 @@ ContainmentItem {
+             ignoreUnknownSignals: true
+ 
+             function onEditModeChanged() {
+-                appletsLayout.editMode = Plasmoid.containment.corona.editMode;
++                root.enforceAero7NoEditMode();
+             }
+         }
+ 
+@@ -295,12 +304,16 @@ ContainmentItem {
+ 
+             containment: Plasmoid
+             containmentItem: root
+-            editModeCondition: Plasmoid.immutable
+-                    ? ContainmentLayoutManager.AppletsLayout.Locked
+-                    : ContainmentLayoutManager.AppletsLayout.AfterPressAndHold
++            editModeCondition: ContainmentLayoutManager.AppletsLayout.Locked
+ 
+-            // Sets the containment in edit mode when we go in edit mode as well
+-            onEditModeChanged: Plasmoid.containment.corona.editMode = editMode;
++            onEditModeChanged: {
++                if (editMode) {
++                    editMode = false;
++                }
++                root.enforceAero7NoEditMode();
++            }
++
++            Component.onCompleted: Qt.callLater(root.enforceAero7NoEditMode)
+ 
+             minimumItemWidth: Kirigami.Units.iconSizes.small * 3
+             minimumItemHeight: minimumItemWidth
+@@ -315,14 +328,15 @@ ContainmentItem {
+             appletContainerComponent: ContainmentLayoutManager.BasicAppletContainer {
+                 id: appletContainer
+ 
+-                editModeCondition: Plasmoid.immutable
+-                    ? ContainmentLayoutManager.ItemContainer.Locked
+-                    : (applet && applet.plasmoid
+-                       && String(applet.plasmoid.pluginName).startsWith("org.aero7.gadgets.")
+-                        ? ContainmentLayoutManager.ItemContainer.AfterMouseOver
+-                        : ContainmentLayoutManager.ItemContainer.AfterPressAndHold)
++                editModeCondition: ContainmentLayoutManager.ItemContainer.Manual
+ 
+-                configOverlaySource: "ConfigOverlay.qml"
++                configOverlaySource: "NoEditOverlay.qml"
++
++                onEditModeChanged: {
++                    if (editMode) {
++                        editMode = false;
++                    }
++                }
+ 
+                 onAppletChanged: {
+                     applet.visible = true
+@@ -427,6 +441,12 @@ ContainmentItem {
+             }
+ 
+             Plasmoid.setInternalAction("configure", configAction)
++            const editAction = Plasmoid.internalAction("desktop edit mode")
++            if (editAction) {
++                editAction.visible = false
++                editAction.enabled = false
++            }
++            root.enforceAero7NoEditMode()
+         }
+     }
+ }
+diff --git a/plasma/plasmoids/io.gitgud.wackyideas.panel/contents/ui/main.qml b/plasma/plasmoids/io.gitgud.wackyideas.panel/contents/ui/main.qml
+index 92e20d4..0888538 100644
+--- a/plasma/plasmoids/io.gitgud.wackyideas.panel/contents/ui/main.qml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.panel/contents/ui/main.qml
+@@ -34,6 +34,23 @@ ContainmentItem {
+         shellAction.exec("aero7-shell-action " + action);
+     }
+ 
++    function enforceAero7NoEditMode() {
++        if (Plasmoid.containment.corona.editMode) {
++            Plasmoid.containment.corona.editMode = false;
++        }
++        if (root.configOverlay) {
++            root.configOverlay.destroy();
++            root.configOverlay = null;
++        }
++    }
++
++    Connections {
++        target: Plasmoid.containment.corona
++        function onEditModeChanged() {
++            root.enforceAero7NoEditMode();
++        }
++    }
++
+     Plasma5Support.DataSource {
+         id: shellAction
+         engine: "executable"
+@@ -176,27 +193,8 @@ ContainmentItem {
+     }
+ 
+     Plasmoid.onUserConfiguringChanged: {
+-        if (!Plasmoid.userConfiguring) {
+-            gradientRect.refreshTaskApplet()
+-            if (root.configOverlay) {
+-                root.configOverlay.destroy();
+-                root.configOverlay = null;
+-            }
+-            return;
+-        }
+-
+-        if (Plasmoid.immutable) {
+-            return;
+-        }
+-
+-        Containment.applets.forEach(applet => applet.expanded = false);
+-        const component = Qt.createComponent("ConfigOverlay.qml");
+-        root.configOverlay = component.createObject(root, {
+-            "anchors.fill": dropArea,
+-            "anchors.rightMargin": root.isHorizontal ? toolBox.width : 0,
+-            "anchors.bottomMargin": !root.isHorizontal ? toolBox.height : 0,
+-        });
+-        component.destroy();
++        gradientRect.refreshTaskApplet();
++        root.enforceAero7NoEditMode();
+     }
+ //END connections
+ 
+@@ -232,6 +230,7 @@ ContainmentItem {
+             LayoutManager.marginHighlights = [];
+             LayoutManager.appletsModel = appletsModel;
+             LayoutManager.restore();
++            root.enforceAero7NoEditMode();
+ 
+             // Aero7 owns taskbar configuration. These Plasma containment
+             // actions must never become normal-session user interface.
+@@ -296,7 +295,7 @@ ContainmentItem {
+                 property bool isMarginSeparator: ((applet.plasmoid?.constraintHints & Plasmoid.MarginAreasSeparator) == Plasmoid.MarginAreasSeparator)
+                 property int appletIndex: index // To make sure it's always readable even inside other models
+                 property bool inThickArea: false
+-                visible: applet.plasmoid?.status !== PlasmaCore.Types.HiddenStatus || (!Plasmoid.immutable && Plasmoid.userConfiguring) || Containment.corona.editMode;
++                visible: applet.plasmoid?.status !== PlasmaCore.Types.HiddenStatus;
+ 
+                 //when the applet moves caused by its resize, don't animate.
+                 //this is completely heuristic, but looks way less "jumpy"
+@@ -591,7 +590,7 @@ ContainmentItem {
+             columnSpacing: Kirigami.Units.smallSpacing
+ 
+             x: Qt.application.layoutDirection === Qt.RightToLeft && isHorizontal ? toolBoxSize : 0;
+-            readonly property int toolBoxSize: !toolBox || !Plasmoid.containment.corona.editMode || Qt.application.layoutDirection === Qt.RightToLeft ? 0 : (isHorizontal ? toolBox.width : toolBox.height)
++            readonly property int toolBoxSize: 0
+ 
+             property int horizontalDisplacement: dropArea.anchors.leftMargin + dropArea.anchors.rightMargin + (isHorizontal ? currentLayout.toolBoxSize : 0)
+             property int verticalDisplacement: dropArea.anchors.topMargin + dropArea.anchors.bottomMargin + (isHorizontal ? 0 : currentLayout.toolBoxSize)
+@@ -623,7 +622,7 @@ ContainmentItem {
+     }
+     MouseArea {
+         anchors.fill: parent
+-        visible: Containment.corona.editMode && !Plasmoid.userConfiguring
++        visible: false
+         hoverEnabled: true
+         onClicked: Plasmoid.internalAction("configure").trigger()
+         Rectangle {
+diff --git a/plasma/plasmoids/io.gitgud.wackyideas.seventasks/contents/ui/ContextMenu.qml b/plasma/plasmoids/io.gitgud.wackyideas.seventasks/contents/ui/ContextMenu.qml
+index 760cd8d..ec9ce8b 100644
+--- a/plasma/plasmoids/io.gitgud.wackyideas.seventasks/contents/ui/ContextMenu.qml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.seventasks/contents/ui/ContextMenu.qml
+@@ -741,36 +741,6 @@ PlasmaExtras.Menu {
+ 
+     PlasmaExtras.MenuItem { separator: true }
+ 
+-    PlasmaExtras.MenuItem {
+-        property QtObject configureAction: null
+-
+-        enabled: configureAction && configureAction.enabled
+-        visible: configureAction && configureAction.visible
+-
+-        text: configureAction ? configureAction.text : ""
+-        icon: configureAction ? configureAction.icon : ""
+-
+-        onClicked: configureAction.trigger()
+-
+-        Component.onCompleted: configureAction = Plasmoid.internalAction("configure")
+-    }
+-
+-    PlasmaExtras.MenuItem {
+-        property QtObject editModeAction: null
+-
+-        enabled: editModeAction && editModeAction.enabled
+-        visible: editModeAction && editModeAction.visible
+-
+-        text: editModeAction ? editModeAction.text : ""
+-        icon: editModeAction ? editModeAction.icon : ""
+-
+-        onClicked: editModeAction.trigger()
+-
+-        Component.onCompleted: editModeAction = Plasmoid.containment.internalAction("configure")
+-    }
+-
+-    PlasmaExtras.MenuItem { separator: true }
+-
+     PlasmaExtras.MenuItem {
+         id: closeWindowItem
+         visible: (visualParent && !get(atm.IsLauncher) && !get(atm.IsStartup))
+diff --git a/plasma/shells/io.gitgud.wackyideas.desktop/contents/views/Desktop.qml b/plasma/shells/io.gitgud.wackyideas.desktop/contents/views/Desktop.qml
+index 09dc871..fdb0e24 100644
+--- a/plasma/shells/io.gitgud.wackyideas.desktop/contents/views/Desktop.qml
++++ b/plasma/shells/io.gitgud.wackyideas.desktop/contents/views/Desktop.qml
+@@ -42,20 +42,11 @@ Item {
+     }
+ 
+     function toggleWidgetExplorer(containment) {
+-
+-        if (sidePanelStack.state == "widgetExplorer") {
+-            sidePanelStack.state = "closed";
+-        } else {
+-            sidePanelStack.state = "widgetExplorer";
+-            sidePanelStack.setSource(Qt.resolvedUrl("../explorer/WidgetExplorer.qml"), {"containment": containment, "sidePanel": sidePanel});
+-        }
++        closeWidgetExplorer();
+     }
+ 
+     function showWidgetExplorer(containment) {
+-        if (sidePanelStack.state !== "widgetExplorer") {
+-            sidePanelStack.state = "widgetExplorer";
+-            sidePanelStack.setSource(Qt.resolvedUrl("../explorer/WidgetExplorer.qml"), {"containment": containment, "sidePanel": sidePanel});
+-        }
++        closeWidgetExplorer();
+     }
+ 
+     function closeWidgetExplorer() {
+@@ -64,6 +55,13 @@ Item {
+         }
+     }
+ 
++    function enforceAero7NoEditMode() {
++        closeWidgetExplorer();
++        if (containment?.plasmoid?.corona?.editMode) {
++            containment.plasmoid.corona.editMode = false;
++        }
++    }
++
+     function toggleActivityManager() {
+         if (sidePanelStack.state == "activityManager") {
+             sidePanelStack.state = "closed";
+@@ -74,64 +72,13 @@ Item {
+     }
+ 
+ 
+-    readonly property rect editModeRect: {
+-        if (!containment) {
+-            return Qt.rect(0,0,0,0);
+-        }
+-        let screenRect = containment.plasmoid.availableScreenRect;
+-        let panelConfigRect = Qt.rect(0,0,0,0);
+-
+-        if (containment.plasmoid.corona.panelBeingConfigured
+-            && containment.plasmoid.corona.panelBeingConfigured.screenToFollow === desktop.screenToFollow) {
+-            panelConfigRect = containment.plasmoid.corona.panelBeingConfigured.relativeConfigRect;
+-        }
+-
+-        if (panelConfigRect.width <= 0) {
+-            ; // Do nothing
+-        } else if (panelConfigRect.x > width - (panelConfigRect.x + panelConfigRect.width)) {
+-            screenRect = Qt.rect(screenRect.x, screenRect.y, panelConfigRect.x - screenRect.x, screenRect.height);
+-        } else {
+-            const diff = Math.max(0, panelConfigRect.x + panelConfigRect.width - screenRect.x);
+-            screenRect = Qt.rect(Math.max(screenRect.x, panelConfigRect.x + panelConfigRect.width), screenRect.y, screenRect.width - diff, screenRect.height);
+-        }
+-
+-        /*if (sidePanel.visible) {
+-            if (Qt.application.layoutDirection === Qt.RightToLeft) {
+-                screenRect = Qt.rect(screenRect.x, screenRect.y, screenRect.width - sidePanel.width, screenRect.height);
+-            } else {
+-                screenRect = Qt.rect(screenRect.x + sidePanel.width, screenRect.y, screenRect.width - sidePanel.width, screenRect.height);
+-            }
+-        }*/
+-        return screenRect;
+-    }
+-
+-    MouseArea {
+-        anchors.fill: parent
+-        onClicked: containment.plasmoid.corona.editMode = false
+-    }
+-
+     MouseArea {
+         id: containmentParent
+-        x: editModeLoader.active ? editModeLoader.item.centerX - width / 2 : 0
+-        y: editModeLoader.active ? editModeLoader.item.centerY - height / 2 : 0
++        x: 0
++        y: 0
+         width: root.width
+         height: root.height
+-        readonly property real extraScale: desktop.configuredPanel || sidePanel.visible ? 0.95 : 0.9
+-        property real scaleFactor: Math.min(editModeRect.width/root.width, editModeRect.height/root.height) * extraScale
+-        scale: containment?.plasmoid.corona.editMode ? scaleFactor : 1
+-    }
+-
+-    Loader {
+-        id: editModeLoader
+-        anchors.fill: parent
+-        sourceComponent: DesktopEditMode {}
+-        active: containment?.plasmoid.corona.editMode || editModeUiTimer.running
+-        Timer {
+-            id: editModeUiTimer
+-            property bool editMode: containment?.plasmoid.corona.editMode || false
+-            onEditModeChanged: restart()
+-            interval: Kirigami.Units.longDuration
+-        }
++        scale: 1
+     }
+ 
+     Loader {
+@@ -229,13 +176,6 @@ Item {
+ 
+         onVisibleChanged: {
+             if (!visible) {
+-                // If was called from a panel, open the panel config
+-                if (sidePanelStack.item && sidePanelStack.item.containment
+-                    && sidePanelStack.item.containment != containment.plasmoid
+-                    && !sidePanelStack.item.containment.userConfiguring
+-                ) {
+-                    Qt.callLater(sidePanelStack.item.containment.internalAction("configure").trigger);
+-                }
+                 sidePanelStack.state = "closed";
+                 ActivitySwitcher.Backend.shouldShowSwitcher = false;
+             }
+@@ -290,6 +230,15 @@ Item {
+         }
+     }
+ 
++    Connections {
++        target: containment?.plasmoid?.corona ?? null
++        function onEditModeChanged() {
++            root.enforceAero7NoEditMode();
++        }
++    }
++
++    Component.onCompleted: Qt.callLater(enforceAero7NoEditMode)
++
+ 
+     onContainmentChanged: {
+         if (containment == null) {
+@@ -297,6 +246,7 @@ Item {
+         }
+ 
+         containment.parent = containmentParent
++        Qt.callLater(enforceAero7NoEditMode)
+ 
+         if (switchAnim.running) {
+             //If the animation was still running, stop it and reset
+diff --git a/plasma/shells/io.gitgud.wackyideas.desktop/contents/views/DesktopEditMode.qml b/plasma/shells/io.gitgud.wackyideas.desktop/contents/views/DesktopEditMode.qml
+deleted file mode 100644
+index ae8c2f0..0000000
+--- a/plasma/shells/io.gitgud.wackyideas.desktop/contents/views/DesktopEditMode.qml
++++ /dev/null
+@@ -1,159 +0,0 @@
+-/*
+-    SPDX-FileCopyrightText: 2024 Marco Martin <mart@kde.org>
+-    SPDX-FileCopyrightText: 2014 David Edmundson <davidedmundson@kde.org>
+-
+-    SPDX-License-Identifier: GPL-2.0-or-later
+-*/
+-
+-import QtQuick
+-import QtQuick.Effects
+-import QtQuick.Layouts
+-import QtQuick.Controls as QQC2
+-
+-import org.kde.kirigami as Kirigami
+-import org.kde.ksvg as KSvg
+-import org.kde.plasma.core as PlasmaCore
+-import org.kde.plasma.components as PC
+-
+-import aeroshell.utils as AeroShellUtils
+-
+-import "../components"
+-
+-Item {
+-    id: root_item
+-
+-    property real centerX: Math.round(editModeUi.x + editModeUi.width/2)
+-    property real centerY: Math.round(editModeUi.y + editModeUi.height/2)
+-    property real roundedRootWidth: Math.round(root.width)
+-    property real roundedRootHeight: Math.round(root.height)
+-
+-    property bool open: false
+-
+-    onOpenChanged: {
+-        if (open && containment.plasmoid.screen >= 0) {
+-            Qt.callLater(root.showWidgetExplorer, containment.plasmoid)
+-        } else {
+-            root.closeWidgetExplorer()
+-        }
+-    }
+-
+-    Rectangle {
+-        color: "#1D5F7A"
+-        anchors.fill: parent
+-    }
+-
+-    AeroShellUtils.SDDM { id: sddm }
+-
+-    Image {
+-        id: bg
+-        anchors.fill: parent
+-        fillMode: Image.PreserveAspectCrop
+-        source: sddm.currentBackground
+-    }
+-
+-    Rectangle {
+-        anchors.fill: parent
+-
+-        height: editModeUi.height + Kirigami.Units.smallSpacing + (Kirigami.Units.largeSpacing * 4)
+-
+-        gradient: Gradient {
+-            orientation: Gradient.Vertical
+-            GradientStop { color: Qt.rgba(0, 0, 0, 0.1); position: 0.0 }
+-            GradientStop { color: Qt.rgba(0, 0, 0, 0.3); position: 0.1 }
+-            GradientStop { color: Qt.rgba(0, 0, 0, 0.5); position: 0.5 }
+-            GradientStop { color: Qt.rgba(0, 0, 0, 0.3); position: 0.9 }
+-            GradientStop { color: Qt.rgba(0, 0, 0, 0.1); position: 1.0 }
+-        }
+-    }
+-
+-    RowLayout {
+-        id: toolBar
+-
+-        LayoutMirroring.enabled: Qt.application.layoutDirection === Qt.RightToLeft
+-        LayoutMirroring.childrenInherit: true
+-
+-        anchors {
+-            left: editModeUi.left
+-            bottom: editModeUi.top
+-            right: editModeUi.right
+-            bottomMargin: Kirigami.Units.smallSpacing
+-        }
+-
+-        Flow {
+-            Layout.fillWidth: true
+-            Layout.minimumHeight: implicitHeight
+-
+-            spacing: Kirigami.Units.smallSpacing
+-
+-            PC.Label {
+-                text: i18n("Desktop Gadgets")
+-                font.bold: true
+-            }
+-        }
+-
+-        GenericButton {
+-            Layout.alignment: Qt.AlignTop
+-
+-            visible: Kirigami.Settings.hasTransientTouchInput || Kirigami.Settings.tabletMode
+-
+-            text: i18ndc("plasma_shell_org.kde.plasma.desktop", "@action:button", "More")
+-
+-            onClicked: {
+-                containment.openContextMenu(mapToGlobal(0, height));
+-            }
+-        }
+-        GenericButton {
+-            Layout.alignment: Qt.AlignTop
+-            text: i18nd("plasma_shell_org.kde.plasma.desktop", "Exit Edit Mode")
+-            onClicked: containment.plasmoid.corona.editMode = false
+-        }
+-    }
+-
+-    Item {
+-        id: editModeUi
+-        visible: open || xAnim.running
+-        x: Math.round(open ? editModeRect.x + editModeRect.width/2 - zoomedWidth/2 : 0)
+-        y: Math.round(open ? editModeRect.y + editModeRect.height/2 - zoomedHeight/2 + toolBar.height : 0)
+-        width: open ? zoomedWidth : roundedRootWidth
+-        height: open ? zoomedHeight : roundedRootHeight
+-        property real zoomedWidth: Math.round(root.width * containmentParent.scaleFactor)
+-        property real zoomedHeight: Math.round(root.height * containmentParent.scaleFactor)
+-
+-        Behavior on x {
+-            NumberAnimation {
+-                id: xAnim
+-                duration: Kirigami.Units.longDuration
+-                easing.type: Easing.Linear
+-            }
+-        }
+-        Behavior on y {
+-            NumberAnimation {
+-                duration: Kirigami.Units.longDuration
+-                easing.type: Easing.Linear
+-            }
+-        }
+-        Behavior on width {
+-            NumberAnimation {
+-                duration: Kirigami.Units.longDuration
+-                easing.type: Easing.Linear
+-            }
+-        }
+-        Behavior on height {
+-            NumberAnimation {
+-                duration: Kirigami.Units.longDuration
+-                easing.type: Easing.Linear
+-            }
+-        }
+-
+-        MultiEffect {
+-            anchors.fill: parent
+-            source: containment
+-            layer.enabled: true
+-            layer.smooth: true
+-        }
+-    }
+-
+-    Component.onCompleted: {
+-        open = Qt.binding(() => {return containment.plasmoid.corona.editMode});
+-    }
+-}

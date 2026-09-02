@@ -17,6 +17,7 @@
     "aeroshell-workspace-git",
     "aero7-file-explorer",
     "aero7-gwenview",
+    "aero7-internet-explorer",
     "aero7-kolourpaint",
     "linux-control-panel",
     "linver",
@@ -55,23 +56,32 @@
     "linux-devmgmt": [
       "aero7-desktop"
     ],
-    "tuxmanager": [],
+    "tuxmanager": [
+      "aerothemeplasma-desktop-git"
+    ],
     "aero7-qt": [
       "aero7-file-explorer",
       "aero7-gwenview",
+      "aero7-internet-explorer",
       "aero7-kolourpaint",
       "linux-control-panel",
       "linver"
     ],
     "aero7-file-explorer": [
-      "aero7-desktop"
+      "aero7-desktop",
+      "aerothemeplasma-desktop-git"
     ],
     "aero7-gwenview": [],
     "linux-control-panel": [
-      "aero7-desktop"
+      "aero7-desktop",
+      "aerothemeplasma-desktop-git"
     ],
     "aero7-kolourpaint": [],
     "aero7-gadgets": [
+      "aero7-desktop",
+      "aerothemeplasma-desktop-git"
+    ],
+    "aero7-internet-explorer": [
       "aero7-desktop"
     ],
     "aero7-desktop": [],
@@ -321,9 +331,7 @@
         "qt6-svg"
       ],
       "makedepends": [
-        "cmake",
-        "ninja",
-        "git"
+        "cmake"
       ],
       "provides": [
         "win-gadgets"
@@ -492,7 +500,6 @@
       "makedepends": [
         "aero7-qt",
         "extra-cmake-modules",
-        "git",
         "ninja"
       ],
       "provides": [
@@ -568,6 +575,26 @@
       ],
       "replaces": []
     },
+    "aero7-internet-explorer": {
+      "arch": [
+        "x86_64"
+      ],
+      "depends": [
+        "aero7-qt",
+        "kio",
+        "kservice",
+        "qt6-base",
+        "xdg-utils"
+      ],
+      "makedepends": [
+        "cmake",
+        "ninja",
+        "git"
+      ],
+      "provides": [],
+      "conflicts": [],
+      "replaces": []
+    },
     "aero7-kolourpaint": {
       "arch": [
         "x86_64"
@@ -617,6 +644,7 @@
         "qt6-base",
         "qt6-multimedia",
         "zlib",
+        "python",
         "plasma-desktop",
         "plasma-nm",
         "polkit",
@@ -631,12 +659,12 @@
         "wireplumber",
         "upower",
         "power-profiles-daemon",
-        "shadow"
+        "shadow",
+        "layer-shell-qt"
       ],
       "makedepends": [
         "aero7-qt",
         "cmake",
-        "git",
         "ninja"
       ],
       "provides": [],
@@ -686,6 +714,7 @@
         "kjobwidgets",
         "kio",
         "kglobalaccel",
+        "kguiaddons",
         "kpipewire",
         "ki18n",
         "kwin",
@@ -712,7 +741,6 @@
         "kwindowsystem",
         "knotifications",
         "knotifyconfig",
-        "kmenuedit",
         "kirigami",
         "kitemmodels",
         "kpackage",
@@ -724,7 +752,11 @@
         "kcalc",
         "featherpad",
         "qt6-base",
-        "aero7-computer-management"
+        "aero7-gadgets",
+        "aero7-computer-management",
+        "aero7-file-explorer",
+        "linux-control-panel",
+        "tuxmanager"
       ],
       "makedepends": [
         "git",
@@ -755,6 +787,7 @@
         "pipewire-pulse",
         "aero7-file-explorer",
         "aero7-gadgets",
+        "aero7-internet-explorer",
         "ark",
         "aerothemeplasma-desktop",
         "linux-control-panel",

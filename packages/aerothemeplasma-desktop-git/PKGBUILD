@@ -2,7 +2,7 @@
 
 pkgname=('aerothemeplasma-desktop-git')
 pkgver=6.7.0_742.r9c2d850
-pkgrel=6
+pkgrel=38
 pkgdesc="An Aero-inspired classic desktop shell for KDE Plasma"
 arch=(x86_64)
 url="https://github.com/memegeko/aerothemeplasma"
@@ -29,6 +29,7 @@ depends=(gcc-libs
          kjobwidgets
          kio
          kglobalaccel
+         kguiaddons
          kpipewire
          ki18n
          kwin
@@ -55,7 +56,6 @@ depends=(gcc-libs
          kwindowsystem
          knotifications
          knotifyconfig
-         kmenuedit
          kirigami
          kitemmodels
          kpackage
@@ -67,7 +67,11 @@ depends=(gcc-libs
          kcalc
          featherpad
          qt6-base
-         aero7-computer-management)
+         aero7-gadgets
+         aero7-computer-management
+         aero7-file-explorer
+         linux-control-panel
+         tuxmanager)
 optdepends=(uac-polkit-agent
             qrca)
 makedepends=(git
@@ -78,13 +82,47 @@ options=('!debug')
 source=("${pkgname}::git+${url}.git#commit=9c2d850f0907cd7d33c81e8a3fcc00abae3abb9b"
         'aero7-desktop-polish.patch'
         'aero7-search-sections.patch'
+        'aero7-sevenstart-plasma67-stability.patch'
+        'aero7-start-links.patch'
+        'aero7-hide-system-settings.patch'
+        'aero7-control-panel-links-and-audio-empty-state.patch'
+        'aero7-desktop-context-and-gadgets.patch'
+        'aero7-runtime-qml-stability.patch'
+        'aero7-start-no-empty-dialog.patch'
+        'aero7-shell-context-and-snipping.patch'
+        'aero7-start-context-import-fix.patch'
+        'aero7-remove-edit-mode.patch'
+        'aero7-win7-comparison-pass.patch'
+        'aero7-start-recents-dedupe.patch'
+        'aero7-ie-taskbar-identity.patch'
+        'aero7-fresh-install-login-lock.patch'
+        'Aero7OnScreenKeyboard.qml'
+        'aero7-no-visible-kde-overlay-r34.tar.gz'
         'aero7-watermark.png'
-        'aero7-kwalletrc')
+        'aero7-kwalletrc'
+        'aero7-kdeglobals')
 sha256sums=('SKIP'
             'a5401b0b49372afc08658be7681d00d4ba15d13ad180fd00b27aff71d0cb2435'
             'b927b6a485d914e12601327dc3b5ae2c0d85394779f935a47ddf050ec702d9f6'
-            'fb2f77fa6b3dd7bb0f1f096c4b0f5aba8b32344f8a6dbada1f094e8e5e283ef4'
-            '10512740e425d40a16d6d3dee52e5b87301b60446649a56c98237be9aeb6bdf7')
+            '50192694b0902175a71b8f5cfdb28020b483ab0e08db69a4000aeb03962ba5ff'
+            '02e04dec81e4de925326d920ca8d6c4b449a8986d1ee3fd9d164eb6ca070c0fb'
+            'c249c4e187497a8bcb5bf9fd9d7ba5f6e03b582d9b263ad8a48bcc0b2bd2480b'
+            'f92529192b00c7ab98042e160f7043a712cb202640aef26f0fcbf4a98a6e53c2'
+            'c0ea6740586b30de6d5924be0e4477f73a30d5f9dc7c208796b0dca21761b70a'
+            '6812270a72754f82a6c9391b221b0d6e383889d5ff8c1e04e4f28d767940fcb1'
+            '717306fb9dc3525284c0bfc6a610687ad4c6d585f321b6f5e85c72600c7cb50b'
+            'bb86b6c89a42ece1b7f586aa1716921b9db2e76ab6f3eb05f69f155013a9fb1f'
+            '4946f075fd0c76af9e2fd7bc27266a134d9c09ab90e9c6e5d55d5db0772f8f5a'
+            '6d339a67cbd670e80941c967762fbfa575b0ffc0361cb9f84b8c1a1ea85caa34'
+            '61a2f83031c5d14e189b320d55275c5897cf20098c1fe82a71dba577a2dabae4'
+            'ef591b76dc7cb889da850ee21092ca476eb587cc47a8aa453f4c9a3537e56f46'
+            'b85e295eac22cfa6da752c0a2019c36ceb1c4c18443398af1e9215ea0b7d3117'
+            '9adf6ae7b4453447d0407b2c4a045ef59c0d64a39faad244a796f6ed664b12c9'
+            'e56d78b54366bee688a4eece2a0a4bdf6f8a0f490d3319a4285f4734ade8a7bd'
+            '829369c3fcb6bf41f15e7c2330759940270116ec06b04e9da770ebe878da961e'
+            'd45164d6d67f2d8ccae63c4fd83bd0dd73e05808f3c8cd739c4850b5680d4982'
+            '10512740e425d40a16d6d3dee52e5b87301b60446649a56c98237be9aeb6bdf7'
+            'c51bea0944c694259c9a9d2b5429f98310075b592a1581e51a5138cd5e00c837')
 conflicts=(aerothemeplasma-desktop)
 provides=(aerothemeplasma-desktop)
 groups=(aerothemeplasma)
@@ -98,12 +136,31 @@ pkgver() {
 prepare() {
   patch -d "${pkgname%}" -Np1 < aero7-desktop-polish.patch
   patch -d "${pkgname%}" -Np1 < aero7-search-sections.patch
+  patch -d "${pkgname%}" -Np1 < aero7-sevenstart-plasma67-stability.patch
+  patch -d "${pkgname%}" -Np1 < aero7-start-links.patch
+  patch -d "${pkgname%}" -Np1 < aero7-hide-system-settings.patch
+  patch -d "${pkgname%}" -Np1 < aero7-control-panel-links-and-audio-empty-state.patch
+  patch -d "${pkgname%}" -Np1 < aero7-desktop-context-and-gadgets.patch
+  patch -d "${pkgname%}" -Np1 < aero7-runtime-qml-stability.patch
+  patch -d "${pkgname%}" -Np1 < aero7-start-no-empty-dialog.patch
+  patch -d "${pkgname%}" -Np1 < aero7-shell-context-and-snipping.patch
+  patch -d "${pkgname%}" -Np1 < aero7-start-context-import-fix.patch
+  patch -d "${pkgname%}" -Np1 < aero7-remove-edit-mode.patch
+  patch -d "${pkgname%}" -Np1 < aero7-win7-comparison-pass.patch
+  patch -d "${pkgname%}" -Np1 < aero7-start-recents-dedupe.patch
+  patch -d "${pkgname%}" -Np1 < aero7-ie-taskbar-identity.patch
+  patch -d "${pkgname%}" -Np1 < aero7-fresh-install-login-lock.patch
+  cp -a "$srcdir/aero7-no-visible-kde-overlay/." "${pkgname%}/"
 }
 
 build() {
   DESTDIR="$pkgdir" cmake -B build -S ${pkgname%} \
-    -DBUILD_TESTING=OFF -DCMAKE_INSTALL_LIBEXECDIR=lib
+    -DBUILD_TESTING=ON -DCMAKE_INSTALL_LIBEXECDIR=lib
   cmake --build build
+}
+
+check() {
+  ctest --test-dir build --output-on-failure
 }
 
 package() {
@@ -114,6 +171,12 @@ package() {
       "$pkgdir/usr/share/licenses/$pkgname/THIRD_PARTY.md"
     install -Dm644 "$srcdir/aero7-watermark.png" \
       "$pkgdir/usr/share/sddm/themes/sddm-theme-mod/Assets/aero7-branding-r3.png"
+    install -Dm644 "$srcdir/aero7-watermark.png" \
+      "$pkgdir/usr/share/plasma/shells/io.gitgud.wackyideas.desktop/contents/images/branding.png"
+    install -Dm644 "$srcdir/Aero7OnScreenKeyboard.qml" \
+      "$pkgdir/usr/share/sddm/themes/sddm-theme-mod/SMOD/Aero7OnScreenKeyboard.qml"
     install -Dm644 "$srcdir/aero7-kwalletrc" \
       "$pkgdir/etc/xdg/kwalletrc"
+    install -Dm644 "$srcdir/aero7-kdeglobals" \
+      "$pkgdir/etc/xdg/kdeglobals"
 }

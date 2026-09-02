@@ -1,0 +1,867 @@
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -15,12 +15,16 @@
+ include(KDECompilerSettings NO_POLICY_SCOPE)
+ include(FeatureSummary)
+ find_package(KF6Config)
++find_package(KF6GuiAddons REQUIRED)
++find_package(KF6GlobalAccel REQUIRED)
++find_package(KF6Notifications REQUIRED)
+ find_package(Plasma)
++find_package(Qt6 REQUIRED COMPONENTS Core DBus Gui Widgets)
+ 
+ add_subdirectory(plasma)
++add_subdirectory(helpers)
+ if(NOT INSTALL_X11_COMPONENTS)
+     add_subdirectory(misc)
+ endif()
+ 
+ install()
+-
+--- a/plasma/plasmoids/io.gitgud.wackyideas.panel/contents/ui/main.qml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.panel/contents/ui/main.qml
+@@ -15,6 +15,7 @@
+ import org.kde.kquickcontrolsaddons
+ import org.kde.draganddrop as DragDrop
+ import org.kde.kirigami as Kirigami
++import org.kde.plasma.plasma5support as Plasma5Support
+ 
+ import "LayoutManager.js" as LayoutManager
+ 
+@@ -29,6 +30,29 @@
+     property bool panelFloating: root.panel ? !!root.panel.floating : false
+     property bool panelFloatingApplets: root.panel ? !!root.panel.floatingApplets : false
+ 
++    function runShellAction(action) {
++        shellAction.exec("aero7-shell-action " + action);
++    }
++
++    Plasma5Support.DataSource {
++        id: shellAction
++        engine: "executable"
++        connectedSources: []
++
++        function exec(command) {
++            if (command)
++                connectSource(command);
++        }
++
++        onNewData: (sourceName, data) => disconnectSource(sourceName)
++    }
++
++    TaskbarContextMenu {
++        id: taskbarContextMenu
++        taskbarLocked: !!Plasmoid.immutable
++        runAction: action => root.runShellAction(action)
++    }
++
+     onPanelThicknessChanged: {
+         if(root.panel) {
+             if(root.panel.userConfiguring) {
+@@ -209,12 +233,18 @@
+             LayoutManager.appletsModel = appletsModel;
+             LayoutManager.restore();
+ 
+-            root.Plasmoid.internalAction("configure").visible = Qt.binding(function() {
+-                return !root.Plasmoid.immutable;
+-            });
+-            root.Plasmoid.internalAction("configure").enabled = Qt.binding(function() {
+-                return !root.Plasmoid.immutable;
+-            });
++            // Aero7 owns taskbar configuration. These Plasma containment
++            // actions must never become normal-session user interface.
++            const configure = root.Plasmoid.internalAction("configure");
++            if (configure) {
++                configure.visible = false;
++                configure.enabled = false;
++            }
++            const addWidgets = root.Plasmoid.internalAction("add widgets");
++            if (addWidgets) {
++                addWidgets.visible = false;
++                addWidgets.enabled = false;
++            }
+         }
+ 
+         onDragEnter: event => {
+@@ -532,6 +562,23 @@
+             property Item applet: null
+             Component.onCompleted: Qt.callLater(refreshTaskApplet)
+         }
++        // This handler sits below every applet. It therefore receives only
++        // empty taskbar background clicks; Start, task buttons and tray icons
++        // keep their own context menus. Accepting the right button here is
++        // what prevents the containment from opening a second Plasma menu.
++        MouseArea {
++            id: taskbarBackgroundMouse
++            anchors.fill: parent
++            acceptedButtons: Qt.RightButton
++            propagateComposedEvents: false
++            onPressed: mouse => mouse.accepted = true
++            onClicked: mouse => {
++                mouse.accepted = true;
++                taskbarContextMenu.visualParent = taskbarBackgroundMouse;
++                taskbarContextMenu.open(mouse.x, mouse.y);
++            }
++        }
++
+         GridLayout {
+             id: currentLayout
+ 
+@@ -598,7 +645,7 @@
+     PC3.ToolButton {
+         id: addWidgetsButton
+         anchors.centerIn: parent
+-        visible: appletsModel.count === 0
++        visible: false
+         text: isHorizontal ? i18nd("plasma_shell_org.kde.plasma.desktop", "Add Widgets…") : undefined
+         icon.name: "list-add-symbolic"
+         onClicked: Plasmoid.internalAction("add widgets").trigger()
+--- a/plasma/plasmoids/io.gitgud.wackyideas.panel/contents/ui/TaskbarContextMenu.qml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.panel/contents/ui/TaskbarContextMenu.qml
+@@ -0,0 +1,48 @@
++import QtQuick
++import org.kde.plasma.extras as PlasmaExtras
++
++PlasmaExtras.Menu {
++    id: menu
++
++    required property var runAction
++    property bool taskbarLocked: true
++
++    PlasmaExtras.MenuItem {
++        text: i18n("Cascade windows")
++        icon: "window-duplicate"
++        onClicked: menu.runAction("cascade")
++    }
++    PlasmaExtras.MenuItem {
++        text: i18n("Show windows stacked")
++        icon: "view-split-top-bottom"
++        onClicked: menu.runAction("stacked")
++    }
++    PlasmaExtras.MenuItem {
++        text: i18n("Show windows side by side")
++        icon: "view-split-left-right"
++        onClicked: menu.runAction("side-by-side")
++    }
++    PlasmaExtras.MenuItem {
++        text: i18n("Show the desktop")
++        icon: "user-desktop"
++        onClicked: menu.runAction("show-desktop")
++    }
++    PlasmaExtras.MenuItem { separator: true }
++    PlasmaExtras.MenuItem {
++        text: i18n("Start Task Manager")
++        icon: "ksysguardd"
++        onClicked: menu.runAction("task-manager")
++    }
++    PlasmaExtras.MenuItem { separator: true }
++    PlasmaExtras.MenuItem {
++        text: i18n("Lock the taskbar")
++        checkable: true
++        checked: menu.taskbarLocked
++        onClicked: menu.runAction("toggle-taskbar-lock")
++    }
++    PlasmaExtras.MenuItem {
++        text: i18n("Properties")
++        icon: "document-properties"
++        onClicked: menu.runAction("taskbar-properties")
++    }
++}
+--- a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/main.qml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/main.qml
+@@ -37,10 +37,11 @@
+ 
+     property Item dragSource: null
+     // Plasma 6.7 can finish constructing the Kicker delegate models before
+-    // this applet has been attached to its panel containment. Giving Kicker
++    // this applet has been attached to its panel containment.  Giving Kicker
+     // the interface during that window lets its launcher-action code
+     // dereference a null Plasma::Applet containment and crashes plasmashell.
+-    // Delay model activation until the applet/panel relationship is complete.
++    // Delay model activation until the next event-loop turn, when the applet
++    // and panel relationship is complete.
+     property bool containmentReady: false
+ 
+     property alias rootModel: rootModel
+@@ -178,15 +179,6 @@
+ 
+         appletInterface: kicker.containmentReady ? kicker : null
+         favoritesModel: globalFavorites
+-        // Keep the Programs tab application-focused. KDE's System Settings,
+-        // Power, and Global Shortcuts runners duplicate Aero7 Control Panel
+-        // results and make ordinary application searches confusing.
+-        runners: [
+-            "krunner_services", "krunner_shell", "calculator",
+-            "krunner_placesrunner", "locations", "baloosearch",
+-            "krunner_recentdocuments", "krunner_bookmarksrunner",
+-            "windows", "krunner_kwin"
+-        ]
+         mergeResults: true
+     }
+     Kicker.RootModel {
+@@ -343,21 +335,14 @@
+         kicker.hideOnWindowDeactivate = true;
+     }
+ 
+-    Plasmoid.contextualActions: [
+-        PlasmaCore.Action {
+-            text: i18n("Edit Applications...")
+-            icon.name: "application-menu"
+-            onTriggered:  menu_executable.exec("kstart kmenuedit");
+-        },
+-        PlasmaCore.Action {
+-            text: i18n("Task Manager")
+-            icon.name: "ksysguardd"
+-            onTriggered: {
+-                menu_executable.exec("tux-manager");
++    function runShellAction(action) {
++        menu_executable.exec("aero7-shell-action " + action);
++    }
+ 
+-            }
+-        }
+-    ]
++    // The orb has an Aero7-owned two-item context menu. Publishing applet
++    // contextual actions here lets the containment append Plasma's Configure,
++    // Alternatives and edit-mode actions, so expose none.
++    Plasmoid.contextualActions: []
+ 
+     Component.onCompleted: {
+         windowSystem.focusIn.connect(enableHideOnWindowDeactivate);
+--- a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/CompactRepresentation.qml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/CompactRepresentation.qml
+@@ -219,17 +219,36 @@
+         acceptedButtons: Qt.LeftButton | Qt.RightButton
+         anchors.fill: parent
+         hoverEnabled: true
+-        propagateComposedEvents: true
++        propagateComposedEvents: false
+ 
+         onPressed: mouse => {
+-            if(mouse.button === Qt.LeftButton)
++            mouse.accepted = true;
++            if(mouse.button === Qt.LeftButton) {
+                 showMenu();
+-            else
+-                mouse.accepted = false;
++            } else if (mouse.button === Qt.RightButton) {
++                startContextMenu.visualParent = mouseAreaCompositingOff;
++                startContextMenu.open(mouse.x, mouse.y);
++            }
+         }
+         z: 99
+     }
+ 
++    ActionMenu {
++        id: startContextMenu
++        actionList: [
++            {
++                text: i18n("Open Windows Explorer"),
++                icon: "system-file-manager",
++                action: () => kicker.runShellAction("explorer")
++            },
++            {
++                text: i18n("Properties"),
++                icon: "document-properties",
++                action: () => kicker.runShellAction("start-properties")
++            }
++        ]
++    }
++
+     // I hate this
+ 
+     // So the only way I could reasonably think of to make this work is running the function
+--- a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/code/tools.js
++++ b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/code/tools.js
+@@ -40,6 +40,31 @@
+     actionMenu.actionList = actionList;
+ }
+ 
++function aeroActionList(i18n, sourceActions, openAction) {
++    var blocked = [
++        "add widgets", "manage widgets", "edit mode", "enter edit mode",
++        "configure panel", "configure taskbar", "configure task manager",
++        "show alternatives", "edit application", "kde menu editor",
++        "remove panel", "remove this panel"
++    ];
++    var result = [{
++        text: i18n("Open"),
++        icon: "document-open",
++        action: openAction
++    }];
++    (sourceActions || []).forEach(function (item) {
++        var text = String(item.text || "").replace(/&/g, "").trim().toLowerCase();
++        for (var index = 0; index < blocked.length; ++index) {
++            if (text.indexOf(blocked[index]) !== -1)
++                return;
++        }
++        if (item.subActions)
++            item.subActions = aeroActionList(i18n, item.subActions, openAction).slice(1);
++        result.push(item);
++    });
++    return result;
++}
++
+ function createFavoriteActions(i18n, favoriteModel, favoriteId) {
+     if (favoriteModel === null || !favoriteModel.enabled || favoriteId == null) {
+         return null;
+@@ -52,11 +77,11 @@
+             var action = {};
+ 
+             if (favoriteModel.isFavorite(favoriteId)) {
+-                action.text = i18n("Remove from Favorites");
++                action.text = i18n("Unpin from Start Menu");
+                 action.icon = "list-remove";
+                 action.actionId = "_kicker_favorite_remove";
+             } else if (favoriteModel.maxFavorites == -1 || favoriteModel.count < favoriteModel.maxFavorites) {
+-                action.text = i18n("Add to Favorites");
++                action.text = i18n("Pin to Start Menu");
+                 action.icon = "bookmark-new";
+                 action.actionId = "_kicker_favorite_add";
+             } else {
+@@ -151,11 +176,11 @@
+         var action = {};
+ 
+         if (favoriteModel.isFavorite(favoriteId)) {
+-            action.text = i18n("Remove from Favorites");
++            action.text = i18n("Unpin from Start Menu");
+             action.icon = "list-remove";
+             action.actionId = "_kicker_favorite_remove";
+         } else if (favoriteModel.maxFavorites == -1 || favoriteModel.count < favoriteModel.maxFavorites) {
+-            action.text = i18n("Add to Favorites");
++            action.text = i18n("Pin to Start Menu");
+             action.icon = "bookmark-new";
+             action.actionId = "_kicker_favorite_add";
+         } else {
+--- a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/GenericItem.qml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/GenericItem.qml
+@@ -44,8 +44,8 @@
+   signal highlightChanged
+   signal aboutToShowActionMenu(variant actionMenu)
+ 
+-  property bool hasActionList: (("favoriteId" in model) && Boolean(model.favoriteId))
+-      || (("hasActionList" in model) && Boolean(model.hasActionList))
++  property bool hasActionList: ((model.favoriteId !== null)
++      || (("hasActionList" in model) && (model.hasActionList !== null)))
+ 
+   property var triggerModel
+ 
+@@ -59,7 +59,10 @@
+   }
+ 
+   onAboutToShowActionMenu: actionMenu => {
+-    var actionList = allItem.hasActionList ? model.actionList : [];
++    var actionList = Tools.aeroActionList(
++        i18n,
++        allItem.hasActionList ? Array.from(model.actionList) : [],
++        () => allItem.trigger());
+     if(model.favoriteId) { // If we have a launchable application, try allowing the user to pin it
+       // Find seventasks instance, if available
+       const entry = model.favoriteId; //kicker.convertUrl(model.url);
+@@ -85,9 +88,7 @@
+       }
+     }
+ 
+-    Tools.fillActionMenu(i18n, actionMenu, actionList,
+-        triggerModel && triggerModel.favoritesModel ? triggerModel.favoritesModel : null,
+-        model.favoriteId);
++    Tools.fillActionMenu(i18n, actionMenu, actionList, ListView.view.model.favoritesModel, model.favoriteId);
+   }
+ 
+   function openActionMenu(x, y) {
+@@ -212,7 +213,7 @@
+       }
+       onPositionChanged: {
+         isDraging = pressed
+-        if (pressed && canDrag && model.url){
++        if (pressed && canDrag){
+           if ("pluginName" in model) {
+             dragHelper.startDrag(kicker, model.url, model.decoration,
+                 "text/x-plasmoidservicename", model.pluginName);
+--- a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/KickoffItem.qml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/KickoffItem.qml
+@@ -71,7 +71,10 @@
+     readonly property bool isNew: model?.isNewlyInstalled ?? false
+ 
+     onAboutToShowActionMenu: (actionMenu) => { // Loads context menu items here
+-        var actionList = hasActionList ? model.actionList : [];
++        var actionList = Tools.aeroActionList(
++            i18n,
++            hasActionList ? Array.from(model.actionList) : [],
++            () => listItem.activate());
+         if(model.favoriteId) { // If we have a launchable application, try allowing the user to pin it
+             // Find seventasks instance, if available
+             const entry = "applications:" + model.favoriteId; //kicker.convertUrl(model.url);
+--- a/helpers/CMakeLists.txt
++++ b/helpers/CMakeLists.txt
+@@ -0,0 +1,2 @@
++add_subdirectory(shellactions)
++add_subdirectory(snippingtool)
+--- a/helpers/shellactions/CMakeLists.txt
++++ b/helpers/shellactions/CMakeLists.txt
+@@ -0,0 +1,3 @@
++add_executable(aero7-shell-action main.cpp)
++target_link_libraries(aero7-shell-action PRIVATE Qt6::Core Qt6::DBus)
++install(TARGETS aero7-shell-action RUNTIME DESTINATION ${KDE_INSTALL_BINDIR})
+--- a/helpers/shellactions/main.cpp
++++ b/helpers/shellactions/main.cpp
+@@ -0,0 +1,166 @@
++#include <QCoreApplication>
++#include <QDBusConnection>
++#include <QDBusInterface>
++#include <QDBusReply>
++#include <QDir>
++#include <QFile>
++#include <QProcess>
++#include <QTemporaryFile>
++#include <QTextStream>
++
++namespace {
++
++bool launch(const QString &program, const QStringList &arguments = {})
++{
++    return QProcess::startDetached(program, arguments);
++}
++
++bool evaluatePlasmaScript(const QString &script)
++{
++    QDBusInterface shell(QStringLiteral("org.kde.plasmashell"),
++                         QStringLiteral("/PlasmaShell"),
++                         QStringLiteral("org.kde.PlasmaShell"),
++                         QDBusConnection::sessionBus());
++    if (!shell.isValid())
++        return false;
++    const QDBusReply<QString> reply = shell.call(QStringLiteral("evaluateScript"), script);
++    return reply.isValid();
++}
++
++bool toggleTaskbarLock()
++{
++    return evaluatePlasmaScript(QStringLiteral(
++        "for (var p of panels()) {"
++        " if (p.type !== 'io.gitgud.wackyideas.panel') continue;"
++        " p.locked = !p.locked;"
++        "}"));
++}
++
++bool toggleShowDesktop()
++{
++    QDBusInterface kwin(QStringLiteral("org.kde.KWin"),
++                        QStringLiteral("/KWin"),
++                        QStringLiteral("org.kde.KWin"),
++                        QDBusConnection::sessionBus());
++    if (!kwin.isValid())
++        return false;
++    const bool showing = kwin.property("showingDesktop").toBool();
++    return kwin.call(QStringLiteral("showDesktop"), !showing).type()
++        != QDBusMessage::ErrorMessage;
++}
++
++QString arrangeScript(const QString &mode)
++{
++    return QStringLiteral(R"JS(
++const mode = "%1";
++const candidates = workspace.windowList().filter(function (window) {
++    return window.normalWindow && !window.minimized && window.onCurrentDesktop
++        && window.moveable && window.resizeable;
++});
++if (candidates.length > 0) {
++    const area = workspace.clientArea(KWin.MaximizeArea, candidates[0]);
++    const gap = 8;
++    if (mode === "cascade") {
++        const offset = 28;
++        const width = Math.max(320, area.width - offset * Math.min(candidates.length, 8));
++        const height = Math.max(220, area.height - offset * Math.min(candidates.length, 8));
++        candidates.forEach(function (window, index) {
++            window.setMaximize(false, false);
++            const step = index %% Math.max(1, Math.min(candidates.length, 8));
++            window.frameGeometry = {x: area.x + step * offset,
++                                    y: area.y + step * offset,
++                                    width: width, height: height};
++        });
++    } else {
++        candidates.forEach(function (window, index) {
++            window.setMaximize(false, false);
++            if (mode === "stacked") {
++                const height = Math.floor((area.height - gap * (candidates.length - 1))
++                                          / candidates.length);
++                window.frameGeometry = {x: area.x,
++                                        y: area.y + index * (height + gap),
++                                        width: area.width, height: height};
++            } else {
++                const width = Math.floor((area.width - gap * (candidates.length - 1))
++                                         / candidates.length);
++                window.frameGeometry = {x: area.x + index * (width + gap),
++                                        y: area.y,
++                                        width: width, height: area.height};
++            }
++        });
++    }
++}
++)JS").arg(mode);
++}
++
++bool arrangeWindows(const QString &mode)
++{
++    QTemporaryFile script;
++    script.setFileTemplate(QDir(QDir::tempPath()).filePath(
++        QCoreApplication::applicationName() + QStringLiteral("-XXXXXX.js")));
++    if (!script.open())
++        return false;
++    script.setAutoRemove(false);
++    const QByteArray contents = arrangeScript(mode).toUtf8();
++    if (script.write(contents) != contents.size())
++        return false;
++    const QString path = script.fileName();
++    script.close();
++
++    QDBusInterface scripting(QStringLiteral("org.kde.KWin"),
++                             QStringLiteral("/Scripting"),
++                             QStringLiteral("org.kde.kwin.Scripting"),
++                             QDBusConnection::sessionBus());
++    const QString plugin = QStringLiteral("aero7-arrange-") + mode;
++    scripting.call(QStringLiteral("unloadScript"), plugin);
++    const QDBusReply<int> loaded = scripting.call(QStringLiteral("loadScript"), path, plugin);
++    if (!loaded.isValid() || loaded.value() < 0) {
++        QFile::remove(path);
++        return false;
++    }
++    const QDBusMessage started = scripting.call(QStringLiteral("start"));
++    QFile::remove(path);
++    return started.type() != QDBusMessage::ErrorMessage;
++}
++
++} // namespace
++
++int main(int argc, char **argv)
++{
++    QCoreApplication app(argc, argv);
++    app.setApplicationName(QStringLiteral("aero7-shell-action"));
++    const QStringList args = app.arguments();
++    if (args.size() != 2) {
++        QTextStream(stderr) << "Usage: aero7-shell-action ACTION\n";
++        return 2;
++    }
++
++    const QString action = args.at(1);
++    bool ok = false;
++    if (action == QLatin1String("explorer"))
++        ok = launch(QStringLiteral("aero7-dolphin"));
++    else if (action == QLatin1String("task-manager"))
++        ok = launch(QStringLiteral("tux-manager"));
++    else if (action == QLatin1String("taskbar-properties"))
++        ok = launch(QStringLiteral("control"), {QStringLiteral("--page"),
++                    QStringLiteral("taskbar-start-menu")});
++    else if (action == QLatin1String("start-properties"))
++        ok = launch(QStringLiteral("control"), {QStringLiteral("--page"),
++                    QStringLiteral("taskbar-start-menu"), QStringLiteral("--tab"),
++                    QStringLiteral("start-menu")});
++    else if (action == QLatin1String("show-desktop"))
++        ok = toggleShowDesktop();
++    else if (action == QLatin1String("toggle-taskbar-lock"))
++        ok = toggleTaskbarLock();
++    else if (action == QLatin1String("cascade"))
++        ok = arrangeWindows(QStringLiteral("cascade"));
++    else if (action == QLatin1String("stacked"))
++        ok = arrangeWindows(QStringLiteral("stacked"));
++    else if (action == QLatin1String("side-by-side"))
++        ok = arrangeWindows(QStringLiteral("side-by-side"));
++    else {
++        QTextStream(stderr) << "Unknown Aero7 shell action: " << action << '\n';
++        return 2;
++    }
++    return ok ? 0 : 1;
++}
+--- a/helpers/snippingtool/CMakeLists.txt
++++ b/helpers/snippingtool/CMakeLists.txt
+@@ -0,0 +1,18 @@
++add_executable(aero7-snipping-tool main.cpp)
++target_link_libraries(aero7-snipping-tool PRIVATE
++    Qt6::Core
++    Qt6::DBus
++    Qt6::Gui
++    Qt6::Widgets
++    KF6::GuiAddons
++    KF6::GlobalAccel
++    KF6::Notifications
++)
++install(TARGETS aero7-snipping-tool RUNTIME DESTINATION ${KDE_INSTALL_BINDIR})
++install(FILES org.aero7.snippingtool.desktop
++    DESTINATION ${KDE_INSTALL_APPDIR})
++install(FILES org.aero7.snippingtool-autostart.desktop
++    DESTINATION ${KDE_INSTALL_AUTOSTARTDIR}
++    RENAME org.aero7.snippingtool.desktop)
++install(FILES aero7-snipping-tool.notifyrc
++    DESTINATION ${KDE_INSTALL_KNOTIFYRCDIR})
+--- a/helpers/snippingtool/org.aero7.snippingtool.desktop
++++ b/helpers/snippingtool/org.aero7.snippingtool.desktop
+@@ -0,0 +1,12 @@
++[Desktop Entry]
++Name=Snipping Tool
++GenericName=Screenshot Capture Utility
++Comment=Capture a rectangular screenshot
++Exec=aero7-snipping-tool --capture
++Icon=spectacle
++Terminal=false
++Type=Application
++Categories=Utility;Graphics;
++Keywords=screenshot;snip;capture;
++StartupNotify=false
++X-KDE-Wayland-Interfaces=zkde_screencast_unstable_v1
+--- a/helpers/snippingtool/org.aero7.snippingtool-autostart.desktop
++++ b/helpers/snippingtool/org.aero7.snippingtool-autostart.desktop
+@@ -0,0 +1,12 @@
++[Desktop Entry]
++Name=Aero7 Snipping Tool Service
++Comment=Provides the Aero7 screenshot shortcut and clipboard service
++Exec=aero7-snipping-tool --daemon
++Icon=spectacle
++Terminal=false
++Type=Application
++OnlyShowIn=KDE;
++NoDisplay=true
++X-KDE-autostart-after=panel
++X-KDE-StartupNotify=false
++X-KDE-Wayland-Interfaces=zkde_screencast_unstable_v1
+--- a/helpers/snippingtool/aero7-snipping-tool.notifyrc
++++ b/helpers/snippingtool/aero7-snipping-tool.notifyrc
+@@ -0,0 +1,13 @@
++[Global]
++Name=Snipping Tool
++Comment=Aero7 screenshot notifications
++
++[Event/screenshotSaved]
++Name=Screenshot saved
++Comment=A screenshot was saved and copied to the clipboard
++Action=Popup
++
++[Event/screenshotFailed]
++Name=Snipping Tool
++Comment=A screenshot could not be captured
++Action=Popup
+--- a/helpers/snippingtool/main.cpp
++++ b/helpers/snippingtool/main.cpp
+@@ -0,0 +1,223 @@
++#include <KGlobalAccel>
++#include <KSystemClipboard>
++#include <KNotification>
++
++#include <QAction>
++#include <QApplication>
++#include <QBuffer>
++#include <QClipboard>
++#include <QDateTime>
++#include <QDBusConnection>
++#include <QDBusInterface>
++#include <QDBusMessage>
++#include <QDesktopServices>
++#include <QDir>
++#include <QFileInfo>
++#include <QImage>
++#include <QKeySequence>
++#include <QMimeData>
++#include <QProcess>
++#include <QStandardPaths>
++#include <QTimer>
++#include <QUrl>
++#include <QUuid>
++
++class SnippingTool final : public QObject
++{
++    Q_OBJECT
++    Q_CLASSINFO("D-Bus Interface", "org.aero7.SnippingTool")
++
++public:
++    explicit SnippingTool(QObject *parent = nullptr)
++        : QObject(parent)
++    {
++        KSystemClipboard::instance();
++        m_shortcut.setObjectName(QStringLiteral("rectangularSnip"));
++        m_shortcut.setText(QStringLiteral("Rectangular Snip"));
++        const QKeySequence sequence(QStringLiteral("Meta+Shift+S"));
++        KGlobalAccel::stealShortcutSystemwide(sequence);
++        KGlobalAccel::self()->setDefaultShortcut(&m_shortcut, {sequence},
++                                                 KGlobalAccel::NoAutoloading);
++        KGlobalAccel::self()->setShortcut(&m_shortcut, {sequence},
++                                          KGlobalAccel::NoAutoloading);
++        connect(&m_shortcut, &QAction::triggered, this, &SnippingTool::capture);
++        connect(&m_process, &QProcess::finished, this, &SnippingTool::captureFinished);
++        connect(&m_process, &QProcess::errorOccurred, this,
++                [this](QProcess::ProcessError error) {
++            if (error == QProcess::FailedToStart)
++                captureFailed(QStringLiteral("Spectacle could not be started."));
++        });
++    }
++
++public Q_SLOTS:
++    void capture()
++    {
++        if (m_process.state() != QProcess::NotRunning) {
++            m_captureQueued = true;
++            return;
++        }
++
++        const QString pictures = QStandardPaths::writableLocation(
++            QStandardPaths::PicturesLocation);
++        if (pictures.isEmpty()) {
++            captureFailed(QStringLiteral("The Pictures folder is not configured."));
++            return;
++        }
++        QDir screenshots(QDir(pictures).filePath(QStringLiteral("Screenshots")));
++        if (!screenshots.exists() && !QDir().mkpath(screenshots.path())) {
++            captureFailed(QStringLiteral("The Screenshots folder could not be created."));
++            return;
++        }
++        const QFileInfo folderInfo(screenshots.path());
++        if (!folderInfo.isDir() || !folderInfo.isWritable()) {
++            captureFailed(QStringLiteral("The Screenshots folder is not writable."));
++            return;
++        }
++
++        const QString stamp = QDateTime::currentDateTime().toString(
++            QStringLiteral("yyyy-MM-dd hh.mm.ss.zzz"));
++        m_outputPath = screenshots.filePath(
++            QStringLiteral("Screenshot %1-%2.png")
++                .arg(stamp, QUuid::createUuid().toString(QUuid::Id128).left(6)));
++        m_process.setProgram(qEnvironmentVariable(
++            "AERO7_SPECTACLE_EXECUTABLE", QStringLiteral("spectacle")));
++        m_process.setArguments({QStringLiteral("--desktopfile"),
++                                QStringLiteral("org.kde.spectacle"),
++                                QStringLiteral("--new-instance"),
++                                QStringLiteral("--region"),
++                                QStringLiteral("--release-capture"),
++                                QStringLiteral("--background"),
++                                QStringLiteral("--nonotify"),
++                                QStringLiteral("--output"), m_outputPath});
++        m_process.start();
++    }
++
++private Q_SLOTS:
++    void captureFinished(int exitCode, QProcess::ExitStatus exitStatus)
++    {
++        const QFileInfo output(m_outputPath);
++        if (!output.exists() || output.size() == 0) {
++            // Escaping Spectacle's selector is a normal cancellation. Spectacle
++            // versions differ in the exit code they use, so the missing output
++            // is the stable signal and should not produce a failure popup.
++        } else if (exitStatus != QProcess::NormalExit || exitCode != 0) {
++            captureFailed(QString::fromUtf8(m_process.readAllStandardError()).trimmed());
++        } else {
++            const QImage image(m_outputPath);
++            if (image.isNull()) {
++                captureFailed(QStringLiteral("The captured PNG could not be read."));
++            } else {
++                QByteArray pngData;
++                QBuffer pngBuffer(&pngData);
++                pngBuffer.open(QIODevice::WriteOnly);
++                image.save(&pngBuffer, "PNG");
++                auto *mimeData = new QMimeData;
++                mimeData->setImageData(image);
++                mimeData->setData(QStringLiteral("image/png"), pngData);
++                KSystemClipboard::instance()->setMimeData(
++                    mimeData, QClipboard::Clipboard);
++                screenshotSaved(image);
++            }
++        }
++
++        if (m_captureQueued) {
++            m_captureQueued = false;
++            QTimer::singleShot(0, this, &SnippingTool::capture);
++        }
++    }
++
++private:
++    void screenshotSaved(const QImage &image)
++    {
++        auto *notification = new KNotification(
++            QStringLiteral("screenshotSaved"), KNotification::CloseOnTimeout, this);
++        notification->setComponentName(QStringLiteral("aero7-snipping-tool"));
++        notification->setTitle(QStringLiteral("Screenshot saved"));
++        notification->setText(QStringLiteral(
++            "The screenshot was saved to Screenshots and copied to the clipboard."));
++        notification->setIconName(QStringLiteral("spectacle"));
++        notification->setPixmap(QPixmap::fromImage(image.scaled(
++            320, 200, Qt::KeepAspectRatio, Qt::SmoothTransformation)));
++        notification->setUrls({QUrl::fromLocalFile(m_outputPath)});
++        auto *open = notification->addDefaultAction(QStringLiteral("Open"));
++        const QString path = m_outputPath;
++        connect(open, &KNotificationAction::activated, notification, [path]() {
++            QDesktopServices::openUrl(QUrl::fromLocalFile(path));
++        });
++        notification->sendEvent();
++    }
++
++    void captureFailed(QString detail)
++    {
++        detail = detail.trimmed();
++        if (detail.isEmpty())
++            detail = QStringLiteral("The screenshot could not be captured.");
++        qWarning().noquote() << "Aero7 Snipping Tool:" << detail;
++        auto *notification = new KNotification(
++            QStringLiteral("screenshotFailed"), KNotification::CloseOnTimeout, this);
++        notification->setComponentName(QStringLiteral("aero7-snipping-tool"));
++        notification->setTitle(QStringLiteral("Snipping Tool"));
++        notification->setText(QStringLiteral("The screenshot could not be captured."));
++        notification->setIconName(QStringLiteral("dialog-error"));
++        auto *retry = notification->addAction(QStringLiteral("Try Again"));
++        connect(retry, &KNotificationAction::activated, this, &SnippingTool::capture);
++        notification->sendEvent();
++    }
++
++    QAction m_shortcut;
++    QProcess m_process;
++    QString m_outputPath;
++    bool m_captureQueued = false;
++};
++
++int main(int argc, char **argv)
++{
++    QApplication app(argc, argv);
++    app.setApplicationName(QStringLiteral("aero7-snipping-tool"));
++    app.setOrganizationName(QStringLiteral("Aero7"));
++    app.setQuitOnLastWindowClosed(false);
++
++    if (app.arguments().contains(QStringLiteral("--check-backend"))) {
++        QProcess help;
++        help.start(qEnvironmentVariable("AERO7_SPECTACLE_EXECUTABLE",
++                                        QStringLiteral("spectacle")),
++                   {QStringLiteral("--help")});
++        if (!help.waitForStarted(3000) || !help.waitForFinished(5000)
++            || help.exitCode() != 0) {
++            qCritical("Spectacle is not available.");
++            return 1;
++        }
++        const QByteArray output = help.readAllStandardOutput();
++        const QList<QByteArray> required = {"--desktopfile", "--region", "--release-capture",
++                                             "--background", "--nonotify", "--output", "--new-instance"};
++        for (const QByteArray &option : required) {
++            if (!output.contains(option)) {
++                qCritical().noquote() << "Spectacle does not support" << option;
++                return 1;
++            }
++        }
++        qInfo("Spectacle rectangular background capture interface: OK");
++        return 0;
++    }
++
++    QDBusConnection bus = QDBusConnection::sessionBus();
++    if (!bus.registerService(QStringLiteral("org.aero7.SnippingTool"))) {
++        if (app.arguments().contains(QStringLiteral("--capture"))) {
++            QDBusInterface running(QStringLiteral("org.aero7.SnippingTool"),
++                                   QStringLiteral("/SnippingTool"),
++                                   QStringLiteral("org.aero7.SnippingTool"), bus);
++            return running.call(QStringLiteral("capture")).type()
++                == QDBusMessage::ErrorMessage ? 1 : 0;
++        }
++        return 0;
++    }
++
++    SnippingTool tool;
++    bus.registerObject(QStringLiteral("/SnippingTool"), &tool,
++                       QDBusConnection::ExportAllSlots);
++    if (app.arguments().contains(QStringLiteral("--capture")))
++        QTimer::singleShot(0, &tool, &SnippingTool::capture);
++    return app.exec();
++}
++
++#include "main.moc"

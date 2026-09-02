@@ -1,0 +1,121 @@
+diff --git a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/main.qml b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/main.qml
+--- a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/main.qml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/main.qml
+@@ -102,6 +102,34 @@ PlasmoidItem {
+         return normalizedApplicationName(name) === normalizedApplicationName(query);
+     }
+ 
++    function sanitizedFavoriteApplications(values) {
++        const cleaned = [
++            "applications:org.aero7.fileexplorer.desktop",
++            "applications:linux-controlpanel.desktop"
++        ];
++        for (let index = 0; values && index < values.length; ++index) {
++            let favorite = String(values[index] || "");
++            if (favorite.toLocaleLowerCase().indexOf("systemsettings") !== -1) {
++                favorite = "applications:linux-controlpanel.desktop";
++            }
++            if (favorite && cleaned.indexOf(favorite) === -1) {
++                cleaned.push(favorite);
++            }
++        }
++        return cleaned;
++    }
++
++    function sanitizeFavoriteApplications() {
++        if (!globalFavorites || !globalFavorites.favorites) {
++            return;
++        }
++        const current = Array.from(globalFavorites.favorites);
++        const cleaned = sanitizedFavoriteApplications(current);
++        if (JSON.stringify(current) !== JSON.stringify(cleaned)) {
++            globalFavorites.favorites = cleaned;
++        }
++    }
++
+     Plasmoid.constraintHints: Plasmoid.CanFillArea
+     activationTogglesExpanded: false
+ 
+@@ -205,6 +233,7 @@ PlasmoidItem {
+             } else {
+                 favoritesModel.favorites = Plasmoid.configuration.favoriteApps;
+             }
++            Qt.callLater(kicker.sanitizeFavoriteApplications);
+         }
+     }
+ 
+@@ -212,7 +241,13 @@ PlasmoidItem {
+         target: globalFavorites
+ 
+         function onFavoritesChanged() {
+-            Plasmoid.configuration.favoriteApps = target.favorites;
++            const current = Array.from(target.favorites || []);
++            const cleaned = kicker.sanitizedFavoriteApplications(current);
++            if (JSON.stringify(current) !== JSON.stringify(cleaned)) {
++                target.favorites = cleaned;
++                return;
++            }
++            Plasmoid.configuration.favoriteApps = cleaned;
+         }
+     }
+ 
+diff --git a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/FavoritesView.qml b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/FavoritesView.qml
+--- a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/FavoritesView.qml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/FavoritesView.qml
+@@ -30,6 +30,7 @@
+ import org.kde.draganddrop
+ 
+ import org.kde.plasma.private.kicker 0.1 as Kicker
++import org.kde.kitemmodels as KItemModels
+ import org.kde.kirigami as Kirigami
+ 
+ Item {
+@@ -186,7 +187,30 @@
+ 
+         anchors.fill: parent
+         interactive: contentHeight > height
+-        model: globalFavorites
++        model: KItemModels.KSortFilterProxyModel {
++            sourceModel: globalFavorites
++
++            function trigger(proxyRow, actionId, actionArgument) {
++                const sourceIndex = mapToSource(index(proxyRow, 0));
++                return sourceIndex.row >= 0
++                    ? sourceModel.trigger(sourceIndex.row, actionId || "", actionArgument ?? null)
++                    : false;
++            }
++
++            function moveRow(fromProxyRow, toProxyRow) {
++                const fromIndex = mapToSource(index(fromProxyRow, 0));
++                const toIndex = mapToSource(index(toProxyRow, 0));
++                if (fromIndex.row >= 0 && toIndex.row >= 0) {
++                    sourceModel.moveRow(fromIndex.row, toIndex.row);
++                }
++            }
++
++            filterRowCallback: function(sourceRow, sourceParent) {
++                const sourceIndex = sourceModel.index(sourceRow, 0, sourceParent);
++                const displayName = sourceModel.data(sourceIndex, Qt.DisplayRole);
++                return !kicker.isFullyHiddenApplication(displayName);
++            }
++        }
+         //move: moveTransition
+         //moveDisplaced: moveTransition
+ 
+diff --git a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/OftenUsedView.qml b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/OftenUsedView.qml
+--- a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/OftenUsedView.qml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/OftenUsedView.qml
+@@ -106,7 +106,12 @@ Item {
+                 sourceModel.trigger(index, str, ptr);
+             }
+             filterRowCallback: function(source_row, source_parent) {
+-                return source_row < Plasmoid.configuration.numberRows// - sourceModel.favoritesModel.count;
++                if (source_row >= Plasmoid.configuration.numberRows) {
++                    return false;
++                }
++                const sourceIndex = sourceModel.index(source_row, 0, source_parent);
++                const displayName = sourceModel.data(sourceIndex, 0);
++                return !kicker.isFullyHiddenApplication(displayName);
+             };
+ 
+         }

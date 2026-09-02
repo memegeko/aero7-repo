@@ -2,15 +2,17 @@
 
 pkgname=('aerothemeplasma-icons-git')
 pkgver=11.r96950b8
-pkgrel=1
+pkgrel=2
 pkgdesc="Icon theme designed for AeroThemePlasma"
 license=('AGPL-3.0-or-later')
 arch=(any)
 url="https://gitgud.io/aeroshell/atp/aerothemeplasma-icons"
 makedepends=('git')
 options=('!strip' '!debug')
-source=("${pkgname}::git+${url}.git#commit=96950b8028a5d960cb683280fe5f1d9e33e6b8a2")
-sha256sums=('SKIP')
+source=("${pkgname}::git+${url}.git#commit=96950b8028a5d960cb683280fe5f1d9e33e6b8a2"
+        'aero7-icon-theme-metadata.patch')
+sha256sums=('SKIP'
+            'f89f5a47901b5593fdfe271a064c2d3ebd300b5941517c57022f8608a5bd22b8')
 conflicts=(aerothemeplasma-icons)
 provides=(aerothemeplasma-icons)
 groups=(aerothemeplasma)
@@ -18,6 +20,10 @@ groups=(aerothemeplasma)
 pkgver() {
   cd "$srcdir/${pkgname%}"
   echo "$(git rev-list --count HEAD).r$(git rev-parse --short HEAD)"
+}
+
+prepare() {
+  patch -d "${pkgname%}" -Np1 < aero7-icon-theme-metadata.patch
 }
 
 package() {

@@ -1,0 +1,88 @@
+diff --git a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/CompactRepresentation.qml b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/CompactRepresentation.qml
+index 8d55513..705f572 100755
+--- a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/CompactRepresentation.qml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/CompactRepresentation.qml
+@@ -86,6 +86,9 @@ Item {
+         return url;
+     }
+     function positionOrb() {
++        if (!orb) {
++            return;
++        }
+         var pos = kicker.mapToGlobal(floatingOrbPanel.x, floatingOrbPanel.y);
+         pos.y -= 5;
+         if(Plasmoid.configuration.offsetFloatingOrb) {
+@@ -101,6 +104,9 @@ Item {
+         orb.y = pos.y;
+     }
+     function showMenu() {
++        if (!dashWindow || !orb) {
++            return;
++        }
+         dashWindow.visible = !dashWindow.visible;
+         dashWindow.showingAllPrograms = false;
+         if(KWindowSystem.isPlatformX11) Plasmoid.setActiveWin(dashWindow);
+diff --git a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/main.qml b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/main.qml
+index 31371e4..9665702 100755
+--- a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/main.qml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/main.qml
+@@ -36,6 +36,12 @@ PlasmoidItem {
+     signal reset
+ 
+     property Item dragSource: null
++    // Plasma 6.7 can finish constructing the Kicker delegate models before
++    // this applet has been attached to its panel containment. Giving Kicker
++    // the interface during that window lets its launcher-action code
++    // dereference a null Plasma::Applet containment and crashes plasmashell.
++    // Delay model activation until the applet/panel relationship is complete.
++    property bool containmentReady: false
+ 
+     property alias rootModel: rootModel
+     property QtObject globalFavorites: rootModel.favoritesModel
+@@ -142,7 +148,7 @@ PlasmoidItem {
+     Kicker.RunnerModel {
+         id: runnerModel
+ 
+-        appletInterface: kicker
++        appletInterface: kicker.containmentReady ? kicker : null
+         favoritesModel: globalFavorites
+         mergeResults: true
+     }
+@@ -155,7 +161,7 @@ PlasmoidItem {
+         flat: true
+         sorted: true
+         showSeparators: false
+-        appletInterface: kicker
++        appletInterface: kicker.containmentReady ? kicker : null
+ 
+         paginate: false
+         pageSize: Plasmoid.configuration.numberColumns *  Plasmoid.configuration.numberRows
+@@ -314,6 +320,14 @@ PlasmoidItem {
+         kicker.hideOnWindowDeactivate = true;
+ 
+         dragHelper.dropped.connect(resetDragSource);
++        containmentReadyTimer.start();
++    }
++
++    Timer {
++        id: containmentReadyTimer
++        interval: 250
++        repeat: false
++        onTriggered: kicker.containmentReady = true
+     }
+ 
+ }
+diff --git a/plasma/plasmoids/io.gitgud.wackyideas.desktopcontainment/contents/ui/FolderView.qml b/plasma/plasmoids/io.gitgud.wackyideas.desktopcontainment/contents/ui/FolderView.qml
+--- a/plasma/plasmoids/io.gitgud.wackyideas.desktopcontainment/contents/ui/FolderView.qml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.desktopcontainment/contents/ui/FolderView.qml
+@@ -1362,11 +1362,6 @@ FocusScope {
+                 : (gridView.height / gridView.cellHeight))
+ 
+-            Component.onCompleted: {
+-                positioner.updateResolution();
+-                positioner.loadAndApplyPositionsConfig();
+-            }
+-
+         }
+ 
+         Folder.ItemViewAdapter {

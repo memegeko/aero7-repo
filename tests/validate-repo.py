@@ -23,7 +23,7 @@ PROPRIETARY_ASSET_PATTERNS = [
 ]
 PRIVATE_KEY_SUFFIXES = {".key", ".p12", ".pfx", ".pem"}
 COMPRESSED_BUILD_SUFFIXES = {".gz", ".zst"}
-EXPECTED_PACKAGE_COUNT = 21
+EXPECTED_PACKAGE_COUNT = 22
 
 
 def fail(message: str) -> None:
@@ -356,8 +356,9 @@ def validate_no_secrets_or_assets() -> None:
             continue
         if path.suffix in PRIVATE_KEY_SUFFIXES:
             fail(f"private-key-like file is tracked: {relative}")
-        # Generated source/package archives are binary build products. Their
-        # recipes, revisions, and checksums are validated above.
+        # Local package and source archives can be several gigabytes and are
+        # generated build products, not searchable repository source.  Their
+        # package recipes and checksums are validated above.
         if path.suffix in COMPRESSED_BUILD_SUFFIXES:
             continue
         text = path.read_text(encoding="utf-8", errors="ignore")

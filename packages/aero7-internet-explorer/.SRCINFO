@@ -1,0 +1,24 @@
+pkgbase = aero7-internet-explorer
+	pkgdesc = Permanent Aero7 Internet Explorer identity backed by an installed modern browser
+	pkgver = 0.1.0
+	pkgrel = 4
+	url = https://github.com/aero7-open-project/aero7-desktop
+	arch = x86_64
+	license = MIT
+	makedepends = cmake
+	makedepends = ninja
+	makedepends = git
+	depends = aero7-qt
+	depends = kio
+	depends = kservice
+	depends = qt6-base
+	depends = xdg-utils
+	optdepends = aero7-programs-center: install and manage browser backends
+	optdepends = firefox: supported browser backend
+	optdepends = chromium: supported browser backend
+	optdepends = librewolf: supported browser backend
+	options = !debug
+	source = aero7-desktop::git+https://github.com/aero7-open-project/aero7-desktop.git#commit=5fef9d9b50401980131a13bc5608cfbf128b1795
+	sha256sums = SKIP
+
+pkgname = aero7-internet-explorer

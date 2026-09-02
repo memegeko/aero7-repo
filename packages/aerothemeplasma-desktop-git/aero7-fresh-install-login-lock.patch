@@ -1,0 +1,145 @@
+--- a/plasma/layout-templates/io.gitgud.wackyideas.taskbar/contents/layout.js
++++ b/plasma/layout-templates/io.gitgud.wackyideas.taskbar/contents/layout.js
+@@ -56,7 +56,13 @@
+ 
+ panel.addWidget("io.gitgud.wackyideas.SevenStart")
+ //panel.addWidget("org.kde.plasma.showActivityManager")
+-panel.addWidget("io.gitgud.wackyideas.seventasks")
++var tasks = panel.addWidget("io.gitgud.wackyideas.seventasks")
++tasks.currentConfigGroup = ["General"]
++tasks.writeConfig("launchers", [
++    "applications:qterminal.desktop",
++    "applications:org.aero7.FileExplorer.desktop",
++    "applications:aero7-internet-explorer.desktop"
++])
+ 
+ /* Next up is determining whether to add the Input Method Panel
+  * widget to the panel or not. This is done based on whether
+--- a/plasma/sddm/sddm-theme-mod/Main.qml
++++ b/plasma/sddm/sddm-theme-mod/Main.qml
+@@ -285,21 +285,16 @@
+         }
+         Component.onCompleted: {
+-            inputPanel.source = Qt.platform.pluginName.includes("wayland") ? "SMOD/VirtualKeyboard_wayland.qml" : "SMOD/VirtualKeyboard.qml"
+-
+-            if(inputPanel.status === Loader.Ready) {
+-                var menuitem = session.createMenuSeparator();
+-
+-                session.addItem(menuitem);
+-                menuitem = session.createMenuItem();
+-                menuitem.text = i18nd("aerothemeplasma-sddm-theme", "On-Screen Keyboard")
+-                menuitem.checkable = false;
+-                menuitem.icon.source = Qt.resolvedUrl("Assets/keyboard.png");
+-                menuitem.triggered.connect(() => {
+-                    password.forceActiveFocus();
+-                    inputPanel.showHide();
+-                });
+-                session.addAction(menuitem);
+-            }
++            inputPanel.source = "SMOD/Aero7OnScreenKeyboard.qml"
+         }
++        onLoaded: {
++            inputPanel.item.targetField = password
++            inputPanel.item.submitCallback = function() {
++                let index = listView.currentIndex
++                let username = userModel.data(userModel.index(index, 0), Main.UserRoles.NameRole)
++                if (username != null) {
++                    sddm.login(username, password.text, session.index)
++                }
++            }
++        }
+         onKeyboardActiveChanged: {
+             if (keyboardActive) {
+@@ -1026,6 +1011,7 @@
+ 
+         indicator.width: 0
+         indicator.height: 0
++        Accessible.name: i18nd("aerothemeplasma-sddm-theme", "Ease of Access and desktop environment")
+ 
+         background: Image
+         {
+@@ -1121,18 +1107,48 @@
+                 return session.index === this.index
+             }
+             Component.onCompleted: {
++                var entries = [];
+                 for(var i = 0; i < sessionModel.count; i++) {
+                     const NameRole = sessionModel.KItemModels.KRoleNames.role("name");
+                     const name = sessionModel.data(sessionModel.index(i, 0), NameRole);
++                    entries.push({name: name, index: i});
++                }
++
++                function sessionRank(name) {
++                    if(name === "Aero7 Desktop (Safe Mode)") return 0;
++                    if(name === "Aero7 Desktop") return 1;
++                    if(name.indexOf("AeroThemePlasma") === 0) return 2;
++                    if(name.indexOf("Plasma") === 0) return 3;
++                    return 100;
++                }
++
++                entries.sort(function(left, right) {
++                    var rankDifference = sessionRank(left.name) - sessionRank(right.name);
++                    return rankDifference !== 0 ? rankDifference : left.index - right.index;
++                });
++
++                for(var entryIndex = 0; entryIndex < entries.length; entryIndex++) {
++                    var entry = entries[entryIndex];
+                     var menuitem = createMenuItem();
+-                    menuitem.text = name;
+-                    menuitem.index = i;
+-                    var func = isIndex.bind({index: i});
++                    menuitem.text = entry.name;
++                    menuitem.index = entry.index;
++                    var func = isIndex.bind({index: entry.index});
+                     menuitem.checkable = true;
+                     menuitem.checked = Qt.binding(func);
+-                    menuitem.triggered.connect(changeVal.bind({index: i}));
++                    menuitem.triggered.connect(changeVal.bind({index: entry.index}));
+                     session.addAction(menuitem);
+                 }
++
++                session.addItem(createMenuSeparator());
++                var keyboardItem = createMenuItem();
++                keyboardItem.text = i18nd("aerothemeplasma-sddm-theme", "On-Screen Keyboard");
++                keyboardItem.checkable = false;
++                keyboardItem.icon.source = Qt.resolvedUrl("Assets/keyboard.png");
++                keyboardItem.triggered.connect(function() {
++                    password.forceActiveFocus();
++                    inputPanel.showHide();
++                });
++                session.addAction(keyboardItem);
+             }
+ 
+         }
+--- a/plasma/shells/io.gitgud.wackyideas.desktop/contents/layout.js
++++ b/plasma/shells/io.gitgud.wackyideas.desktop/contents/layout.js
+@@ -56,7 +56,13 @@
+ 
+ panel.addWidget("io.gitgud.wackyideas.SevenStart")
+ //panel.addWidget("org.kde.plasma.showActivityManager")
+-panel.addWidget("io.gitgud.wackyideas.seventasks")
++var tasks = panel.addWidget("io.gitgud.wackyideas.seventasks")
++tasks.currentConfigGroup = ["General"]
++tasks.writeConfig("launchers", [
++    "applications:qterminal.desktop",
++    "applications:org.aero7.FileExplorer.desktop",
++    "applications:aero7-internet-explorer.desktop"
++])
+ 
+ /* Next up is determining whether to add the Input Method Panel
+  * widget to the panel or not. This is done based on whether
+--- a/plasma/shells/io.gitgud.wackyideas.desktop/contents/lockscreen/AuthUI.qml
++++ b/plasma/shells/io.gitgud.wackyideas.desktop/contents/lockscreen/AuthUI.qml
+@@ -538,6 +538,12 @@
+         }
+ 
+         source: "../images/branding.png"
++        sourceClipRect: Qt.rect(0, 0, 225, 50)
++        width: Math.min(225, parent.width - 40)
++        height: width * 50 / 225
++        fillMode: Image.PreserveAspectFit
++        smooth: true
++        mipmap: true
+ 
+         visible: opacity > 0
+         opacity: !inputPanel.keyboardActive

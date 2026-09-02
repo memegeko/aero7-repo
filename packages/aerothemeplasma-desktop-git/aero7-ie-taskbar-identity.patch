@@ -1,0 +1,897 @@
+diff --git a/plasma/plasmoids/io.gitgud.wackyideas.seventasks/contents/ui/Task.qml b/plasma/plasmoids/io.gitgud.wackyideas.seventasks/contents/ui/Task.qml
+index 8524fc0..5a64b2a 100644
+--- a/plasma/plasmoids/io.gitgud.wackyideas.seventasks/contents/ui/Task.qml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.seventasks/contents/ui/Task.qml
+@@ -96,9 +96,9 @@ PlasmaCore.ToolTipArea {
+                 var taskCount = taskList.contentItem.visibleChildren.length;
+                 if(taskCount <= 1) taskCount = taskList.count
+                 if(taskCount < 0) taskCount = 0;
+-                var launcherCount = tasksModel.logicalLauncherCount;
++                var launcherCount = tasksRoot.logicalLauncherCount;
+                 if(launcherCount === 0) launcherCount = 1;
+-                var currentWidth = Math.floor((taskList.width - (LayoutMetrics.preferredMinLauncherWidth()+16) * (launcherCount)) / (taskList.count - tasksModel.logicalLauncherCount));
++                var currentWidth = Math.floor((taskList.width - (LayoutMetrics.preferredMinLauncherWidth()+16) * (launcherCount)) / (taskList.count - tasksRoot.logicalLauncherCount));
+                 return Math.min(maxWidth, Math.max(minWidth, currentWidth));
+             }
+         }
+diff --git a/plasma/plasmoids/io.gitgud.wackyideas.seventasks/contents/ui/main.qml b/plasma/plasmoids/io.gitgud.wackyideas.seventasks/contents/ui/main.qml
+index 2a340c0..1cc8662 100644
+--- a/plasma/plasmoids/io.gitgud.wackyideas.seventasks/contents/ui/main.qml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.seventasks/contents/ui/main.qml
+@@ -260,8 +260,8 @@ PlasmoidItem {
+     }
+ 
+     function taskInLauncherList(launcher) {
+-        for(var i = 0; i < tasksModel.launcherList.length; i++) {
+-            if(tasksModel.launcherList[i].includes(launcher)) {
++        for(var i = 0; i < tasksModel.shellLauncherList.length; i++) {
++            if(tasksModel.shellLauncherList[i].includes(launcher)) {
+                 return true;
+             }
+         }
+@@ -279,86 +279,63 @@ PlasmoidItem {
+ 
+     property Item taskThumbnail: ToolTip {  }
+ 
+-    property TaskManager.TasksModel tasksModel: TaskManager.TasksModel {
+-        id: tasksModel
++    property var tasksModel: Plasmoid.aeroTasksModel
+ 
+-        readonly property int logicalLauncherCount: {
+-            if (Plasmoid.configuration.separateLaunchers) {
+-                return launcherCount;
+-            }
+-
+-            var startupsWithLaunchers = 0;
+-
+-            for(var i = 0; i < tasksModel.count; ++i) {
+-                var item = taskList.itemAtIndex(i);
+-
+-                if (item?.model?.IsStartup && item.model.HasLauncher) {
+-                    ++startupsWithLaunchers;
+-                }
+-            }
+-            return launcherCount + startupsWithLaunchers;
++    readonly property int logicalLauncherCount: {
++        if (Plasmoid.configuration.separateLaunchers) {
++            return tasksModel.launcherCount;
+         }
+-
+-        virtualDesktop: virtualDesktopInfo.currentDesktop
+-        screenGeometry: Plasmoid.containment.screenGeometry
+-        activity: activityInfo.currentActivity
+-
+-        filterByVirtualDesktop: Plasmoid.configuration.showOnlyCurrentDesktop
+-        filterByScreen: Plasmoid.configuration.showOnlyCurrentScreen
+-        filterByActivity: Plasmoid.configuration.showOnlyCurrentActivity
+-        filterNotMinimized: Plasmoid.configuration.showOnlyMinimized
+-
+-        hideActivatedLaunchers: true //tasks.iconsOnly || Plasmoid.configuration.hideLauncherOnStart
+-        sortMode: sortModeEnumValue(Plasmoid.configuration.sortingStrategy)
+-        launchInPlace: tasks.iconsOnly && Plasmoid.configuration.sortingStrategy === 1
+-        separateLaunchers: false
+-        groupMode: Plasmoid.configuration.groupPopups ? TaskManager.TasksModel.GroupApplications : TaskManager.TasksModel.GroupDisabled
+-        groupInline: !Plasmoid.configuration.groupPopups && !tasks.iconsOnly
+-        groupingWindowTasksThreshold: (Plasmoid.configuration.onlyGroupWhenFull && !tasks.iconsOnly
+-            ? LayoutMetrics.optimumCapacity(width, height) + 1 : -1)
+-
+-        onLauncherListChanged: {
+-            Plasmoid.configuration.launchers = launcherList;
++        var startupsWithLaunchers = 0;
++        for(var i = 0; i < tasksModel.count; ++i) {
++            var item = taskList.itemAtIndex(i);
++            if (item?.model?.IsStartup && item.model.HasLauncher) {
++                ++startupsWithLaunchers;
++            }
+         }
++        return tasksModel.launcherCount + startupsWithLaunchers;
++    }
+ 
+-        onGroupingAppIdBlacklistChanged: {
+-            Plasmoid.configuration.groupingAppIdBlacklist = groupingAppIdBlacklist;
++    function sortModeEnumValue(index) {
++        switch (index) {
++        case 0: return TaskManager.TasksModel.SortDisabled;
++        case 1: return TaskManager.TasksModel.SortManual;
++        case 2: return TaskManager.TasksModel.SortAlpha;
++        case 3: return TaskManager.TasksModel.SortVirtualDesktop;
++        case 4: return TaskManager.TasksModel.SortActivity;
++        default: return TaskManager.TasksModel.SortDisabled;
+         }
++    }
+ 
+-        onGroupingLauncherUrlBlacklistChanged: {
+-            Plasmoid.configuration.groupingLauncherUrlBlacklist = groupingLauncherUrlBlacklist;
+-        }
++    Binding { target: tasksModel; property: "virtualDesktop"; value: virtualDesktopInfo.currentDesktop }
++    Binding { target: tasksModel; property: "screenGeometry"; value: Plasmoid.containment.screenGeometry }
++    Binding { target: tasksModel; property: "activity"; value: activityInfo.currentActivity }
++    Binding { target: tasksModel; property: "filterByVirtualDesktop"; value: Plasmoid.configuration.showOnlyCurrentDesktop }
++    Binding { target: tasksModel; property: "filterByScreen"; value: Plasmoid.configuration.showOnlyCurrentScreen }
++    Binding { target: tasksModel; property: "filterByActivity"; value: Plasmoid.configuration.showOnlyCurrentActivity }
++    Binding { target: tasksModel; property: "filterNotMinimized"; value: Plasmoid.configuration.showOnlyMinimized }
++    Binding { target: tasksModel; property: "hideActivatedLaunchers"; value: true }
++    Binding { target: tasksModel; property: "sortMode"; value: tasks.sortModeEnumValue(Plasmoid.configuration.sortingStrategy) }
++    Binding { target: tasksModel; property: "launchInPlace"; value: tasks.iconsOnly && Plasmoid.configuration.sortingStrategy === 1 }
++    Binding { target: tasksModel; property: "separateLaunchers"; value: false }
++    Binding { target: tasksModel; property: "groupMode"; value: Plasmoid.configuration.groupPopups ? TaskManager.TasksModel.GroupApplications : TaskManager.TasksModel.GroupDisabled }
++    Binding { target: tasksModel; property: "groupInline"; value: !Plasmoid.configuration.groupPopups && !tasks.iconsOnly }
++    Binding {
++        target: tasksModel
++        property: "groupingWindowTasksThreshold"
++        value: Plasmoid.configuration.onlyGroupWhenFull && !tasks.iconsOnly
++            ? LayoutMetrics.optimumCapacity(width, height) + 1 : -1
++    }
+ 
+-        function sortModeEnumValue(index) {
+-            switch (index) {
+-                case 0:
+-                    return TaskManager.TasksModel.SortDisabled;
+-                case 1:
+-                    return TaskManager.TasksModel.SortManual;
+-                case 2:
+-                    return TaskManager.TasksModel.SortAlpha;
+-                case 3:
+-                    return TaskManager.TasksModel.SortVirtualDesktop;
+-                case 4:
+-                    return TaskManager.TasksModel.SortActivity;
+-                default:
+-                    return TaskManager.TasksModel.SortDisabled;
+-            }
++    Connections {
++        target: tasksModel
++        function onShellLauncherListChanged() {
++            Plasmoid.configuration.launchers = tasksModel.shellLauncherList;
+         }
+-
+-        function groupModeEnumValue(index) {
+-            switch (index) {
+-                case 0:
+-                    return TaskManager.TasksModel.GroupDisabled;
+-                case 1:
+-                    return TaskManager.TasksModel.GroupApplications;
+-            }
++        function onGroupingAppIdBlacklistChanged() {
++            Plasmoid.configuration.groupingAppIdBlacklist = tasksModel.groupingAppIdBlacklist;
+         }
+-
+-        Component.onCompleted: {
+-            launcherList = Plasmoid.configuration.launchers;
+-            groupingAppIdBlacklist = Plasmoid.configuration.groupingAppIdBlacklist;
+-            groupingLauncherUrlBlacklist = Plasmoid.configuration.groupingLauncherUrlBlacklist;
++        function onGroupingLauncherUrlBlacklistChanged() {
++            Plasmoid.configuration.groupingLauncherUrlBlacklist = tasksModel.groupingLauncherUrlBlacklist;
+         }
+     }
+ 
+@@ -457,7 +434,7 @@ PlasmoidItem {
+             target: Plasmoid.configuration
+ 
+             function onLaunchersChanged() {
+-                tasksModel.launcherList = Plasmoid.configuration.launchers
++                tasksModel.shellLauncherList = Plasmoid.configuration.launchers
+             }
+             function onGroupingAppIdBlacklistChanged() {
+                 tasksModel.groupingAppIdBlacklist = Plasmoid.configuration.groupingAppIdBlacklist;
+@@ -613,6 +590,9 @@ PlasmoidItem {
+ 
+     Component.onCompleted: {
+         TaskTools.taskManagerInstanceCount += 1;
++        tasksModel.shellLauncherList = Plasmoid.configuration.launchers;
++        tasksModel.groupingAppIdBlacklist = Plasmoid.configuration.groupingAppIdBlacklist;
++        tasksModel.groupingLauncherUrlBlacklist = Plasmoid.configuration.groupingLauncherUrlBlacklist;
+         tasks.requestLayout.connect(iconGeometryTimer.restart);
+         //tasks.windowsHovered.connect(backend.windowsHovered);
+         //tasks.activateWindowView.connect(backend.activateWindowView);
+diff --git a/plasma/plasmoids/src/seventasks_src/CMakeLists.txt b/plasma/plasmoids/src/seventasks_src/CMakeLists.txt
+index f3e839e..d8dcfcc 100755
+--- a/plasma/plasmoids/src/seventasks_src/CMakeLists.txt
++++ b/plasma/plasmoids/src/seventasks_src/CMakeLists.txt
+@@ -1,6 +1,8 @@
+ cmake_minimum_required(VERSION 3.16)
+ 
+ project(io.gitgud.wackyideas.seventasks)
++
++include(CTest)
+  
+ find_package(ECM 1.4.0 REQUIRED NO_MODULE)
+ set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH})
+@@ -16,10 +18,13 @@ find_package(KF6Svg)
+ find_package(KF6Config)
+ find_package(Plasma)
+ find_package(PlasmaQuick)
++find_package(LibTaskManager CONFIG REQUIRED)
+ 
+ 
+ find_package(KF6 REQUIRED COMPONENTS
+     I18n
++    KIO
++    Service
+ )
+ 
+ find_package(Qt6 CONFIG REQUIRED COMPONENTS
+@@ -27,6 +32,10 @@ find_package(Qt6 CONFIG REQUIRED COMPONENTS
+     Core
+ )
+ 
++if(BUILD_TESTING)
++    find_package(Qt6 CONFIG REQUIRED COMPONENTS Test)
++endif()
++
+ find_package(KF6CoreAddons)
+ 
+ add_subdirectory(src)
+diff --git a/plasma/plasmoids/src/seventasks_src/src/CMakeLists.txt b/plasma/plasmoids/src/seventasks_src/src/CMakeLists.txt
+index cc105ff..0958068 100755
+--- a/plasma/plasmoids/src/seventasks_src/src/CMakeLists.txt
++++ b/plasma/plasmoids/src/seventasks_src/src/CMakeLists.txt
+@@ -5,6 +5,7 @@ add_definitions(-DTRANSLATION_DOMAIN=\"plasma_applet_io.gitgud.wackyideas.sevent
+ 
+ set(seventasks_SRCS
+     seventasks.cpp
++    aero7tasksmodel.cpp
+ )
+ if (Qt6_VERSION VERSION_GREATER_EQUAL "6.8.0")
+     set(private_code_option  "PRIVATE_CODE")
+@@ -28,6 +29,10 @@ target_link_libraries(io.gitgud.wackyideas.seventasks
+                       KF6::ConfigCore
+                       KF6::ConfigGui
+                       KF6::CoreAddons)
++target_link_libraries(io.gitgud.wackyideas.seventasks
++                      PW::LibTaskManager
++                      KF6::KIOGui
++                      KF6::Service)
+ 
+ 
+ #target_link_libraries(plasma_applet_seventasks KF5::WindowSystem)
+@@ -35,5 +40,33 @@ include_directories(/usr/include/Plasma /usr/include/PlasmaQuick /usr/include/KF
+ 
+ install(TARGETS io.gitgud.wackyideas.seventasks DESTINATION ${KDE_INSTALL_PLUGINDIR}/plasma/applets)
+ 
++if(BUILD_TESTING)
++    add_executable(aero7tasksmodeltest
++        aero7tasksmodel.cpp
++        aero7tasksmodeltest.cpp
++    )
++    target_link_libraries(aero7tasksmodeltest
++        Qt6::Test
++        PW::LibTaskManager
++        KF6::KIOGui
++        KF6::Service
++    )
++    add_test(NAME aero7tasksmodeltest COMMAND aero7tasksmodeltest)
++    set_tests_properties(aero7tasksmodeltest PROPERTIES
++        ENVIRONMENT "QT_QPA_PLATFORM=offscreen"
++    )
++
++    add_executable(aero7tasksmodeldump
++        aero7tasksmodel.cpp
++        aero7tasksmodeldump.cpp
++    )
++    target_link_libraries(aero7tasksmodeldump
++        Qt6::Gui
++        PW::LibTaskManager
++        KF6::KIOGui
++        KF6::Service
++    )
++endif()
++
+ 
+ #plasma_install_package(package io.gitgud.wackyideas.seventasks)
+diff --git a/plasma/plasmoids/src/seventasks_src/src/seventasks.cpp b/plasma/plasmoids/src/seventasks_src/src/seventasks.cpp
+index febd351..9b4dfbd 100755
+--- a/plasma/plasmoids/src/seventasks_src/src/seventasks.cpp
++++ b/plasma/plasmoids/src/seventasks_src/src/seventasks.cpp
+@@ -4,12 +4,14 @@
+ */
+ 
+ #include "seventasks.h"
++#include "aero7tasksmodel.h"
+ #include <kwindowsystem.h>
+ #include <kwindowinfo.h>
+ #include <kx11extras.h>
+ 
+ SevenTasks::SevenTasks(QObject *parentObject, const KPluginMetaData &data, const QVariantList &args)
+     : Plasma::Applet(parentObject, data, args)
++    , m_aeroTasksModel(new Aero7TasksModel(this))
+ {
+ }
+ 
+@@ -17,6 +19,11 @@ SevenTasks::~SevenTasks()
+ {
+ }
+ 
++Aero7TasksModel *SevenTasks::aeroTasksModel() const
++{
++    return m_aeroTasksModel;
++}
++
+ 
+ bool SevenTasks::isActiveWindow(int wid)
+ {
+diff --git a/plasma/plasmoids/src/seventasks_src/src/seventasks.h b/plasma/plasmoids/src/seventasks_src/src/seventasks.h
+index b162058..f89f725 100755
+--- a/plasma/plasmoids/src/seventasks_src/src/seventasks.h
++++ b/plasma/plasmoids/src/seventasks_src/src/seventasks.h
+@@ -25,13 +25,17 @@
+ #include <kx11extras.h>
+ #include <kwindoweffects.h>
+ 
++class Aero7TasksModel;
++
+ class SevenTasks : public Plasma::Applet
+ {
+     Q_OBJECT
++    Q_PROPERTY(Aero7TasksModel *aeroTasksModel READ aeroTasksModel CONSTANT)
+ 
+ public:
+     SevenTasks(QObject *parentObject, const KPluginMetaData &data, const QVariantList &args);
+     ~SevenTasks();
++    Aero7TasksModel *aeroTasksModel() const;
+     Q_INVOKABLE QColor getDominantColor(QVariant src);
+     Q_INVOKABLE bool isActiveWindow(int wid);
+     Q_INVOKABLE QRect getWindowAspectRatio(int wid);
+@@ -121,6 +125,9 @@ protected:
+     }
+ Q_SIGNALS:
+     void mouseEventDetected();
++
++private:
++    Aero7TasksModel *m_aeroTasksModel = nullptr;
+ };
+ 
+ #endif
+diff --git a/plasma/plasmoids/src/seventasks_src/src/aero7tasksmodel.h b/plasma/plasmoids/src/seventasks_src/src/aero7tasksmodel.h
+new file mode 100644
+index 0000000..48c160b
+--- /dev/null
++++ b/plasma/plasmoids/src/seventasks_src/src/aero7tasksmodel.h
+@@ -0,0 +1,65 @@
++/*
++    SPDX-FileCopyrightText: 2026 Aero7 Open Project
++    SPDX-License-Identifier: LGPL-2.1-or-later
++*/
++
++#pragma once
++
++#include <QFileSystemWatcher>
++#include <QStringList>
++#include <QUrl>
++#include <taskmanager/abstracttasksmodel.h>
++#include <taskmanager/tasksmodel.h>
++
++class Aero7TasksModel final : public TaskManager::TasksModel
++{
++    Q_OBJECT
++    Q_PROPERTY(QStringList shellLauncherList READ shellLauncherList WRITE setShellLauncherList NOTIFY shellLauncherListChanged)
++    Q_PROPERTY(QString internetExplorerBackend READ internetExplorerBackend NOTIFY internetExplorerBackendChanged)
++
++public:
++    explicit Aero7TasksModel(QObject *parent = nullptr);
++
++    QStringList shellLauncherList() const;
++    void setShellLauncherList(const QStringList &launchers);
++    QString internetExplorerBackend() const;
++
++    QVariant data(const QModelIndex &index, int role) const override;
++
++    Q_INVOKABLE bool requestAddLauncher(const QUrl &url);
++    Q_INVOKABLE bool requestRemoveLauncher(const QUrl &url);
++    Q_INVOKABLE bool requestAddLauncherToActivity(const QUrl &url, const QString &activity);
++    Q_INVOKABLE bool requestRemoveLauncherFromActivity(const QUrl &url, const QString &activity);
++    Q_INVOKABLE QStringList launcherActivities(const QUrl &url);
++    Q_INVOKABLE int launcherPosition(const QUrl &url) const;
++
++    Q_INVOKABLE void requestActivate(const QModelIndex &index) override;
++    Q_INVOKABLE void requestNewInstance(const QModelIndex &index) override;
++    Q_INVOKABLE void requestOpenUrls(const QModelIndex &index, const QList<QUrl> &urls) override;
++
++Q_SIGNALS:
++    void shellLauncherListChanged();
++    void internetExplorerBackendChanged();
++
++private:
++    static QString configPath();
++    static QString policyPath();
++    static bool isSafeDesktopId(const QString &desktopId);
++
++    QString effectiveBackend() const;
++    QString toBackendLauncher(const QString &launcher) const;
++    QString toShellLauncher(const QString &launcher) const;
++    QUrl toBackendLauncher(const QUrl &launcher) const;
++    QUrl toShellLauncher(const QUrl &launcher) const;
++    bool isInternetExplorerTask(const QModelIndex &index) const;
++    bool isLauncherTask(const QModelIndex &index) const;
++    void launchInternetExplorer(const QList<QUrl> &urls = {}, bool newWindow = false);
++    void refreshBackend();
++    void refreshWatchPaths();
++    void applyShellLaunchers();
++
++    QFileSystemWatcher m_watcher;
++    QStringList m_shellLaunchers;
++    QString m_backendDesktopId;
++    bool m_applyingLaunchers = false;
++};
+diff --git a/plasma/plasmoids/src/seventasks_src/src/aero7tasksmodel.cpp b/plasma/plasmoids/src/seventasks_src/src/aero7tasksmodel.cpp
+new file mode 100644
+index 0000000..e8b40ed
+--- /dev/null
++++ b/plasma/plasmoids/src/seventasks_src/src/aero7tasksmodel.cpp
+@@ -0,0 +1,329 @@
++/*
++    SPDX-FileCopyrightText: 2026 Aero7 Open Project
++    SPDX-License-Identifier: LGPL-2.1-or-later
++*/
++
++#include "aero7tasksmodel.h"
++
++#include <KIO/ApplicationLauncherJob>
++#include <KService>
++#include <KServiceAction>
++
++#include <QDir>
++#include <QFileInfo>
++#include <QIcon>
++#include <QRegularExpression>
++#include <QSettings>
++#include <QStandardPaths>
++
++namespace {
++constexpr auto InternetExplorerDesktopId = "aero7-internet-explorer.desktop";
++
++QString launcherForDesktopId(const QString &desktopId)
++{
++    return QStringLiteral("applications:") + desktopId;
++}
++}
++
++Aero7TasksModel::Aero7TasksModel(QObject *parent)
++    : TaskManager::TasksModel(parent)
++{
++    connect(this, &TaskManager::TasksModel::launcherListChanged, this, [this] {
++        if (m_applyingLaunchers) {
++            return;
++        }
++        QStringList canonical;
++        for (const QString &launcher : TaskManager::TasksModel::launcherList()) {
++            canonical.append(toShellLauncher(launcher));
++        }
++        if (canonical != m_shellLaunchers) {
++            m_shellLaunchers = canonical;
++            Q_EMIT shellLauncherListChanged();
++        }
++    });
++    connect(&m_watcher, &QFileSystemWatcher::fileChanged, this, [this] {
++        refreshWatchPaths();
++        refreshBackend();
++    });
++    connect(&m_watcher, &QFileSystemWatcher::directoryChanged, this, [this] {
++        refreshWatchPaths();
++        refreshBackend();
++    });
++    refreshWatchPaths();
++    refreshBackend();
++}
++
++QString Aero7TasksModel::configPath()
++{
++    const QString testPath = qEnvironmentVariable("AERO7_IE_TASKBAR_CONFIG");
++    if (!testPath.isEmpty()) {
++        return testPath;
++    }
++    return QStandardPaths::writableLocation(QStandardPaths::ConfigLocation)
++        + QStringLiteral("/aero7/internet-explorer.conf");
++}
++
++QString Aero7TasksModel::policyPath()
++{
++    const QString testPath = qEnvironmentVariable("AERO7_IE_TASKBAR_POLICY");
++    if (!testPath.isEmpty()) {
++        return testPath;
++    }
++    return QStringLiteral("/etc/aero7/internet-explorer.conf");
++}
++
++bool Aero7TasksModel::isSafeDesktopId(const QString &desktopId)
++{
++    static const QRegularExpression safe(
++        QStringLiteral(R"(^[A-Za-z0-9][A-Za-z0-9._-]*\.desktop$)"));
++    return desktopId.size() <= 255
++        && desktopId != QLatin1String(InternetExplorerDesktopId)
++        && safe.match(desktopId).hasMatch();
++}
++
++QString Aero7TasksModel::effectiveBackend() const
++{
++    QSettings policy(policyPath(), QSettings::IniFormat);
++    const QString enforced = policy.value(QStringLiteral("Policy/Backend"))
++                                 .toString().trimmed();
++    if (isSafeDesktopId(enforced)) {
++        return enforced;
++    }
++    QSettings user(configPath(), QSettings::IniFormat);
++    const QString selected = user.value(QStringLiteral("Browser/Backend"))
++                                 .toString().trimmed();
++    return isSafeDesktopId(selected) ? selected : QString();
++}
++
++QStringList Aero7TasksModel::shellLauncherList() const
++{
++    return m_shellLaunchers;
++}
++
++void Aero7TasksModel::setShellLauncherList(const QStringList &launchers)
++{
++    if (m_shellLaunchers == launchers) {
++        return;
++    }
++    m_shellLaunchers = launchers;
++    applyShellLaunchers();
++    Q_EMIT shellLauncherListChanged();
++}
++
++QString Aero7TasksModel::internetExplorerBackend() const
++{
++    return m_backendDesktopId;
++}
++
++QString Aero7TasksModel::toBackendLauncher(const QString &launcher) const
++{
++    if (m_backendDesktopId.isEmpty()) {
++        return launcher;
++    }
++    QString translated = launcher;
++    translated.replace(launcherForDesktopId(QString::fromLatin1(InternetExplorerDesktopId)),
++                       launcherForDesktopId(m_backendDesktopId));
++    return translated;
++}
++
++QString Aero7TasksModel::toShellLauncher(const QString &launcher) const
++{
++    if (m_backendDesktopId.isEmpty()) {
++        return launcher;
++    }
++    QString translated = launcher;
++    translated.replace(launcherForDesktopId(m_backendDesktopId),
++                       launcherForDesktopId(QString::fromLatin1(InternetExplorerDesktopId)));
++    return translated;
++}
++
++QUrl Aero7TasksModel::toBackendLauncher(const QUrl &launcher) const
++{
++    return QUrl(toBackendLauncher(launcher.toString()));
++}
++
++QUrl Aero7TasksModel::toShellLauncher(const QUrl &launcher) const
++{
++    return QUrl(toShellLauncher(launcher.toString()));
++}
++
++void Aero7TasksModel::applyShellLaunchers()
++{
++    QStringList translated;
++    translated.reserve(m_shellLaunchers.size());
++    for (const QString &launcher : m_shellLaunchers) {
++        translated.append(toBackendLauncher(launcher));
++    }
++    m_applyingLaunchers = true;
++    TaskManager::TasksModel::setLauncherList(translated);
++    m_applyingLaunchers = false;
++}
++
++void Aero7TasksModel::refreshWatchPaths()
++{
++    QStringList wanted;
++    const QString userConfig = configPath();
++    const QString userDirectory = QFileInfo(userConfig).absolutePath();
++    if (QFileInfo::exists(userDirectory)) {
++        wanted.append(userDirectory);
++    }
++    if (QFileInfo::exists(userConfig)) {
++        wanted.append(userConfig);
++    }
++    if (QFileInfo::exists(policyPath())) {
++        wanted.append(policyPath());
++    }
++    for (const QString &path : m_watcher.files() + m_watcher.directories()) {
++        if (!wanted.contains(path)) {
++            m_watcher.removePath(path);
++        }
++    }
++    for (const QString &path : wanted) {
++        if (!m_watcher.files().contains(path)
++            && !m_watcher.directories().contains(path)) {
++            m_watcher.addPath(path);
++        }
++    }
++}
++
++void Aero7TasksModel::refreshBackend()
++{
++    const QString selected = effectiveBackend();
++    if (selected == m_backendDesktopId) {
++        return;
++    }
++    m_backendDesktopId = selected;
++    applyShellLaunchers();
++    Q_EMIT internetExplorerBackendChanged();
++    if (rowCount() > 0) {
++        Q_EMIT dataChanged(index(0, 0), index(rowCount() - 1, 0));
++    }
++}
++
++bool Aero7TasksModel::isInternetExplorerTask(const QModelIndex &index) const
++{
++    if (!index.isValid() || m_backendDesktopId.isEmpty()) {
++        return false;
++    }
++    const QUrl launcher = TaskManager::TasksModel::data(
++        index, TaskManager::AbstractTasksModel::LauncherUrlWithoutIcon).toUrl();
++    if (launcher.toString(QUrl::RemoveQuery)
++        == launcherForDesktopId(m_backendDesktopId)) {
++        return true;
++    }
++    QString appId = TaskManager::TasksModel::data(
++        index, TaskManager::AbstractTasksModel::AppId).toString();
++    appId.remove(QStringLiteral(".desktop"), Qt::CaseInsensitive);
++    QString backendId = m_backendDesktopId;
++    backendId.chop(8);
++    return appId.compare(backendId, Qt::CaseInsensitive) == 0;
++}
++
++bool Aero7TasksModel::isLauncherTask(const QModelIndex &index) const
++{
++    return TaskManager::TasksModel::data(
++        index, TaskManager::AbstractTasksModel::IsLauncher).toBool();
++}
++
++QVariant Aero7TasksModel::data(const QModelIndex &index, int role) const
++{
++    if (!isInternetExplorerTask(index)) {
++        return TaskManager::TasksModel::data(index, role);
++    }
++    switch (role) {
++    case Qt::DisplayRole:
++    case TaskManager::AbstractTasksModel::AppName:
++        return QStringLiteral("Internet Explorer");
++    case Qt::DecorationRole:
++        return QIcon::fromTheme(QStringLiteral("aero7-internet-explorer"));
++    case TaskManager::AbstractTasksModel::GenericName:
++        return QStringLiteral("Web Browser");
++    case TaskManager::AbstractTasksModel::AppId:
++        return QString::fromLatin1(InternetExplorerDesktopId);
++    case TaskManager::AbstractTasksModel::LauncherUrl:
++    case TaskManager::AbstractTasksModel::LauncherUrlWithoutIcon:
++        return QUrl(launcherForDesktopId(QString::fromLatin1(InternetExplorerDesktopId)));
++    default:
++        return TaskManager::TasksModel::data(index, role);
++    }
++}
++
++void Aero7TasksModel::launchInternetExplorer(const QList<QUrl> &urls, bool newWindow)
++{
++    const KService::Ptr service = KService::serviceByStorageId(
++        QString::fromLatin1(InternetExplorerDesktopId));
++    if (!service || !service->isValid()) {
++        return;
++    }
++    KIO::ApplicationLauncherJob *job = nullptr;
++    if (newWindow) {
++        for (const KServiceAction &action : service->actions()) {
++            if (action.name() == QLatin1String("NewWindow")) {
++                job = new KIO::ApplicationLauncherJob(action, this);
++                break;
++            }
++        }
++    }
++    if (!job) {
++        job = new KIO::ApplicationLauncherJob(service, this);
++    }
++    job->setUrls(urls);
++    job->start();
++}
++
++bool Aero7TasksModel::requestAddLauncher(const QUrl &url)
++{
++    return TaskManager::TasksModel::requestAddLauncher(toBackendLauncher(url));
++}
++
++bool Aero7TasksModel::requestRemoveLauncher(const QUrl &url)
++{
++    return TaskManager::TasksModel::requestRemoveLauncher(toBackendLauncher(url));
++}
++
++bool Aero7TasksModel::requestAddLauncherToActivity(const QUrl &url, const QString &activity)
++{
++    return TaskManager::TasksModel::requestAddLauncherToActivity(toBackendLauncher(url), activity);
++}
++
++bool Aero7TasksModel::requestRemoveLauncherFromActivity(const QUrl &url, const QString &activity)
++{
++    return TaskManager::TasksModel::requestRemoveLauncherFromActivity(toBackendLauncher(url), activity);
++}
++
++QStringList Aero7TasksModel::launcherActivities(const QUrl &url)
++{
++    return TaskManager::TasksModel::launcherActivities(toBackendLauncher(url));
++}
++
++int Aero7TasksModel::launcherPosition(const QUrl &url) const
++{
++    return TaskManager::TasksModel::launcherPosition(toBackendLauncher(url));
++}
++
++void Aero7TasksModel::requestActivate(const QModelIndex &index)
++{
++    if (isInternetExplorerTask(index) && isLauncherTask(index)) {
++        launchInternetExplorer();
++        return;
++    }
++    TaskManager::TasksModel::requestActivate(index);
++}
++
++void Aero7TasksModel::requestNewInstance(const QModelIndex &index)
++{
++    if (isInternetExplorerTask(index)) {
++        launchInternetExplorer({}, true);
++        return;
++    }
++    TaskManager::TasksModel::requestNewInstance(index);
++}
++
++void Aero7TasksModel::requestOpenUrls(const QModelIndex &index, const QList<QUrl> &urls)
++{
++    if (isInternetExplorerTask(index)) {
++        launchInternetExplorer(urls);
++        return;
++    }
++    TaskManager::TasksModel::requestOpenUrls(index, urls);
++}
+diff --git a/plasma/plasmoids/src/seventasks_src/src/aero7tasksmodeltest.cpp b/plasma/plasmoids/src/seventasks_src/src/aero7tasksmodeltest.cpp
+new file mode 100644
+index 0000000..86cc331
+--- /dev/null
++++ b/plasma/plasmoids/src/seventasks_src/src/aero7tasksmodeltest.cpp
+@@ -0,0 +1,58 @@
++/*
++    SPDX-FileCopyrightText: 2026 Aero7 Open Project
++    SPDX-License-Identifier: LGPL-2.1-or-later
++*/
++
++#include "aero7tasksmodel.h"
++
++#include <QFile>
++#include <QSignalSpy>
++#include <QTemporaryDir>
++#include <QTest>
++
++class Aero7TasksModelTest final : public QObject
++{
++    Q_OBJECT
++
++private Q_SLOTS:
++    void canonicalLauncherIsStableAcrossBackends()
++    {
++        QTemporaryDir temporary;
++        QVERIFY(temporary.isValid());
++        const QString config = temporary.filePath(QStringLiteral("internet-explorer.conf"));
++        const QString policy = temporary.filePath(QStringLiteral("policy.conf"));
++        qputenv("AERO7_IE_TASKBAR_CONFIG", config.toUtf8());
++        qputenv("AERO7_IE_TASKBAR_POLICY", policy.toUtf8());
++
++        QFile file(config);
++        QVERIFY(file.open(QIODevice::WriteOnly));
++        file.write("[Browser]\nBackend=firefox.desktop\n");
++        file.close();
++
++        Aero7TasksModel model;
++        const QString shellLauncher = QStringLiteral(
++            "applications:aero7-internet-explorer.desktop");
++        model.setShellLauncherList({shellLauncher});
++        QCOMPARE(model.internetExplorerBackend(), QStringLiteral("firefox.desktop"));
++        QCOMPARE(model.shellLauncherList(), QStringList{shellLauncher});
++        QCOMPARE(model.TaskManager::TasksModel::launcherList(),
++                 QStringList{QStringLiteral("applications:firefox.desktop")});
++        QCOMPARE(model.launcherPosition(QUrl(shellLauncher)), 0);
++
++        QSignalSpy backendChanged(&model,
++                                  &Aero7TasksModel::internetExplorerBackendChanged);
++        QVERIFY(file.open(QIODevice::WriteOnly | QIODevice::Truncate));
++        file.write("[Browser]\nBackend=chromium.desktop\n");
++        file.close();
++        QTRY_COMPARE(model.internetExplorerBackend(), QStringLiteral("chromium.desktop"));
++        QVERIFY(!backendChanged.isEmpty());
++        QCOMPARE(model.shellLauncherList(), QStringList{shellLauncher});
++        QCOMPARE(model.TaskManager::TasksModel::launcherList(),
++                 QStringList{QStringLiteral("applications:chromium.desktop")});
++        QCOMPARE(model.launcherPosition(QUrl(shellLauncher)), 0);
++    }
++};
++
++QTEST_MAIN(Aero7TasksModelTest)
++#include "aero7tasksmodeltest.moc"
++
+diff --git a/plasma/plasmoids/src/seventasks_src/src/aero7tasksmodeldump.cpp b/plasma/plasmoids/src/seventasks_src/src/aero7tasksmodeldump.cpp
+new file mode 100644
+index 0000000..e0ea0c2
+--- /dev/null
++++ b/plasma/plasmoids/src/seventasks_src/src/aero7tasksmodeldump.cpp
+@@ -0,0 +1,78 @@
++/*
++    SPDX-FileCopyrightText: 2026 Aero7 Open Project
++    SPDX-License-Identifier: LGPL-2.1-or-later
++*/
++
++#include "aero7tasksmodel.h"
++
++#include <QGuiApplication>
++#include <QJsonArray>
++#include <QJsonDocument>
++#include <QJsonObject>
++#include <QTimer>
++
++namespace {
++QJsonValue jsonValue(const QVariant &value)
++{
++    if (value.metaType().id() == QMetaType::QUrl) {
++        return value.toUrl().toString();
++    }
++    return QJsonValue::fromVariant(value);
++}
++}
++
++int main(int argc, char **argv)
++{
++    QGuiApplication app(argc, argv);
++    Aero7TasksModel model;
++    model.setGroupMode(TaskManager::TasksModel::GroupApplications);
++    model.setHideActivatedLaunchers(true);
++    model.setShellLauncherList({QStringLiteral("applications:aero7-internet-explorer.desktop")});
++
++    QTimer::singleShot(2500, &app, [&app, &model] {
++        QJsonObject report;
++        report.insert(QStringLiteral("backend"), model.internetExplorerBackend());
++        report.insert(QStringLiteral("shellLaunchers"),
++                      QJsonArray::fromStringList(model.shellLauncherList()));
++
++        QJsonArray rows;
++        for (int row = 0; row < model.rowCount(); ++row) {
++            const QModelIndex index = model.index(row, 0);
++            const auto exposed = [&model, &index](int role) {
++                return model.data(index, role);
++            };
++            const auto raw = [&model, &index](int role) {
++                return model.TaskManager::TasksModel::data(index, role);
++            };
++
++            QJsonObject item;
++            item.insert(QStringLiteral("row"), row);
++            item.insert(QStringLiteral("display"),
++                        jsonValue(exposed(Qt::DisplayRole)));
++            item.insert(QStringLiteral("rawDisplay"),
++                        jsonValue(raw(Qt::DisplayRole)));
++            item.insert(QStringLiteral("appId"),
++                        jsonValue(exposed(TaskManager::AbstractTasksModel::AppId)));
++            item.insert(QStringLiteral("rawAppId"),
++                        jsonValue(raw(TaskManager::AbstractTasksModel::AppId)));
++            item.insert(QStringLiteral("launcher"),
++                        jsonValue(exposed(TaskManager::AbstractTasksModel::LauncherUrlWithoutIcon)));
++            item.insert(QStringLiteral("rawLauncher"),
++                        jsonValue(raw(TaskManager::AbstractTasksModel::LauncherUrlWithoutIcon)));
++            item.insert(QStringLiteral("isLauncher"),
++                        jsonValue(exposed(TaskManager::AbstractTasksModel::IsLauncher)));
++            item.insert(QStringLiteral("isWindow"),
++                        jsonValue(exposed(TaskManager::AbstractTasksModel::IsWindow)));
++            item.insert(QStringLiteral("isGroupParent"),
++                        jsonValue(exposed(TaskManager::AbstractTasksModel::IsGroupParent)));
++            item.insert(QStringLiteral("childCount"),
++                        jsonValue(exposed(TaskManager::AbstractTasksModel::ChildCount)));
++            rows.append(item);
++        }
++        report.insert(QStringLiteral("rows"), rows);
++        fprintf(stdout, "%s\n", QJsonDocument(report).toJson(QJsonDocument::Indented).constData());
++        app.quit();
++    });
++
++    return app.exec();
++}

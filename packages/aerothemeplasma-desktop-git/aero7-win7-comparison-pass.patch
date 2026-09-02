@@ -1,0 +1,245 @@
+--- a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/main.qml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/main.qml
+@@ -111,8 +111,12 @@
+         ];
+         for (let index = 0; values && index < values.length; ++index) {
+             let favorite = String(values[index] || "");
+-            if (favorite.toLocaleLowerCase().indexOf("systemsettings") !== -1) {
++            const normalized = favorite.toLocaleLowerCase();
++            if (normalized.indexOf("systemsettings") !== -1) {
+                 favorite = "applications:linux-controlpanel.desktop";
++            } else if (normalized.indexOf("dolphin") !== -1
++                       || normalized.indexOf("fileexplorer") !== -1) {
++                favorite = "applications:org.aero7.fileexplorer.desktop";
+             }
+             if (favorite && cleaned.indexOf(favorite) === -1) {
+                 cleaned.push(favorite);
+--- a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/OftenUsedView.qml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/OftenUsedView.qml
+@@ -112,7 +112,15 @@
+                 }
+                 const sourceIndex = sourceModel.index(source_row, 0, source_parent);
+                 const displayName = sourceModel.data(sourceIndex, 0);
+-                return !kicker.isFullyHiddenApplication(displayName);
++                if (kicker.isFullyHiddenApplication(displayName)) {
++                    return false;
++                }
++                // A Windows 7 Start menu never repeats a pinned application in
++                // the frequently-used section immediately below it.
++                const favoriteIdRole = sourceModel.KItemModels.KRoleNames.role("favoriteId");
++                const favoriteId = String(sourceModel.data(sourceIndex, favoriteIdRole) || "");
++                const favorites = Array.from(globalFavorites.favorites || []);
++                return favoriteId === "" || favorites.indexOf(favoriteId) === -1;
+             };
+ 
+         }
+--- a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/SidePanelModels.qml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/SidePanelModels.qml
+@@ -111,9 +111,9 @@
+             description: i18n("See the disk drives and other hardware connected to your computer."),
+             itemIcon: "computer",
+             itemIconFallback: "unknown",
+-            executableString: "file:///.",
++            executableString: "dolphin aero7computer:/",
+             menuModel: null,
+-            executeProgram: false
++            executeProgram: true
+         },
+         {
+             name: i18n("Network"),
+@@ -172,7 +172,7 @@
+             name: i18n("Run"),
+ 			itemText: i18n("Run..."),
+             description: i18n("Opens a program, folder, document, or web site."),
+-			itemIcon: "system-run",
++			itemIcon: "krunner",
+ 			itemIconFallback: "system-run",
+ 			executableString: Plasmoid.configuration.defaultRunnerApp,
+ 			executeProgram: true,
+--- a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/FloatingIcon.qml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/FloatingIcon.qml
+@@ -13,6 +13,7 @@
+ import org.kde.plasma.private.kicker as Kicker
+ import org.kde.coreaddons as KCoreAddons // kuser
+ import org.kde.plasma.private.shell 2.0
++import org.kde.plasma.plasma5support as Plasma5Support
+ 
+ import org.kde.kwindowsystem 1.0
+ import org.kde.kquickcontrolsaddons 2.0
+@@ -20,7 +21,6 @@
+ 
+ import org.kde.kirigami 2.13 as Kirigami
+ import org.kde.kquickcontrolsaddons 2.0 as KQuickAddons
+-import org.kde.kcmutils as KCM
+ import org.kde.kwindowsystem 1.0
+ 
+ 
+@@ -35,6 +35,16 @@
+         property alias iconSource: imgAuthorIcon.source
+         property alias fallbackIcon: imgAuthorIcon.fallback
+ 
++        Plasma5Support.DataSource {
++            id: userAction
++            engine: "executable"
++            connectedSources: []
++            onNewData: (sourceName, data) => disconnectSource(sourceName)
++            function exec(command) {
++                if (command) connectSource(command)
++            }
++        }
++
+         BorderImage {
+             source: "../pics/user.png"
+             smooth: true
+@@ -93,6 +103,13 @@
+             mipmap: true
+             visible: true
+         }
++        Kirigami.Icon {
++            anchors.fill: parent
++            anchors.margins: Kirigami.Units.smallSpacing * 2
++            source: "preferences-system-users"
++            visible: imgAuthorIcon.source === "" && kuser.faceIconUrl.toString() === ""
++            z: 50
++        }
+         /*OpacityMask {
+             anchors.fill: imgAuthor
+             source: (kuser.faceIconUrl.toString() === "") ? imgAuthorIcon : imgAuthor;
+@@ -106,7 +123,7 @@
+             anchors.fill: parent
+             acceptedButtons: Qt.LeftButton
+             onPressed: {
+-                KCM.KCMLauncher.openSystemSettings("kcm_users")
++                userAction.exec("control --page user-accounts")
+                 root.visible = false;
+             }
+             cursorShape: Qt.PointingHandCursor
+--- a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/MenuRepresentation.qml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/MenuRepresentation.qml
+@@ -412,12 +412,12 @@
+ 			anchors.rightMargin: 2
+ 			anchors.bottomMargin: 2
+ 			gradient: Gradient {
+-				GradientStop { position: 0.0; color: "#26000000" }
+-				GradientStop { position: 0.11; color: "#53000000" }
+-				GradientStop { position: 0.2775; color: "#82000000" }
+-				GradientStop { position: 0.445; color: "#99000000" }
+-				GradientStop { position: 0.51; color: "#99000000" }
+-				GradientStop { position: 0.84; color: "#4f000000" }
++				GradientStop { position: 0.0; color: "#32162d43" }
++				GradientStop { position: 0.11; color: "#5b14283d" }
++				GradientStop { position: 0.2775; color: "#86132439" }
++				GradientStop { position: 0.445; color: "#9b112033" }
++				GradientStop { position: 0.51; color: "#9b112033" }
++				GradientStop { position: 0.84; color: "#56162a3e" }
+ 				GradientStop { position: 1.0; color: "#00000000" }
+ 			}
+ 			topLeftRadius: 8
+--- a/plasma/plasmoids/io.gitgud.wackyideas.desktopcontainment/contents/ui/FolderView.qml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.desktopcontainment/contents/ui/FolderView.qml
+@@ -245,20 +245,6 @@
+         id: eventGenerator
+     }
+ 
+-    Watermark {
+-        id: watermark
+-
+-        anchors {
+-            right: parent.right
+-            bottom: parent.bottom
+-
+-            rightMargin: 5
+-            bottomMargin: 5
+-        }
+-
+-        width: Math.floor(parent.width/4)
+-    }
+-
+     MouseEventListener {
+         id: listener
+         enabled: !Plasmoid.containment.corona.editMode
+@@ -1362,6 +1348,11 @@
+                 ? (gridView.width / gridView.cellWidth)
+                 : (gridView.height / gridView.cellHeight))
+ 
++            Component.onCompleted: {
++                positioner.updateResolution();
++                positioner.loadAndApplyPositionsConfig();
++            }
++
+         }
+ 
+         Folder.ItemViewAdapter {
+--- a/plasma/desktoptheme/Aero7/widgets/panel-background.svg
++++ b/plasma/desktoptheme/Aero7/widgets/panel-background.svg
+@@ -117,57 +117,57 @@
+          offset="0"
+          style="stop-color:#000000;stop-opacity:0.06122449;" />
+       <stop
+-         style="stop-color:#3167ff;stop-opacity:0.35294116"
++         style="stop-color:#5b83b8;stop-opacity:0.35294116"
+          offset="0.28507671"
+          id="stop1138" />
+       <stop
+-         style="stop-color:#7ebcff;stop-opacity:0.16470589"
++         style="stop-color:#9fc2e5;stop-opacity:0.16470589"
+          offset="0.2913385"
+          id="stop1140" />
+       <stop
+          id="stop1142"
+          offset="0.34376019"
+-         style="stop-color:#4d59ff;stop-opacity:0.42745098" />
++         style="stop-color:#667caf;stop-opacity:0.42745098" />
+       <stop
+          id="stop1144"
+          offset="0.39310053"
+-         style="stop-color:#5c84ff;stop-opacity:0.32156864" />
++         style="stop-color:#7d9bc5;stop-opacity:0.32156864" />
+       <stop
+-         style="stop-color:#7ebcff;stop-opacity:0.16862746"
++         style="stop-color:#9fc2e5;stop-opacity:0.16862746"
+          offset="0.40131494"
+          id="stop1146" />
+       <stop
+          id="stop1148"
+          offset="0.42569745"
+-         style="stop-color:#7ebcff;stop-opacity:0.19215687" />
++         style="stop-color:#9fc2e5;stop-opacity:0.19215687" />
+       <stop
+          id="stop1150"
+          offset="0.43263599"
+-         style="stop-color:#5d76ff;stop-opacity:0.40784314" />
++         style="stop-color:#7991ba;stop-opacity:0.40784314" />
+       <stop
+-         style="stop-color:#125eff;stop-opacity:0.39215687"
++         style="stop-color:#447db7;stop-opacity:0.39215687"
+          offset="0.50198394"
+          id="stop1152" />
+       <stop
+          id="stop1154"
+          offset="0.5062806"
+-         style="stop-color:#1c5aff;stop-opacity:0.47058824" />
++         style="stop-color:#4b7db6;stop-opacity:0.47058824" />
+       <stop
+          id="stop1156"
+          offset="0.51964968"
+-         style="stop-color:#2e88ff;stop-opacity:0.47058824" />
++         style="stop-color:#6497ca;stop-opacity:0.47058824" />
+       <stop
+-         style="stop-color:#5790ff;stop-opacity:0.42745098"
++         style="stop-color:#78a3ce;stop-opacity:0.42745098"
+          offset="0.54968733"
+          id="stop1158" />
+       <stop
+          id="stop1160"
+          offset="0.55512947"
+-         style="stop-color:#1f5eff;stop-opacity:0.35294116" />
++         style="stop-color:#4f7fb4;stop-opacity:0.35294116" />
+       <stop
+          id="stop1162"
+          offset="1"
+-         style="stop-color:#7ebcff;stop-opacity:0.0627451" />
++         style="stop-color:#9fc2e5;stop-opacity:0.0627451" />
+     </linearGradient>
+     <radialGradient
+        inkscape:collect="always"

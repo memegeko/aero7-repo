@@ -1,0 +1,31 @@
+diff --git a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/SidePanelModels.qml b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/SidePanelModels.qml
+index c0049ff..5266849 100644
+--- a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/SidePanelModels.qml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/SidePanelModels.qml
+@@ -144,7 +144,7 @@ Item {
+             description: i18n("View and manage devices, printers and print jobs"),
+ 			itemIcon: "input_devices_settings",
+ 			itemIconFallback: "printer",
+-			executableString: "systemsettings kcm_printer_manager",
++			executableString: "control --page devices-and-printers",
+ 			executeProgram: true,
+             menuModel: null,
+         },
+@@ -154,7 +154,7 @@ Item {
+             description: i18n("Choose default programs for web browsing, e-mail, playing music, and other activities."),
+ 			itemIcon: "preferences-desktop-default-applications",
+ 			itemIconFallback: "application-x-executable",
+-			executableString: "systemsettings kcm_componentchooser",
++			executableString: "control --setting default-apps",
+ 			executeProgram: true,
+             menuModel: null,
+         },
+@@ -164,7 +164,7 @@ Item {
+             description: i18n("Find Help topics, tutorials, troubleshooting, and other support services."),
+ 			itemIcon: "help-browser",
+ 			itemIconFallback: "system-help",
+-			executableString: "https://develop.kde.org/docs/",
++			executableString: "https://aero7.miku-dayo.com/",
+ 			executeProgram: false,
+             menuModel: null,
+         },

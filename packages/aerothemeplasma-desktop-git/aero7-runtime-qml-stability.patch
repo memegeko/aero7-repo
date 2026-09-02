@@ -1,0 +1,420 @@
+diff --git a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/FavoritesView.qml b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/FavoritesView.qml
+old mode 100755
+new mode 100644
+index e67acbd..1774f02
+--- a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/FavoritesView.qml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/FavoritesView.qml
+@@ -216,7 +216,9 @@ Item {
+ 
+         onCountChanged: {
+             animationDuration = 0;
+-            resetAnimationDurationTimer.start();
++            if (resetAnimationDurationTimer) {
++                resetAnimationDurationTimer.restart();
++            }
+         }
+     }
+     Timer {
+diff --git a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/MenuRepresentation.qml b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/MenuRepresentation.qml
+old mode 100755
+new mode 100644
+index 5821880..2acb96c
+--- a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/MenuRepresentation.qml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/MenuRepresentation.qml
+@@ -1163,7 +1163,7 @@ PlasmaCore.Dialog {
+ 				size: iconSizeSide
+ 
+ 				KeyNavigation.tab: lockScreenDelegate
+-				KeyNavigation.backtab: Qt.binding(() => { return leaveButtons.findUpItem(); });
++				KeyNavigation.backtab: leaveButtons.findUpItem()
+ 
+ 				Keys.onPressed: event => {
+ 					if(event.key == Qt.Key_Return) {
+diff --git a/plasma/plasmoids/io.gitgud.wackyideas.digitalclocklite/contents/ui/CalendarView.qml b/plasma/plasmoids/io.gitgud.wackyideas.digitalclocklite/contents/ui/CalendarView.qml
+index d19555b..c89a4e4 100644
+--- a/plasma/plasmoids/io.gitgud.wackyideas.digitalclocklite/contents/ui/CalendarView.qml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.digitalclocklite/contents/ui/CalendarView.qml
+@@ -111,7 +111,7 @@ PlasmaCore.Dialog {
+ 
+     property bool debug: false
+ 
+-    property bool isExpanded: Plasmoid.expanded
++    property bool isExpanded: !!Plasmoid.expanded
+ 
+     onIsExpandedChanged: {
+         // clear all the selections when the plasmoid is showing/hiding
+diff --git a/plasma/plasmoids/io.gitgud.wackyideas.digitalclocklite/contents/ui/DaysCalendar.qml b/plasma/plasmoids/io.gitgud.wackyideas.digitalclocklite/contents/ui/DaysCalendar.qml
+old mode 100755
+new mode 100644
+index 5e15910..b6b9c86
+--- a/plasma/plasmoids/io.gitgud.wackyideas.digitalclocklite/contents/ui/DaysCalendar.qml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.digitalclocklite/contents/ui/DaysCalendar.qml
+@@ -21,6 +21,9 @@ import org.kde.kirigami as Kirigami
+ Item {
+     id: daysCalendar
+ 
++    readonly property real themePixelSize: Math.max(8, Math.round(
++        (Kirigami.Theme.defaultFont.pointSize || 9) * 96 / 72))
++
+     signal headerClicked
+     signal scrollUp
+     signal scrollDown
+@@ -75,7 +78,7 @@ Item {
+                 verticalAlignment: Text.AlignVCenter
+                 opacity: 0.4
+                 text: modelData
+-                font.pixelSize: Math.max(Kirigami.Theme.smallestFont.pixelSize, daysCalendar.cellHeight / 3)
++                font.pixelSize: Math.max(daysCalendar.themePixelSize, daysCalendar.cellHeight / 3)
+             }
+         }
+     }
+@@ -115,7 +118,7 @@ Item {
+                 width: daysCalendar.cellWidth
+                 height: daysCalendar.cellHeight
+                 text: (Qt.locale(Qt.locale().uiLanguages[0]).dayName(((calendarBackend.firstDayOfWeek + index) % days.count), Locale.ShortFormat)).substring(0, 2);
+-                font.pixelSize: Math.max(Kirigami.Theme.smallestFont.pixelSize, daysCalendar.cellHeight / 3)
++                font.pixelSize: Math.max(daysCalendar.themePixelSize, daysCalendar.cellHeight / 3)
+                 //opacity: 0.8
+                 horizontalAlignment: Text.AlignHCenter
+                 verticalAlignment: Text.AlignVCenter
+@@ -149,4 +152,3 @@ Item {
+         }
+     }
+ }
+-
+diff --git a/plasma/plasmoids/io.gitgud.wackyideas.digitalclocklite/contents/ui/DigitalClock.qml b/plasma/plasmoids/io.gitgud.wackyideas.digitalclocklite/contents/ui/DigitalClock.qml
+index 1926331..f22a73b 100644
+--- a/plasma/plasmoids/io.gitgud.wackyideas.digitalclocklite/contents/ui/DigitalClock.qml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.digitalclocklite/contents/ui/DigitalClock.qml
+@@ -33,6 +33,11 @@ import org.kde.plasma.private.digitalclock
+ Item {
+     id: main
+ 
++    readonly property real configuredPixelSize: Math.max(8, Math.round(
++        (Plasmoid.configuration.fontSize || Kirigami.Theme.defaultFont.pointSize || 9) * 96 / 72))
++    readonly property real themePixelSize: Math.max(8, Math.round(
++        (Kirigami.Theme.defaultFont.pointSize || 9) * 96 / 72))
++
+     property string timeFormat
+     property date currentTime
+ 
+@@ -72,7 +77,8 @@ Item {
+ 
+     // if the date/timezone cannot be fit with the smallest font to its designated space
+     readonly property bool oneLineMode: Plasmoid.formFactor == PlasmaCore.Types.Horizontal &&
+-                                        main.height <= 2 * Kirigami.Theme.smallestFont.pixelSize &&
++                                        main.height > 0 &&
++                                        main.height <= 2 * main.themePixelSize &&
+                                         (main.showDate || timezoneLabel.visible)
+                                         
+     property QtObject dashWindow: null
+@@ -151,13 +157,13 @@ Item {
+                 target: timeLabel
+ 
+                 height: sizehelper.height
+-                font.pointSize: Math.min(Plasmoid.configuration.fontSize || Kirigami.Theme.defaultFont.pointSize, Math.round(timeLabel.height * 72 / 96))
++                font.pixelSize: Math.min(main.configuredPixelSize, timeLabel.height)
+             }
+ 
+             PropertyChanges {
+                 target: timezoneLabel
+ 
+-                font.pointSize: Math.min(Plasmoid.configuration.fontSize || Kirigami.Theme.defaultFont.pointSize, Math.round(timezoneLabel.height * 72 / 96))
++                font.pixelSize: Math.min(main.configuredPixelSize, timezoneLabel.height)
+             }
+ 
+             PropertyChanges {
+@@ -166,7 +172,7 @@ Item {
+                 height: 0.8 * timeLabel.height
+                 width: dateLabel.paintedWidth
+ 
+-                font.pointSize: Math.min(Plasmoid.configuration.fontSize || Kirigami.Theme.defaultFont.pointSize, Math.round(dateLabel.height * 72 / 96))
++                font.pixelSize: Math.min(main.configuredPixelSize, dateLabel.height)
+             }
+ 
+             AnchorChanges {
+@@ -187,7 +193,7 @@ Item {
+                  * and still fits well into the panel with all the applied margins.
+                  */
+                 height: Math.min(main.showDate || timezoneLabel.visible ? main.height * 0.56 : main.height * 0.71,
+-                                 3 * Kirigami.Theme.defaultFont.pixelSize)
++                                 3 * main.themePixelSize)
+ 
+                 font.pixelSize: sizehelper.height
+             }
+@@ -260,10 +266,10 @@ Item {
+             PropertyChanges {
+                 target: sizehelper
+ 
+-                height: Math.min(main.height, 3 * Kirigami.Theme.defaultFont.pixelSize)
++                height: Math.min(main.height, 3 * main.themePixelSize)
+ 
+                 fontSizeMode: Text.VerticalFit
+-                font.pixelSize: 3 * Kirigami.Theme.defaultFont.pixelSize
++                font.pixelSize: 3 * main.themePixelSize
+             }
+         },
+ 
+@@ -320,7 +326,7 @@ Item {
+                 width: main.width
+ 
+                 fontSizeMode: Text.Fit
+-                minimumPixelSize: Math.min(0.7 * Kirigami.Theme.smallestFont.pixelSize, timeLabel.height)
++                minimumPixelSize: Math.min(0.7 * main.themePixelSize, timeLabel.height)
+                 elide: Text.ElideRight
+             }
+ 
+@@ -337,7 +343,7 @@ Item {
+                 width: main.width
+ 
+                 fontSizeMode: Text.HorizontalFit
+-                font.pixelSize: 3 * Kirigami.Theme.defaultFont.pixelSize
++                font.pixelSize: 3 * main.themePixelSize
+             }
+         },
+ 
+@@ -550,7 +556,7 @@ Item {
+                     family: Plasmoid.configuration.fontFamily || Kirigami.Theme.defaultFont.family
+                     weight: Plasmoid.configuration.boldText ? Font.Bold : Kirigami.Theme.defaultFont.weight
+                     italic: Plasmoid.configuration.italicText
+-                    pointSize: (Plasmoid.configuration.fontSize || Kirigami.Theme.defaultFont.pointSize)
++                    pixelSize: main.configuredPixelSize
+                     hintingPreference: Font.PreferFullHinting
+                 }
+                 minimumPixelSize: 1
+diff --git a/plasma/plasmoids/io.gitgud.wackyideas.panel/contents/ui/main.qml b/plasma/plasmoids/io.gitgud.wackyideas.panel/contents/ui/main.qml
+index f191d20..e070d92 100644
+--- a/plasma/plasmoids/io.gitgud.wackyideas.panel/contents/ui/main.qml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.panel/contents/ui/main.qml
+@@ -25,9 +25,9 @@ ContainmentItem {
+     // filled in by the shell (Panel.qml) with the plasma-workspace PanelView
+     property var panel: null
+ 
+-    property int panelThickness: root.panel.thickness
+-    property bool panelFloating: root.panel.floating
+-    property bool panelFloatingApplets: root.panel.floatingApplets
++    property int panelThickness: root.panel ? root.panel.thickness : Plasmoid.configuration.panelThickness
++    property bool panelFloating: root.panel ? !!root.panel.floating : false
++    property bool panelFloatingApplets: root.panel ? !!root.panel.floatingApplets : false
+ 
+     onPanelThicknessChanged: {
+         if(root.panel) {
+@@ -134,6 +134,7 @@ ContainmentItem {
+         root.checkLastSpacer();
+         // When a new preset panel is added, avoid calling save() multiple times
+         Qt.callLater(LayoutManager.save);
++        Qt.callLater(gradientRect.refreshTaskApplet);
+         /*Qt.callLater(() => {
+            gradientRect.applet = Qt.binding(() => { return gradientRect.findApplet(); });
+            gradientRect.nextApplet = Qt.binding(() => { return gradientRect.findNextApplet(); });
+@@ -147,11 +148,12 @@ ContainmentItem {
+         }
+         checkLastSpacer();
+         LayoutManager.save();
++        Qt.callLater(gradientRect.refreshTaskApplet);
+     }
+ 
+     Plasmoid.onUserConfiguringChanged: {
+         if (!Plasmoid.userConfiguring) {
+-            gradientRect.updateProps = !gradientRect.updateProps
++            gradientRect.refreshTaskApplet()
+             if (root.configOverlay) {
+                 root.configOverlay.destroy();
+                 root.configOverlay = null;
+@@ -494,21 +496,25 @@ ContainmentItem {
+                     }
+                 }
+             }
+-            property bool iconsOnlyApplet: applet ? applet.applet.iconsOnly : false
++            property bool iconsOnlyApplet: applet && applet.applet ? !!applet.applet.iconsOnly : false
+             property int index: applet ? applet.index : -1
+             property int count: appletsModel.count
+             property string targetPlasmoid: "io.gitgud.wackyideas.seventasks"
+             function findApplet() {
+                 for(var i = 0; i < currentLayout.visibleChildren.length; i++) {
+-                    if(currentLayout.visibleChildren[i].applet.Plasmoid.pluginName === targetPlasmoid) {
+-                        return currentLayout.visibleChildren[i];
++                    const child = currentLayout.visibleChildren[i];
++                    if(child && child.applet && child.applet.Plasmoid
++                            && child.applet.Plasmoid.pluginName === targetPlasmoid) {
++                        return child;
+                     }
+                 }
+                 return null
+             }
+             function findNextApplet() {
+                 for(var i = 0; i < currentLayout.visibleChildren.length; i++) {
+-                    if(currentLayout.visibleChildren[i].applet.Plasmoid.pluginName === targetPlasmoid) {
++                    const child = currentLayout.visibleChildren[i];
++                    if(child && child.applet && child.applet.Plasmoid
++                            && child.applet.Plasmoid.pluginName === targetPlasmoid) {
+                         if(i == currentLayout.visibleChildren.length-1) {
+                             return null;
+                         }
+@@ -517,8 +523,14 @@ ContainmentItem {
+                 }
+                 return null;
+             }
+-            property Item nextApplet: updateProps, findNextApplet();
+-            property Item applet: updateProps, findApplet();
++            function refreshTaskApplet() {
++                applet = findApplet();
++                nextApplet = findNextApplet();
++                updateProps = !updateProps;
++            }
++            property Item nextApplet: null
++            property Item applet: null
++            Component.onCompleted: Qt.callLater(refreshTaskApplet)
+         }
+         GridLayout {
+             id: currentLayout
+diff --git a/plasma/plasmoids/io.gitgud.wackyideas.seventasks/contents/ui/Task.qml b/plasma/plasmoids/io.gitgud.wackyideas.seventasks/contents/ui/Task.qml
+index 8524fc0..365410c 100644
+--- a/plasma/plasmoids/io.gitgud.wackyideas.seventasks/contents/ui/Task.qml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.seventasks/contents/ui/Task.qml
+@@ -1401,7 +1401,7 @@ TaskManagerApplet.SmartLauncherItem { }
+                 Badge {
+                     id: badge
+                     visible: task.smartLauncherItem && task.smartLauncherItem.countVisible
+-                    number: task.smartLauncherItem.count
++                    number: task.smartLauncherItem ? task.smartLauncherItem.count : 0
+                     anchors.top: parent.top
+                     anchors.right: parent.right
+                     anchors.rightMargin: (tasksRoot.height <= 30) ? (-Kirigami.Units.largeSpacing + (label.visible ? Kirigami.Units.smallSpacing : 0)) : -Kirigami.Units.smallSpacing
+diff --git a/plasma/plasmoids/io.gitgud.wackyideas.seventasks/contents/ui/WindowListDelegate.qml b/plasma/plasmoids/io.gitgud.wackyideas.seventasks/contents/ui/WindowListDelegate.qml
+index 6197634..4104f1a 100644
+--- a/plasma/plasmoids/io.gitgud.wackyideas.seventasks/contents/ui/WindowListDelegate.qml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.seventasks/contents/ui/WindowListDelegate.qml
+@@ -62,7 +62,7 @@ MouseArea {
+             prefix: "attention"
+ 
+             visible: demandsAttention
+-            opacity: root.parentTask.attentionAnimOpacity
++            opacity: root.parentTask ? root.parentTask.attentionAnimOpacity : 0
+         }
+ 
+         KSvg.FrameSvgItem {
+diff --git a/plasma/plasmoids/io.gitgud.wackyideas.seventasks/contents/ui/WindowThumbnail.qml b/plasma/plasmoids/io.gitgud.wackyideas.seventasks/contents/ui/WindowThumbnail.qml
+index a39b104..f248458 100644
+--- a/plasma/plasmoids/io.gitgud.wackyideas.seventasks/contents/ui/WindowThumbnail.qml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.seventasks/contents/ui/WindowThumbnail.qml
+@@ -78,7 +78,7 @@ MouseArea {
+             prefix: "attention"
+ 
+             visible: demandsAttention
+-            opacity: root.parentTask.attentionAnimOpacity
++            opacity: root.parentTask ? root.parentTask.attentionAnimOpacity : 0
+         }
+ 
+         KSvg.FrameSvgItem {
+diff --git a/plasma/plasmoids/io.gitgud.wackyideas.volume/contents/ui/main.qml b/plasma/plasmoids/io.gitgud.wackyideas.volume/contents/ui/main.qml
+index 3f5c74a..c8850ad 100644
+--- a/plasma/plasmoids/io.gitgud.wackyideas.volume/contents/ui/main.qml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.volume/contents/ui/main.qml
+@@ -30,9 +30,9 @@ PlasmoidItem {
+         id: config
+     }
+ 
+-    property bool volumeFeedback: config.audioFeedback
+-    property bool globalMute: config.globalMute
+-    property bool globalMuteSources: config.globalMuteSources
++    property bool volumeFeedback: !!config.audioFeedback
++    property bool globalMute: !!config.globalMute
++    property bool globalMuteSources: !!config.globalMuteSources
+     property string displayName: i18n("Audio Volume")
+     property QtObject draggedStream: null
+     property QtObject mixerWindow: null
+diff --git a/plasma/plasmoids/src/notifications_src/notifications/global/Globals.qml b/plasma/plasmoids/src/notifications_src/notifications/global/Globals.qml
+index 321c412..1f546be 100644
+--- a/plasma/plasmoids/src/notifications_src/notifications/global/Globals.qml
++++ b/plasma/plasmoids/src/notifications_src/notifications/global/Globals.qml
+@@ -131,6 +131,9 @@ QtObject {
+         }
+ 
+         const containment = plasmoid.containment;
++        if (!containment || !containment.screenGeometry || !containment.availableScreenRect) {
++            return Qt.rect(0, 0, -1, -1);
++        }
+         // NOTE this is our "plasmoid" property from above, don't port this to Plasmoid attached property!
+         let rect = Qt.rect(containment.screenGeometry.x + containment.availableScreenRect.x,
+                            containment.screenGeometry.y + containment.availableScreenRect.y,
+@@ -261,8 +264,8 @@ QtObject {
+             }
+         });
+         globals.plasmoidItems = newPlasmoidItems;
+-        globals.plasmoidItem = newPlasmoidItems[0];
+-        globals.plasmoid = globals.plasmoidItem.plasmoid;
++        globals.plasmoidItem = newPlasmoidItems.length > 0 ? newPlasmoidItems[0] : null;
++        globals.plasmoid = globals.plasmoidItem ? globals.plasmoidItem.plasmoid : null;
+     }
+ 
+     function checkInhibition() {
+diff --git a/plasma/plasmoids/src/systemtray_src/systemtray/package/contents/ui/HiddenItemsView.qml b/plasma/plasmoids/src/systemtray_src/systemtray/package/contents/ui/HiddenItemsView.qml
+index 046d814..dcf8b45 100644
+--- a/plasma/plasmoids/src/systemtray_src/systemtray/package/contents/ui/HiddenItemsView.qml
++++ b/plasma/plasmoids/src/systemtray_src/systemtray/package/contents/ui/HiddenItemsView.qml
+@@ -58,11 +58,15 @@ ScrollView {
+ 
+         pixelAligned: true
+ 
+-        readonly property int itemCount: model.count
++        readonly property int itemCount: model ? model.count : 0
+ 
+ 
+         model: KItemModels.KSortFilterProxyModel {
+-            sourceModel: Plasmoid.systemTrayModel
++            id: hiddenItemsModel
++            sourceModel: null
++            Component.onCompleted: Qt.callLater(function() {
++                hiddenItemsModel.sourceModel = Plasmoid.systemTrayModel
++            })
+             filterRoleName: "effectiveStatus"
+             filterRowCallback: (sourceRow, sourceParent) => {
+                 let value = sourceModel.data(sourceModel.index(sourceRow, 0, sourceParent), filterRole);
+diff --git a/plasma/plasmoids/src/systemtray_src/systemtray/package/contents/ui/main.qml b/plasma/plasmoids/src/systemtray_src/systemtray/package/contents/ui/main.qml
+index c09f807..d7c06a3 100644
+--- a/plasma/plasmoids/src/systemtray_src/systemtray/package/contents/ui/main.qml
++++ b/plasma/plasmoids/src/systemtray_src/systemtray/package/contents/ui/main.qml
+@@ -128,7 +128,7 @@ ContainmentItem {
+                 if(write) writeToConfig();
+             }
+             function getItemOrder(id) {
+-                if(typeof orderObject[id] === "undefined") return -1;
++                if(!orderObject || typeof orderObject[id] === "undefined") return -1;
+                 return orderObject[id];
+             }
+             function writeToConfig() {
+@@ -161,7 +161,10 @@ ContainmentItem {
+             id: activeModel
+             model: KItemModels.KSortFilterProxyModel {
+                 id: shownItemsModel
+-                sourceModel: Plasmoid.systemTrayModel
++                sourceModel: null
++                Component.onCompleted: Qt.callLater(function() {
++                    shownItemsModel.sourceModel = Plasmoid.systemTrayModel
++                })
+                 filterRoleName: "effectiveStatus"
+ 
+                 filterRowCallback: (sourceRow, sourceParent) => {
+@@ -334,7 +337,7 @@ ContainmentItem {
+             property bool firstTimePopup: false
+ 
+             hideOnWindowDeactivate: !Plasmoid.configuration.pin
+-            visible: systemTrayState.expanded
++            visible: systemTrayState.expanded && root.hiddenLayout.itemCount > 0
+             appletInterface: root
+ 
+             backgroundHints: expandedRepresentation.useTransparentFlyout ? PlasmaCore.Dialog.StandardBackground : PlasmaCore.Dialog.SolidBackground
+diff --git a/plasma/shells/io.gitgud.wackyideas.desktop/contents/explorer/WidgetExplorer.qml b/plasma/shells/io.gitgud.wackyideas.desktop/contents/explorer/WidgetExplorer.qml
+index e0c98c1..46efa29 100644
+--- a/plasma/shells/io.gitgud.wackyideas.desktop/contents/explorer/WidgetExplorer.qml
++++ b/plasma/shells/io.gitgud.wackyideas.desktop/contents/explorer/WidgetExplorer.qml
+@@ -222,7 +222,7 @@ PC3.Page {
+                 height: 1
+                 anchors.left: parent.left
+                 anchors.right: parent.right
+-                anchors.top: anchors.top
++                anchors.top: parent.top
+                 color: "#dfdfdf"
+             }
+         }

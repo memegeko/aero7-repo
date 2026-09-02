@@ -1,0 +1,25 @@
+diff --git a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/main.qml b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/main.qml
+index 13da9ec..51e11e6 100755
+--- a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/main.qml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/main.qml
+@@ -139,7 +139,6 @@ PlasmoidItem {
+     toolTipSubText: ""
+ 
+     CompactRepresentation { id: compactRepresentation; anchors.fill: parent }
+-    MenuRepresentation { id: menuRepresentation }
+ 
+     // Used to run separate programs through this plasmoid.
+     Plasma5Support.DataSource {
+diff --git a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/CompactRepresentation.qml b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/CompactRepresentation.qml
+index 6ed8230..47df9fc 100755
+--- a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/CompactRepresentation.qml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/CompactRepresentation.qml
+@@ -141,7 +141,7 @@ Item {
+     //kicker.status: PlasmaCore.Types.PassiveStatus
+ 
+     Component.onCompleted: {
+-        dashWindow = Qt.createQmlObject("MenuRepresentation {}", kicker);
++        dashWindow = Qt.createQmlObject("MenuRepresentation { visible: false }", kicker);
+         orb = Qt.createQmlObject("StartOrb {}", kicker);
+ 
+         orbTimer.start();

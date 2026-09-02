@@ -1,0 +1,48 @@
+pkgname=aero7-internet-explorer
+pkgver=0.1.0
+pkgrel=4
+pkgdesc='Permanent Aero7 Internet Explorer identity backed by an installed modern browser'
+arch=('x86_64')
+options=('!debug')
+url='https://github.com/aero7-open-project/aero7-desktop'
+license=('MIT')
+depends=(
+  'aero7-qt'
+  'kio'
+  'kservice'
+  'qt6-base'
+  'xdg-utils'
+)
+optdepends=(
+  'aero7-programs-center: install and manage browser backends'
+  'firefox: supported browser backend'
+  'chromium: supported browser backend'
+  'librewolf: supported browser backend'
+)
+makedepends=('cmake' 'ninja' 'git')
+_commit=5fef9d9b50401980131a13bc5608cfbf128b1795
+source=("aero7-desktop::git+$url.git#commit=$_commit")
+sha256sums=('SKIP')
+
+build() {
+  cmake -S "$srcdir/aero7-desktop/companions/aero7-internet-explorer" -B build -G Ninja \
+    -DCMAKE_BUILD_TYPE=None \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DBUILD_TESTING=OFF
+  cmake --build build
+}
+
+check() {
+  cmake -S "$srcdir/aero7-desktop/companions/aero7-internet-explorer" -B test-build -G Ninja \
+    -DCMAKE_BUILD_TYPE=None \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DBUILD_TESTING=ON
+  cmake --build test-build
+  QT_QPA_PLATFORM=offscreen ctest --test-dir test-build --output-on-failure
+}
+
+package() {
+  DESTDIR="$pkgdir" cmake --install build
+  install -Dm644 "$srcdir/aero7-desktop/companions/aero7-internet-explorer/LICENSE" \
+    "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}

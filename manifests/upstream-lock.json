@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-23T23:47:14Z",
+  "generated_at": "2026-09-02T19:59:52Z",
   "packages": {
     "aeroshell-libplasma-git": {
       "aur_url": "https://aur.archlinux.org/aeroshell-libplasma-git.git",
@@ -29,9 +29,9 @@
       "source_revisions": {
         "https://gitgud.io/aeroshell/atp/aerothemeplasma-icons": "96950b8028a5d960cb683280fe5f1d9e33e6b8a2"
       },
-      "pkgbuild_sha256": "8c88dc8217f8d11f1e1fdbbc36a9433a1572fd93c654d2231fdd8007c609d646",
-      "srcinfo_sha256": "266daf68025f3ca201f90898fd1eba3d40b03a55db2fa775ecce769e341b21fe",
-      "reviewed_at": "2026-08-05T17:15:00Z"
+      "pkgbuild_sha256": "ca8e3f1f029f932e4609f3ae25a388bc5708b449b1734d7bef007b91bbf51bbb",
+      "srcinfo_sha256": "0872961434d6e497f7b8e1dfcf9eb1d506d2088776f89f873996ad1559231345",
+      "reviewed_at": "2026-08-16T22:35:00Z"
     },
     "aerothemeplasma-sounds-git": {
       "source_type": "pinned-vcs",
@@ -63,9 +63,9 @@
       "source_revisions": {
         "https://github.com/memegeko/aerothemeplasma": "9c2d850f0907cd7d33c81e8a3fcc00abae3abb9b"
       },
-      "pkgbuild_sha256": "233175e628f28072ee997f83e892b19914962a1297555df0451d4d54fc1a7a87",
-      "srcinfo_sha256": "171b63292118a98ac99c612ba9000f80210843310d148e83ae5a1d11d224079b",
-      "reviewed_at": "2026-08-11T22:39:00Z"
+      "pkgbuild_sha256": "499be78b459e03ea90f00dcb8ad9b8165fe9e0c8b8c6cb892ec42fcc879cc171",
+      "srcinfo_sha256": "dcdeab28081eb4251017d54a9d3b3881fd64d150b41237dae787df673e0b230f",
+      "reviewed_at": "2026-08-30T14:15:00Z"
     },
     "aero7-computer-management-git": {
       "source_type": "pinned-vcs",
@@ -100,13 +100,11 @@
       "reviewed_at": "2026-07-31T00:00:00Z"
     },
     "aero7-file-explorer": {
-      "source_type": "pinned-vcs",
-      "source_revisions": {
-        "https://github.com/aero7-open-project/aero7-file-explorer": "37e51bbc3af0e09fd86c995eccdba1cd1879dd0a"
-      },
-      "pkgbuild_sha256": "acb4ecd1e78cb6c8bac9ef1350782a18b7b1aa66dbe317efdd9b4b1bd6417679",
-      "srcinfo_sha256": "66501e06bd1c913b6bcfcb85e1d1c6816d7d5baf91451f8b2d6e17b38f99a9b3",
-      "reviewed_at": "2026-08-20T21:53:06Z"
+      "source_type": "local",
+      "source_revisions": {},
+      "pkgbuild_sha256": "ec2d10af855efd0d0fd3104742de8d46d3e0a7b2ffd1175633d9f6c223b06c3d",
+      "srcinfo_sha256": "f1a495dc362cc80441a062d098bccde5a0bcfe488741076c5d4593dc3c988e6c",
+      "reviewed_at": "2026-08-23T13:07:00Z"
     },
     "aero7-gwenview": {
       "source_type": "pinned-vcs",
@@ -118,13 +116,11 @@
       "reviewed_at": "2026-07-31T00:00:00Z"
     },
     "linux-control-panel": {
-      "source_type": "pinned-vcs",
-      "source_revisions": {
-        "https://github.com/memegeko/aero7-control-panel-": "c6f178288379c0c499b65bdc113313c5ffcf75f6"
-      },
-      "pkgbuild_sha256": "84584455eb78d622d902e97184c3f29a46cff02966f4f854ad2f5331642eaa35",
-      "srcinfo_sha256": "9235cd92430a2b6adcc5601928072b78a893b27d285279a99c950ffa9bebd68b",
-      "reviewed_at": "2026-08-11T00:00:00Z"
+      "source_type": "local",
+      "source_revisions": {},
+      "pkgbuild_sha256": "9d68e748574e7166966e42870f19c908c934efdeb5001ff582f536eb805139d2",
+      "srcinfo_sha256": "04e33897239e8388a9123ad5e4523290a3977167a87293b40cb1de43771a36fe",
+      "reviewed_at": "2026-09-02T19:45:00Z"
     },
     "aero7-kolourpaint": {
       "source_type": "pinned-vcs",
@@ -137,22 +133,29 @@
       "reviewed_at": "2026-07-31T00:00:00Z"
     },
     "aero7-gadgets": {
+      "source_type": "local",
+      "source_revisions": {},
+      "pkgbuild_sha256": "791df756763330d799b7ebd0369afad643215b94cae2b2a6e6657dc291bdceca",
+      "srcinfo_sha256": "5fa25e11d95d1e50e2d7b2745e494e20c9d0c223edad1ca829798c1b2e8e6951",
+      "reviewed_at": "2026-08-30T13:44:21Z"
+    },
+    "aero7-internet-explorer": {
       "source_type": "pinned-vcs",
       "source_revisions": {
-        "https://github.com/aero7-open-project/aero7-desktop": "843fafc0400fd2df0e26b429a6c26e133d4aec05"
+        "https://github.com/aero7-open-project/aero7-desktop": "5fef9d9b50401980131a13bc5608cfbf128b1795"
       },
-      "pkgbuild_sha256": "51a08a3c82e1c9e59b748a4512e2e58308808503b07c38e7c71c10f6b50718d7",
-      "srcinfo_sha256": "0af5b96f884dec2226828c86b1a632f47410d690612e495dad10d2d4bff9d693",
-      "reviewed_at": "2026-08-23T23:47:14Z"
+      "pkgbuild_sha256": "76244a3543492c71cb5d11f6daa12ea80e25857187dc3350c3fe5ef55481a562",
+      "srcinfo_sha256": "fc3129a355300e755886cddb1e3063bd8ef1b0af77be80e4e8a14739862c4ef6",
+      "reviewed_at": "2026-09-02T19:59:52Z"
     },
     "aero7-desktop": {
       "source_type": "pinned-vcs",
       "source_revisions": {
-        "https://github.com/aero7-open-project/aero7-desktop": "843fafc0400fd2df0e26b429a6c26e133d4aec05"
+        "https://github.com/aero7-open-project/aero7-desktop": "5fef9d9b50401980131a13bc5608cfbf128b1795"
       },
-      "pkgbuild_sha256": "c23bd1e9c5923fbc1d57ec1774d4c41b4637de07b3f740d01e9400c8afdcd6ff",
-      "srcinfo_sha256": "e1171d0f0276bd485d5716a58cadfd6f9c4f7d4c8ec1bb369d42539bbadbb210",
-      "reviewed_at": "2026-08-23T23:47:14Z"
+      "pkgbuild_sha256": "ecbf3e24a4bd09db36ba9bcecfd71ddfaec6431de3b1bcd20b3f4bbb1aab78fc",
+      "srcinfo_sha256": "afd2585992ba766dd69d7361f557be23c228fa582727e0c20c83b7ba0257ade4",
+      "reviewed_at": "2026-09-02T19:59:52Z"
     },
     "winxplorer": {
       "source_type": "pinned-vcs",

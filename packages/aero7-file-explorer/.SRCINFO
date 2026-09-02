@@ -1,13 +1,12 @@
 pkgbase = aero7-file-explorer
 	pkgdesc = Aero7 File Explorer with Windows 7 shell behavior and appearance
 	pkgver = 25.12.3
-	pkgrel = 29
-	url = https://github.com/aero7-open-project/aero7-file-explorer
+	pkgrel = 30
+	url = https://github.com/aero7-desktop/aero7-file-explorer
 	arch = x86_64
 	license = GPL-2.0-or-later
 	makedepends = aero7-qt
 	makedepends = extra-cmake-modules
-	makedepends = git
 	makedepends = ninja
 	depends = baloo
 	depends = baloo-widgets
@@ -46,7 +45,7 @@ pkgbase = aero7-file-explorer
 	conflicts = dolphin
 	conflicts = aero7-dolphin
 	replaces = aero7-dolphin
-	source = aero7-file-explorer::git+https://github.com/aero7-open-project/aero7-file-explorer.git#commit=37e51bbc3af0e09fd86c995eccdba1cd1879dd0a
-	sha256sums = SKIP
+	source = aero7-file-explorer-25.12.3-r30.tar.gz
+	sha256sums = 0c9494ca8444ceff9843fcef53936e18241f7828e06b780063049e6a21bedcd5
 
 pkgname = aero7-file-explorer

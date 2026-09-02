@@ -1,0 +1,313 @@
+diff --git a/plasma/plasmoids/io.gitgud.wackyideas.desktopcontainment/contents/ui/FolderViewLayer.qml b/plasma/plasmoids/io.gitgud.wackyideas.desktopcontainment/contents/ui/FolderViewLayer.qml
+index c4d83a8..45b9ce5 100644
+--- a/plasma/plasmoids/io.gitgud.wackyideas.desktopcontainment/contents/ui/FolderViewLayer.qml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.desktopcontainment/contents/ui/FolderViewLayer.qml
+@@ -9,6 +9,7 @@ import QtQml 2.15
+ 
+ import org.kde.plasma.plasmoid 2.0
+ import org.kde.plasma.core as PlasmaCore
++import org.kde.plasma.plasma5support as Plasma5Support
+ import org.kde.plasma.components 3.0 as PlasmaComponents
+ import org.kde.config // for KAuthorized
+ import org.kde.kirigami 2.20 as Kirigami
+@@ -380,6 +381,28 @@ FocusScope {
+         id: actionSeparatorThird
+         isSeparator: true
+     }
++    PlasmaCore.Action {
++        id: screenResolutionAction
++        text: i18n("Screen resolution")
++        icon.name: "preferences-desktop-display"
++        onTriggered: controlPanelLauncher.exec("/usr/bin/control --setting display")
++    }
++    PlasmaCore.Action {
++        id: gadgetGalleryAction
++        text: i18n("Gadgets")
++        icon.name: "preferences-desktop-widgets"
++        onTriggered: controlPanelLauncher.exec("/usr/bin/aero7-gadget-gallery")
++    }
++
++    Plasma5Support.DataSource {
++        id: controlPanelLauncher
++        engine: "executable"
++        connectedSources: []
++        function exec(command) {
++            connectSource(command)
++        }
++        onNewData: (sourceName, data) => disconnectSource(sourceName)
++    }
+ 
+     Component.onCompleted: {
+         if (!isContainment) {
+@@ -403,6 +426,8 @@ FocusScope {
+         }
+ 
+         Plasmoid.contextualActions.push(actionSeparatorThird);
++        Plasmoid.contextualActions.push(screenResolutionAction);
++        Plasmoid.contextualActions.push(gadgetGalleryAction);
+ 
+         Plasmoid.contextualActionsAboutToShow.connect(updateContextualActions);
+         Plasmoid.contextualActionsAboutToShow.connect(folderView.model.clearSelection);
+diff --git a/plasma/plasmoids/io.gitgud.wackyideas.desktopcontainment/contents/ui/main.qml b/plasma/plasmoids/io.gitgud.wackyideas.desktopcontainment/contents/ui/main.qml
+index 697db2d..f0f1c10 100644
+--- a/plasma/plasmoids/io.gitgud.wackyideas.desktopcontainment/contents/ui/main.qml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.desktopcontainment/contents/ui/main.qml
+@@ -11,6 +11,7 @@ import QtQuick.Layouts 1.15
+ 
+ import org.kde.plasma.plasmoid 2.0
+ import org.kde.plasma.core as PlasmaCore
++import org.kde.plasma.plasma5support as Plasma5Support
+ import org.kde.ksvg 1.0 as KSvg
+ import org.kde.kquickcontrolsaddons 2.0 as KQuickControlsAddons
+ import org.kde.kirigami 2.20 as Kirigami
+@@ -24,6 +25,10 @@ import "code/FolderTools.js" as FolderTools
+ ContainmentItem {
+     id: root
+ 
++    function launchControlSetting(setting) {
++        controlPanelLauncher.exec("/usr/bin/control --setting " + setting)
++    }
++
+     switchWidth: { switchSize(); }
+     switchHeight: { switchSize(); }
+ 
+@@ -312,7 +317,10 @@ ContainmentItem {
+ 
+                 editModeCondition: Plasmoid.immutable
+                     ? ContainmentLayoutManager.ItemContainer.Locked
+-                    : ContainmentLayoutManager.ItemContainer.AfterPressAndHold
++                    : (applet && applet.plasmoid
++                       && String(applet.plasmoid.pluginName).startsWith("org.aero7.gadgets.")
++                        ? ContainmentLayoutManager.ItemContainer.AfterMouseOver
++                        : ContainmentLayoutManager.ItemContainer.AfterPressAndHold)
+ 
+                 configOverlaySource: "ConfigOverlay.qml"
+ 
+@@ -400,7 +408,17 @@ ContainmentItem {
+             text: i18n("Personalize")
+             icon.name: "preferences-desktop-wallpaper"
+             shortcut: "alt+d,alt+s"
+-            onTriggered: Plasmoid.containment.configureRequested(Plasmoid)
++            onTriggered: root.launchControlSetting("personalization")
++        }
++
++        Plasma5Support.DataSource {
++            id: controlPanelLauncher
++            engine: "executable"
++            connectedSources: []
++            function exec(command) {
++                connectSource(command)
++            }
++            onNewData: (sourceName, data) => disconnectSource(sourceName)
+         }
+ 
+         Component.onCompleted: {
+diff --git a/plasma/shells/io.gitgud.wackyideas.desktop/contents/explorer/AppletDelegate.qml b/plasma/shells/io.gitgud.wackyideas.desktop/contents/explorer/AppletDelegate.qml
+index 895796d..0ab3978 100644
+--- a/plasma/shells/io.gitgud.wackyideas.desktop/contents/explorer/AppletDelegate.qml
++++ b/plasma/shells/io.gitgud.wackyideas.desktop/contents/explorer/AppletDelegate.qml
+@@ -57,12 +57,12 @@ Item {
+     TapHandler {
+         id: tapHandler
+         enabled: !delegate.pendingUninstall && model.isSupported
+-        onDoubleTapped: widgetExplorer.addApplet(delegate.pluginName)
+         acceptedButtons: Qt.LeftButton | Qt.RightButton
+         onTapped: (eventPoint, button) => {
+-            if(button == Qt.LeftButton)
++            if(button == Qt.LeftButton) {
+                 delegate.GridView.view.currentIndex = index;
+-            else if(button == Qt.RightButton) {
++                widgetExplorer.addApplet(delegate.pluginName);
++            } else if(button == Qt.RightButton) {
+                 widgetsOptions.visualParent = delegate;
+                 widgetsOptions.openRelative();
+             }
+diff --git a/plasma/shells/io.gitgud.wackyideas.desktop/contents/explorer/WidgetExplorer.qml b/plasma/shells/io.gitgud.wackyideas.desktop/contents/explorer/WidgetExplorer.qml
+index d0d593b..e0c98c1 100644
+--- a/plasma/shells/io.gitgud.wackyideas.desktop/contents/explorer/WidgetExplorer.qml
++++ b/plasma/shells/io.gitgud.wackyideas.desktop/contents/explorer/WidgetExplorer.qml
+@@ -196,11 +196,7 @@ PC3.Page {
+     QQC2.Action {
+         shortcut: "Escape"
+         onTriggered: {
+-            if (searchInput.length > 0) {
+-                searchInput.text = ""
+-            } else {
+-                main.closed()
+-            }
++            main.closed()
+         }
+     }
+ 
+@@ -463,6 +459,8 @@ PC3.Page {
+                 }
+                 PC3.TextField {
+                     id: searchInput
++                    text: "Aero7"
++                    readOnly: true
+                     focus: false
+                     Layout.fillWidth: true
+                     Layout.maximumWidth: 201
+@@ -503,7 +501,9 @@ PC3.Page {
+                         }
+                     }
+                     onTextChanged: {
+-                        widgetExplorer.widgetsModel.searchTerm = text
++                        if (widgetExplorer) {
++                            widgetExplorer.widgetsModel.searchTerm = "Aero7"
++                        }
+                         pageSwitcher.pageIndex = 0;
+                         list.positionViewAtBeginning()
+                         list.currentIndex = list.count ? 0 : -1
+@@ -520,10 +520,7 @@ PC3.Page {
+                         width: filterWidgets.width
+                         z: 99
+                         hoverEnabled: true
+-                        onClicked: {
+-                            categoriesDialog.model = widgetExplorer.filterModel
+-                            categoriesDialog.openRelative();
+-                        }
++                        enabled: false
+                     }
+ 
+ 
+@@ -667,6 +664,7 @@ PC3.Page {
+ 
+             RowLayout {
+                 id: installFromLocal
++                visible: false
+ 
+                 anchors.right: morePlasmoidsLink.left
+                 anchors.top: parent.top
+@@ -694,6 +692,7 @@ PC3.Page {
+             }
+             RowLayout {
+                 id: morePlasmoidsLink
++                visible: false
+ 
+                 anchors.right: parent.right
+                 anchors.top: parent.top
+@@ -724,7 +723,12 @@ PC3.Page {
+         id: setModelTimer
+         interval: 20
+         running: true
+-        onTriggered: list.model = widgetExplorer.widgetsModel
++        onTriggered: {
++            widgetExplorer.widgetsModel.filterQuery = ""
++            widgetExplorer.widgetsModel.filterType = ""
++            widgetExplorer.widgetsModel.searchTerm = "Aero7"
++            list.model = widgetExplorer.widgetsModel
++        }
+     }
+ 
+     Rectangle {
+diff --git a/plasma/shells/io.gitgud.wackyideas.desktop/contents/views/Desktop.qml b/plasma/shells/io.gitgud.wackyideas.desktop/contents/views/Desktop.qml
+index 5e34e0b..09dc871 100644
+--- a/plasma/shells/io.gitgud.wackyideas.desktop/contents/views/Desktop.qml
++++ b/plasma/shells/io.gitgud.wackyideas.desktop/contents/views/Desktop.qml
+@@ -51,6 +51,19 @@ Item {
+         }
+     }
+ 
++    function showWidgetExplorer(containment) {
++        if (sidePanelStack.state !== "widgetExplorer") {
++            sidePanelStack.state = "widgetExplorer";
++            sidePanelStack.setSource(Qt.resolvedUrl("../explorer/WidgetExplorer.qml"), {"containment": containment, "sidePanel": sidePanel});
++        }
++    }
++
++    function closeWidgetExplorer() {
++        if (sidePanelStack.state === "widgetExplorer") {
++            sidePanelStack.state = "closed";
++        }
++    }
++
+     function toggleActivityManager() {
+         if (sidePanelStack.state == "activityManager") {
+             sidePanelStack.state = "closed";
+diff --git a/plasma/shells/io.gitgud.wackyideas.desktop/contents/views/DesktopEditMode.qml b/plasma/shells/io.gitgud.wackyideas.desktop/contents/views/DesktopEditMode.qml
+index d1cd63c..ae8c2f0 100644
+--- a/plasma/shells/io.gitgud.wackyideas.desktop/contents/views/DesktopEditMode.qml
++++ b/plasma/shells/io.gitgud.wackyideas.desktop/contents/views/DesktopEditMode.qml
+@@ -12,8 +12,6 @@ import QtQuick.Controls as QQC2
+ 
+ import org.kde.kirigami as Kirigami
+ import org.kde.ksvg as KSvg
+-import org.kde.kcmutils as KCM
+-
+ import org.kde.plasma.core as PlasmaCore
+ import org.kde.plasma.components as PC
+ 
+@@ -31,6 +29,14 @@ Item {
+ 
+     property bool open: false
+ 
++    onOpenChanged: {
++        if (open && containment.plasmoid.screen >= 0) {
++            Qt.callLater(root.showWidgetExplorer, containment.plasmoid)
++        } else {
++            root.closeWidgetExplorer()
++        }
++    }
++
+     Rectangle {
+         color: "#1D5F7A"
+         anchors.fill: parent
+@@ -79,47 +85,9 @@ Item {
+ 
+             spacing: Kirigami.Units.smallSpacing
+ 
+-            GenericButton {
+-                id: addWidgetButton
+-                property QtObject qAction: containment?.plasmoid.internalAction("add widgets") || null
+-                text: qAction?.text
+-                onClicked: qAction.trigger()
+-            }
+-
+-            GenericButton {
+-                id: addPanelButton
+-                height: addWidgetButton.height
+-                property QtObject qAction: containment?.plasmoid.corona.action("add panel") || null
+-                text: qAction?.text
+-                Accessible.role: Accessible.ButtonMenu
+-                onClicked: containment.plasmoid.corona.showAddPanelContextMenu(mapToGlobal(0, height))
+-            }
+-
+-            GenericButton {
+-                id: configureButton
+-                property QtObject qAction: containment?.plasmoid.internalAction("configure") || null
+-                text: i18n("Personalize")
+-                onClicked: qAction.trigger()
+-            }
+-
+-            GenericButton {
+-                id: themeButton
+-                text: i18nd("plasma_shell_org.kde.plasma.desktop", "Global Themes")
+-                onClicked: KCM.KCMLauncher.openSystemSettings("kcm_lookandfeel")
+-            }
+-
+-            GenericButton {
+-                id: displaySettingsButton
+-                text: i18nd("plasma_shell_org.kde.plasma.desktop", "Display Configuration")
+-                onClicked: KCM.KCMLauncher.openSystemSettings("kcm_kscreen")
+-            }
+-
+-            GenericButton {
+-                id: manageContainmentsButton
+-                property QtObject qAction: containment?.plasmoid.corona.action("manage-containments") || null
+-                text: qAction?.text
+-                visible: qAction?.visible || false
+-                onClicked: qAction.trigger()
++            PC.Label {
++                text: i18n("Desktop Gadgets")
++                font.bold: true
+             }
+         }
+ 
+@@ -187,6 +155,5 @@ Item {
+ 
+     Component.onCompleted: {
+         open = Qt.binding(() => {return containment.plasmoid.corona.editMode});
+-        executable.exec("kreadconfig6 --file \"/usr/share/sddm/themes/sddm-theme-mod/theme.conf.user\" --group \"General\" --key \"background\"");
+     }
+ }

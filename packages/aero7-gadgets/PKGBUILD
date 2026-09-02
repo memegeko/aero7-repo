@@ -1,32 +1,30 @@
 pkgname=aero7-gadgets
 pkgver=3.0.0
-pkgrel=1
-pkgdesc='Native Windows 7-style desktop gadget runtime, gallery, and nine built-in gadgets for Aero7'
+pkgrel=2
+pkgdesc='Native Windows 7-style desktop gadget runtime, gallery and nine built-in gadgets for Aero7'
 arch=('x86_64')
-url='https://github.com/aero7-open-project/aero7-desktop'
+url='https://github.com/memegeko/aero7-repo'
 license=('MIT')
 depends=('kwindowsystem' 'layer-shell-qt' 'qt6-base' 'qt6-svg')
-makedepends=('cmake' 'ninja' 'git')
+makedepends=('cmake')
 provides=('win-gadgets')
 conflicts=('win-gadgets' 'win-gadgets-git')
 install="$pkgname.install"
-_commit=843fafc0400fd2df0e26b429a6c26e133d4aec05
-source=("aero7-desktop::git+$url.git#commit=$_commit")
-sha256sums=('SKIP')
+source=("$pkgname-$pkgver.tar.gz")
+sha256sums=('effc3e89fbbb7b95eb4b529ba4e96e4dff8f9b008adb2326c66996360baff248')
 
 build() {
-  cmake -S "$srcdir/aero7-desktop/companions/aero7-gadgets" -B build -G Ninja \
+  cmake -S "$srcdir/$pkgname" -B build \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=/usr
   cmake --build build
 }
 
 check() {
-  QT_QPA_PLATFORM=offscreen ctest --test-dir build --output-on-failure
+  ctest --test-dir build --output-on-failure
 }
 
 package() {
   DESTDIR="$pkgdir" cmake --install build
-  install -Dm644 "$srcdir/aero7-desktop/companions/aero7-gadgets/LICENSE" \
-    "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+  install -Dm644 "$srcdir/$pkgname/LICENSE" "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
 }
