@@ -23,7 +23,7 @@ PROPRIETARY_ASSET_PATTERNS = [
 ]
 PRIVATE_KEY_SUFFIXES = {".key", ".p12", ".pfx", ".pem"}
 COMPRESSED_BUILD_SUFFIXES = {".gz", ".zst"}
-EXPECTED_PACKAGE_COUNT = 22
+EXPECTED_PACKAGE_COUNT = 23
 
 
 def fail(message: str) -> None:

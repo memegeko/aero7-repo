@@ -1,9 +1,9 @@
 pkgname=aero7-gadgets
 pkgver=3.0.0
-pkgrel=2
+pkgrel=3
 pkgdesc='Native Windows 7-style desktop gadget runtime, gallery and nine built-in gadgets for Aero7'
 arch=('x86_64')
-url='https://github.com/memegeko/aero7-repo'
+url='https://github.com/aero7-open-project/aero7-desktop'
 license=('MIT')
 depends=('kwindowsystem' 'layer-shell-qt' 'qt6-base' 'qt6-svg')
 makedepends=('cmake')
@@ -11,7 +11,7 @@ provides=('win-gadgets')
 conflicts=('win-gadgets' 'win-gadgets-git')
 install="$pkgname.install"
 source=("$pkgname-$pkgver.tar.gz")
-sha256sums=('effc3e89fbbb7b95eb4b529ba4e96e4dff8f9b008adb2326c66996360baff248')
+sha256sums=('5e21432024e11a89066f9234b8e79f1cad37deecd2fec0db7f627aa8b3f93719')
 
 build() {
   cmake -S "$srcdir/$pkgname" -B build \

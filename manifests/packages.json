@@ -11,7 +11,7 @@
     "uac-polkit-agent-git",
     "aerothemeplasma-desktop-git",
     "aero7-computer-management-git",
-    "linux-devmgmt",
+    "aero7-device-manager",
     "tuxmanager",
     "aero7-qt",
     "aero7-file-explorer",
@@ -20,6 +20,7 @@
     "aero7-kolourpaint",
     "aero7-gadgets",
     "aero7-internet-explorer",
+    "aero7-programs-center-git",
     "aero7-desktop",
     "winxplorer",
     "execbin",
@@ -62,6 +63,9 @@
     "aero7-computer-management-git": [
       "aero7-computer-management"
     ],
+    "aero7-device-manager": [
+      "linux-devmgmt"
+    ],
     "aero7-file-explorer": [
       "dolphin",
       "aero7-dolphin"
@@ -75,6 +79,9 @@
     ],
     "aero7-gadgets": [
       "win-gadgets"
+    ],
+    "aero7-programs-center-git": [
+      "aero7-programs-center"
     ]
   }
 }

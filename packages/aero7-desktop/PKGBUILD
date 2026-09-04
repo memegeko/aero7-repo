@@ -1,6 +1,6 @@
 pkgname=aero7-desktop
 pkgver=0.2.0
-pkgrel=13
+pkgrel=26
 pkgdesc='Aero7-owned Wayland desktop session, recovery, migration, and shell integration'
 arch=('x86_64')
 url='https://github.com/aero7-open-project/aero7-desktop'
@@ -20,11 +20,11 @@ depends=(
   'ark'
   'aerothemeplasma-desktop'
   'linux-control-panel'
-  'linux-devmgmt'
+  'aero7-device-manager'
   'aero7-computer-management-git'
 )
 makedepends=('cmake' 'ninja' 'gettext' 'git')
-_commit=5fef9d9b50401980131a13bc5608cfbf128b1795
+_commit=ad0338e49d3e0549f12e6e5e9bc0e28b54bc93a4
 source=("$pkgname::git+$url.git#commit=$_commit")
 sha256sums=('SKIP')
 

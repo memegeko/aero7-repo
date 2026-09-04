@@ -1,0 +1,22 @@
+pkgbase = aero7-programs-center-git
+	pkgdesc = Optional graphical software manager for Aero7 Linux (Beta)
+	pkgver = 0.1.0.r12.g0405a2e
+	pkgrel = 1
+	url = https://github.com/aero7-open-project/aero7-programs-center
+	arch = x86_64
+	license = MIT
+	makedepends = cmake
+	makedepends = git
+	makedepends = ninja
+	makedepends = pkgconf
+	depends = appstream
+	depends = pacman
+	depends = polkit
+	depends = qt6-base
+	provides = aero7-programs-center
+	conflicts = aero7-programs-center
+	options = !debug
+	source = aero7-programs-center::git+https://github.com/aero7-open-project/aero7-programs-center.git#commit=0405a2ef42c96d253a9436b3413fdccfe7c1cb09
+	sha256sums = SKIP
+
+pkgname = aero7-programs-center-git

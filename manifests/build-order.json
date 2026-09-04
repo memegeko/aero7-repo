@@ -7,10 +7,11 @@
     "aeroshell-smod-git",
     "uac-polkit-agent-git",
     "aero7-computer-management-git",
-    "linux-devmgmt",
+    "aero7-device-manager",
     "tuxmanager",
     "aero7-qt",
     "aero7-gadgets",
+    "aero7-programs-center-git",
     "winxplorer",
     "execbin",
     "aeroshell-kwin-components-git",
@@ -53,7 +54,7 @@
       "aero7-desktop",
       "aerothemeplasma-desktop-git"
     ],
-    "linux-devmgmt": [
+    "aero7-device-manager": [
       "aero7-desktop"
     ],
     "tuxmanager": [
@@ -84,6 +85,7 @@
     "aero7-internet-explorer": [
       "aero7-desktop"
     ],
+    "aero7-programs-center-git": [],
     "aero7-desktop": [],
     "winxplorer": [],
     "execbin": [],
@@ -269,7 +271,7 @@
       ],
       "replaces": []
     },
-    "linux-devmgmt": {
+    "aero7-device-manager": {
       "arch": [
         "x86_64",
         "aarch64"
@@ -279,11 +281,18 @@
       ],
       "makedepends": [
         "cmake",
+        "git",
         "ninja"
       ],
-      "provides": [],
-      "conflicts": [],
-      "replaces": []
+      "provides": [
+        "linux-devmgmt"
+      ],
+      "conflicts": [
+        "linux-devmgmt"
+      ],
+      "replaces": [
+        "linux-devmgmt"
+      ]
     },
     "tuxmanager": {
       "arch": [
@@ -339,6 +348,30 @@
       "conflicts": [
         "win-gadgets",
         "win-gadgets-git"
+      ],
+      "replaces": []
+    },
+    "aero7-programs-center-git": {
+      "arch": [
+        "x86_64"
+      ],
+      "depends": [
+        "appstream",
+        "pacman",
+        "polkit",
+        "qt6-base"
+      ],
+      "makedepends": [
+        "cmake",
+        "git",
+        "ninja",
+        "pkgconf"
+      ],
+      "provides": [
+        "aero7-programs-center"
+      ],
+      "conflicts": [
+        "aero7-programs-center"
       ],
       "replaces": []
     },
@@ -791,7 +824,7 @@
         "ark",
         "aerothemeplasma-desktop",
         "linux-control-panel",
-        "linux-devmgmt",
+        "aero7-device-manager",
         "aero7-computer-management-git"
       ],
       "makedepends": [

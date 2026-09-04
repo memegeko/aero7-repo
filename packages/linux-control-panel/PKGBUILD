@@ -1,9 +1,9 @@
 pkgname=linux-control-panel
 pkgver=0.1.0
-pkgrel=33
+pkgrel=38
 pkgdesc='Aero7 system settings hub for Linux and Plasma 6'
 arch=('x86_64')
-url='https://github.com/memegeko/aero7-control-panel-'
+url='https://github.com/aero7-open-project/aero7-control-panel-'
 license=('GPL-3.0-or-later')
 depends=('cups' 'glibc' 'kwidgetsaddons' 'kwindowsystem' 'openssl' 'qt6-base'
          'qt6-multimedia' 'zlib' 'python' 'plasma-desktop' 'plasma-nm' 'polkit' 'iptables' 'ufw'
@@ -23,10 +23,11 @@ optdepends=('bluez-utils: Bluetooth discovery, pairing and connection management
             'freerdp: Remote Desktop Connections optional feature'
             'samba: File and Printer Sharing optional feature'
             'modemmanager: Mobile Broadband and Modem optional feature'
-            'colord: Color Management optional feature')
+            'colord: Color Management optional feature'
+            'aero7-programs-center-git: Programs Center Beta optional feature')
 makedepends=('aero7-qt' 'cmake' 'ninja')
-source=('linux-control-panel-0.1.0-r33.tar.gz')
-sha256sums=('d51424c84090c8cda297ab16b8c32087aeceb6bc3a4e742a4e3c6d856de0c9b2')
+source=('linux-control-panel-0.1.0-r38.tar.gz')
+sha256sums=('870f4852b99e7125167ff4068def02a25302e5ca1958b49d65dfe0e96c23c546')
 
 build() {
   cmake -S linux-control -B build -G Ninja \

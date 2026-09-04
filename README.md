@@ -4,9 +4,9 @@
 
 # Aero7 Package Repository
 
-Signed binary Arch Linux package repository infrastructure for Aero7-shell.
+Signed binary Arch Linux package repository infrastructure for Aero7.
 
-This repository is beta infrastructure. It is intended to make Aero7-shell
+This repository is beta infrastructure. It is intended to make Aero7 Desktop
 installation faster by publishing a signed set of precompiled Aero packages
 and selected companion applications for current Arch Linux x86_64 systems.
 
@@ -24,7 +24,7 @@ these package names:
 - `uac-polkit-agent-git`
 - `aerothemeplasma-desktop-git`
 - `aero7-computer-management-git`
-- `linux-devmgmt`
+- `aero7-device-manager` (provides and replaces `linux-devmgmt`)
 - `tuxmanager`
 - `aero7-qt`
 - `aero7-file-explorer` (provides `dolphin` and the `aero7-dolphin` compatibility launcher)
@@ -33,6 +33,7 @@ these package names:
 - `aero7-kolourpaint` (provides `kolourpaint`)
 - `aero7-gadgets` (provides `win-gadgets`)
 - `aero7-internet-explorer` (permanent Aero7 browser identity with a supported modern backend)
+- `aero7-programs-center-git` (optional Programs Center Beta feature)
 - `aero7-desktop` (session, migration, recovery, compatibility metadata, and shell integration)
 - `winxplorer`
 - `execbin`
@@ -42,12 +43,15 @@ It does not build or publish X11 Plasma packages.
 
 ## Current Status
 
-The 22-package beta source manifest includes the updateable Aero7 Desktop,
-native Gadgets 3 runtime, separate Aero7 Computer Management console, and its
-searchable administration-module shortcuts. Packages are built
+The 23-package Beta 2 source manifest includes the updateable Aero7 Desktop,
+native Gadgets 3 runtime, separate Aero7 Computer Management console, renamed
+Aero7 Device Manager, optional Programs Center Beta, and searchable
+administration-module shortcuts. Packages are built
 in a clean Arch chroot, signed, and validated as one complete repository set.
-The existing 20-package Beta 1 endpoint remains online, while publication of
-the new 22-package set is frozen until the explicitly approved final release.
+The existing 20-package Beta 1 endpoint remains online. The Beta 2 recipes and
+exact source pins are public for review, while the new signed binary payload is
+withheld until its build report and the complete Beta 2 release gate are
+approved. Pushing source does not promote packages or publish either ISO.
 
 The reviewed companion application recipes are included in the signed beta set. Their
 exact upstream revisions are pinned, all source patches apply cleanly, and all

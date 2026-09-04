@@ -1,14 +1,14 @@
 pkgname=aero7-computer-management-git
-pkgver=0.2.0.r19.ga29afe0
+pkgver=0.2.0.r20.g6d7fe79
 pkgrel=1
 pkgdesc='Aero7-native Computer Management console for Linux'
 arch=('x86_64')
-url='https://github.com/memegeko/aero7-computer-management'
+url='https://github.com/aero7-open-project/aero7-computer-management'
 license=('MIT')
 depends=('qt6-base' 'systemd' 'udisks2' 'polkit' 'shadow' 'dosfstools' 'e2fsprogs')
 makedepends=('cmake' 'ninja' 'git')
 optdepends=('samba: Shared Folders status'
-            'linux-devmgmt: Device Manager integration'
+            'aero7-device-manager: Device Manager integration'
             'ntfs-3g: create and resize NTFS volumes'
             'exfatprogs: create exFAT volumes'
             'btrfs-progs: create and resize Btrfs volumes'
@@ -16,7 +16,7 @@ optdepends=('samba: Shared Folders status'
 provides=('aero7-computer-management')
 conflicts=('aero7-computer-management')
 options=('!debug')
-source=("aero7-computer-management::git+$url.git#commit=a29afe0158785504a038c1da060947de8a2fd532")
+source=("aero7-computer-management::git+$url.git#commit=6d7fe79c579f35c5d1471cea57691e4ee28c237a")
 sha256sums=('SKIP')
 
 build() {

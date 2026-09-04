@@ -1,6 +1,6 @@
 {
   "repository": "aero7",
-  "status": "beta-source-update-pending-build",
+  "status": "beta2-source-ready-artifacts-withheld",
   "published_url": "https://memegeko.github.io/aero7-repo/$arch",
   "signing_fingerprint": "72C79ABBBBE96446DD3324042694BFE1090F4FD6",
   "public_key": "keys/aero7-repository.asc",
@@ -8,7 +8,8 @@
   "last_successful_build": "20260731T213342Z-d4c1b8978de0",
   "notes": [
     "The live signed endpoint still contains the previous 20-package Beta 1 set.",
-    "The beta source manifest now contains 21 recipes, including updateable Aero7 Desktop and Gadgets 3 packages pinned to the maintained desktop repository.",
-    "A new signed Pages payload remains gated on the normal builder and explicit final-release approval."
+    "The Beta 2 source manifest contains 23 recipes, including Aero7 Desktop, Gadgets 3, the renamed Aero7 Device Manager, and optional Programs Center Beta.",
+    "A new signed Pages payload remains gated on the normal builder, complete release validation, and explicit publication approval.",
+    "The online and offline Aero7 ISO files are separate artifacts and are not published by this repository."
   ]
 }

@@ -1,9 +1,9 @@
 pkgname=aero7-file-explorer
 pkgver=25.12.3
-pkgrel=30
+pkgrel=33
 pkgdesc='Aero7 File Explorer with Windows 7 shell behavior and appearance'
 arch=('x86_64')
-url='https://github.com/aero7-desktop/aero7-file-explorer'
+url='https://github.com/aero7-open-project/aero7-file-explorer'
 license=('GPL-2.0-or-later')
 depends=('baloo' 'baloo-widgets' 'glibc' 'kbookmarks' 'kcodecs'
          'kcolorscheme' 'kcompletion' 'kconfig' 'kconfigwidgets' 'kcoreaddons'
@@ -15,8 +15,8 @@ makedepends=('aero7-qt' 'extra-cmake-modules' 'ninja')
 provides=("dolphin=$pkgver" 'aero7-dolphin')
 conflicts=('dolphin' 'aero7-dolphin')
 replaces=('aero7-dolphin')
-source=('aero7-file-explorer-25.12.3-r30.tar.gz')
-sha256sums=('0c9494ca8444ceff9843fcef53936e18241f7828e06b780063049e6a21bedcd5')
+source=('aero7-file-explorer-25.12.3-r33.tar.gz')
+sha256sums=('798e36ca47cd184ee6b5b99c9085d61d049cc773b45194f85d33bec6f24e9610')
 
 build() {
   cmake -S aero7-file-explorer -B build -G Ninja \
