@@ -1,6 +1,6 @@
 pkgname=aero7-internet-explorer
 pkgver=0.1.0
-pkgrel=6
+pkgrel=7
 pkgdesc='Permanent Aero7 Internet Explorer identity backed by an installed modern browser'
 arch=('x86_64')
 options=('!debug')
@@ -20,7 +20,7 @@ optdepends=(
   'librewolf: supported browser backend'
 )
 makedepends=('cmake' 'ninja' 'git')
-_commit=07bb91f696f01e2411337c8ef0c575a50dd4bf13
+_commit=7831dded87842c75a14cd71b9a19d4f6f6e71a79
 source=("aero7-desktop::git+$url.git#commit=$_commit")
 sha256sums=('SKIP')
 

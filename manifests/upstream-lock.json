@@ -137,19 +137,19 @@
     "aero7-gadgets": {
       "source_type": "pinned-vcs",
       "source_revisions": {
-        "https://github.com/aero7-open-project/aero7-desktop": "07bb91f696f01e2411337c8ef0c575a50dd4bf13"
+        "https://github.com/aero7-open-project/aero7-desktop": "7831dded87842c75a14cd71b9a19d4f6f6e71a79"
       },
-      "pkgbuild_sha256": "c2fd7f0e0e499df6778b71b29efda5ccd99261d5f6703d42b462977f7da9fab0",
-      "srcinfo_sha256": "174004f2f46b946430ff3252767cd62e8c6222c6ea90af7b704fc75de90acd0f",
+      "pkgbuild_sha256": "277c0c56ab37e8532fda6657b8af9a120ed2189ff06e191cfbba71c51cfc5358",
+      "srcinfo_sha256": "4b266a710d0c20aca1e4a498c1449ae40625a2fa3737d7953c3674d5e03fabe6",
       "reviewed_at": "2026-09-21T00:00:00Z"
     },
     "aero7-internet-explorer": {
       "source_type": "pinned-vcs",
       "source_revisions": {
-        "https://github.com/aero7-open-project/aero7-desktop": "07bb91f696f01e2411337c8ef0c575a50dd4bf13"
+        "https://github.com/aero7-open-project/aero7-desktop": "7831dded87842c75a14cd71b9a19d4f6f6e71a79"
       },
-      "pkgbuild_sha256": "e3d189d4d4c70cf45ddb857e9add2c3c257ee2b251582fa16803e4755fc2ae57",
-      "srcinfo_sha256": "0a512d9be8527f72233c85a98301ec65b2611ded55d7f8aebaa25cc87a9b7a07",
+      "pkgbuild_sha256": "d6e2962656a83678f246c80b00d2cf380de443fb4d2044b006da2e0863270b95",
+      "srcinfo_sha256": "0a68ac9ce073b12e7f6f1ee12d53dd250619c869cf5034fc7ada866277dcc168",
       "reviewed_at": "2026-09-21T00:00:00Z"
     },
     "aero7-programs-center-git": {
@@ -164,10 +164,10 @@
     "aero7-desktop": {
       "source_type": "pinned-vcs",
       "source_revisions": {
-        "https://github.com/aero7-open-project/aero7-desktop": "07bb91f696f01e2411337c8ef0c575a50dd4bf13"
+        "https://github.com/aero7-open-project/aero7-desktop": "7831dded87842c75a14cd71b9a19d4f6f6e71a79"
       },
-      "pkgbuild_sha256": "b9fca91aea2bc3e0b0143ab4692e75a7cc0de9afdc805a85e24139e44f34f3ce",
-      "srcinfo_sha256": "1573625f48a817f08259b46380457b836466e296c5ae62b907e36081c09e8454",
+      "pkgbuild_sha256": "a46799754ce2eb69c3872b8ac49b0583066421c1c07dc05578fe7d055d37aaff",
+      "srcinfo_sha256": "5a4efe72fb914c64e3e81f404360a6ddc06e4e92bee6f978f8947f05e932100c",
       "reviewed_at": "2026-09-21T00:00:00Z"
     },
     "winxplorer": {
