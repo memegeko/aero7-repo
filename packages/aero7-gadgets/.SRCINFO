@@ -1,12 +1,16 @@
 pkgbase = aero7-gadgets
 	pkgdesc = Native Windows 7-style desktop gadget runtime, gallery and nine built-in gadgets for Aero7
 	pkgver = 3.0.0
-	pkgrel = 3
+	pkgrel = 26
 	url = https://github.com/aero7-open-project/aero7-desktop
 	install = aero7-gadgets.install
 	arch = x86_64
 	license = MIT
 	makedepends = cmake
+	makedepends = dbus
+	makedepends = git
+	makedepends = kservice
+	makedepends = ninja
 	depends = kwindowsystem
 	depends = layer-shell-qt
 	depends = qt6-base
@@ -14,7 +18,7 @@ pkgbase = aero7-gadgets
 	provides = win-gadgets
 	conflicts = win-gadgets
 	conflicts = win-gadgets-git
-	source = aero7-gadgets-3.0.0.tar.gz
-	sha256sums = 5e21432024e11a89066f9234b8e79f1cad37deecd2fec0db7f627aa8b3f93719
+	source = aero7-desktop::git+https://github.com/aero7-open-project/aero7-desktop.git#commit=07bb91f696f01e2411337c8ef0c575a50dd4bf13
+	sha256sums = SKIP
 
 pkgname = aero7-gadgets

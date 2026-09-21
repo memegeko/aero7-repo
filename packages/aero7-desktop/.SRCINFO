@@ -1,7 +1,7 @@
 pkgbase = aero7-desktop
 	pkgdesc = Aero7-owned Wayland desktop session, recovery, migration, and shell integration
 	pkgver = 0.2.0
-	pkgrel = 26
+	pkgrel = 34
 	url = https://github.com/aero7-open-project/aero7-desktop
 	arch = x86_64
 	license = MIT
@@ -25,7 +25,7 @@ pkgbase = aero7-desktop
 	depends = linux-control-panel
 	depends = aero7-device-manager
 	depends = aero7-computer-management-git
-	source = aero7-desktop::git+https://github.com/aero7-open-project/aero7-desktop.git#commit=ad0338e49d3e0549f12e6e5e9bc0e28b54bc93a4
+	source = aero7-desktop::git+https://github.com/aero7-open-project/aero7-desktop.git#commit=07bb91f696f01e2411337c8ef0c575a50dd4bf13
 	sha256sums = SKIP
 
 pkgname = aero7-desktop

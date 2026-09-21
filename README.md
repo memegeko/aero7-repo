@@ -53,6 +53,13 @@ exact source pins are public for review, while the new signed binary payload is
 withheld until its build report and the complete Beta 2 release gate are
 approved. Pushing source does not promote packages or publish either ISO.
 
+The `testing` branch pins Desktop and Internet Explorer to `07bb91f`, Gadgets
+to the same reviewed Desktop revision, File Explorer to `3770c0e0d`, and the
+integrated AeroThemePlasma source to `3ef3253`. The obsolete patch stack and
+superseded source archives were removed; those fixes now live in their actual
+source repositories. A new signed repository build is still required before
+these recipes reach the pacman endpoint.
+
 The reviewed companion application recipes are included in the signed beta set. Their
 exact upstream revisions are pinned, all source patches apply cleanly, and all
 compiled GUI applications pass isolated startup tests. All companion packages

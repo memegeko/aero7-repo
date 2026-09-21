@@ -1,7 +1,7 @@
 pkgbase = aero7-internet-explorer
 	pkgdesc = Permanent Aero7 Internet Explorer identity backed by an installed modern browser
 	pkgver = 0.1.0
-	pkgrel = 5
+	pkgrel = 6
 	url = https://github.com/aero7-open-project/aero7-desktop
 	arch = x86_64
 	license = MIT
@@ -18,7 +18,7 @@ pkgbase = aero7-internet-explorer
 	optdepends = chromium: supported browser backend
 	optdepends = librewolf: supported browser backend
 	options = !debug
-	source = aero7-desktop::git+https://github.com/aero7-open-project/aero7-desktop.git#commit=ad0338e49d3e0549f12e6e5e9bc0e28b54bc93a4
+	source = aero7-desktop::git+https://github.com/aero7-open-project/aero7-desktop.git#commit=07bb91f696f01e2411337c8ef0c575a50dd4bf13
 	sha256sums = SKIP
 
 pkgname = aero7-internet-explorer

@@ -340,7 +340,11 @@
         "qt6-svg"
       ],
       "makedepends": [
-        "cmake"
+        "cmake",
+        "dbus",
+        "git",
+        "kservice",
+        "ninja"
       ],
       "provides": [
         "win-gadgets"
@@ -533,6 +537,7 @@
       "makedepends": [
         "aero7-qt",
         "extra-cmake-modules",
+        "git",
         "ninja"
       ],
       "provides": [

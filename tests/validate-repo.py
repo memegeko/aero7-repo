@@ -160,90 +160,22 @@ def validate_workflows() -> None:
 
 
 def validate_desktop_polish() -> None:
-    launcher_patch = (
-        REPO
-        / "packages"
-        / "aerothemeplasma-desktop-git"
-        / "aero7-desktop-polish.patch"
-    ).read_text(encoding="utf-8")
-    for required in [
-        'executableString: "control"',
-        'itemIcon: "system-run"',
-        "<default>execbin</default>",
-        "existingPanels[existingIndex].remove()",
-        "BackgroundNormal=240,240,240",
-        'color: "#f7f7f7"',
-        "<default>40</default>",
-        'source: Qt.resolvedUrl("Assets/aero7-branding-r3.png")',
-        'connectSource("/usr/bin/control --list-settings-json")',
-        'connectSource("/usr/bin/aero7-compmgmt --list-settings-json")',
-        'settingsLauncher.exec("/usr/bin/control --setting " + result.key)',
-        '"krunner_services", "krunner_shell", "calculator"',
-        '"windows", "krunner_kwin"',
-    ]:
-        if required not in launcher_patch:
-            fail(f"Aero launcher polish is missing: {required}")
-    if "model: rootModel.modelForRow(1)" in launcher_patch:
-        fail("All Programs still points at a nonexistent child model")
-    for forbidden_runner in [
-        '"krunner_systemsettings"',
-        '"krunner_keys"',
-        '"krunner_powerdevil"',
-    ]:
-        if forbidden_runner in launcher_patch:
-            fail(f"Programs search still enables a confusing KDE runner: {forbidden_runner}")
-
-    search_sections_patch = (
-        REPO
-        / "packages"
-        / "aerothemeplasma-desktop-git"
-        / "aero7-search-sections.patch"
-    ).read_text(encoding="utf-8")
-    for required in [
-        'appendCatalog(controlPanelCatalog, query, "control-panel", i18n("Control Panel"))',
-        'appendCatalog(deviceManagerCatalog, query, "device-manager", i18n("Device Manager"))',
-        'connectSource("/usr/bin/devmgmt --list-settings-json")',
-        'settingsLauncher.exec("/usr/bin/devmgmt --open " + result.key)',
-        "id: combinedResultsModel",
-        "id: combinedActionModel",
-        "id: resultsGrid",
-        '"provider": "runner"',
-        '"System Settings"',
-        "required property string section",
-        '-                model: [i18n("Programs"), i18n("Control Panel")]',
-    ]:
-        if required not in search_sections_patch:
-            fail(f"Aero launcher section search is missing: {required}")
-    applications_first = "appendRunnerResults(true);"
-    control_panel_second = 'appendCatalog(controlPanelCatalog, query, "control-panel", i18n("Control Panel"));'
-    device_manager_third = 'appendCatalog(deviceManagerCatalog, query, "device-manager", i18n("Device Manager"));'
-    remaining_results_last = "appendRunnerResults(false);"
-    if not (
-        search_sections_patch.index(applications_first)
-        < search_sections_patch.index(control_panel_second)
-        < search_sections_patch.index(device_manager_third)
-        < search_sections_patch.index(remaining_results_last)
-    ):
-        fail("search results must order Applications, Control Panel, Device Manager, then other groups")
-    if '+        appendCatalog(computerManagementCatalog, query, "computer-management");' in search_sections_patch:
-        fail("Computer Management pages would duplicate their application entries")
-    if launcher_patch.count('executable.exec("tux-manager")') < 3:
-        fail("Task Manager launcher actions are not consistently wired")
-
     desktop_pkgbuild = (
         REPO / "packages" / "aerothemeplasma-desktop-git" / "PKGBUILD"
     ).read_text(encoding="utf-8")
     for required in [
-        'url="https://github.com/memegeko/aerothemeplasma"',
-        "#commit=9c2d850f0907cd7d33c81e8a3fcc00abae3abb9b",
+        'url="https://github.com/aero7-open-project/aerothemeplasma"',
+        "#commit=3ef3253e88bd886ef31f55e5eb39d82305d78f62",
         '"${pkgname%}/LICENSE"',
         '"${pkgname%}/THIRD_PARTY.md"',
-        "aero7-search-sections.patch",
         "aero7-kwalletrc",
         '"$pkgdir/etc/xdg/kwalletrc"',
     ]:
         if required not in desktop_pkgbuild:
             fail(f"Aero7 desktop fork metadata is missing: {required}")
+    for obsolete_patch in ["aero7-desktop-polish.patch", "aero7-search-sections.patch"]:
+        if obsolete_patch in desktop_pkgbuild:
+            fail(f"integrated desktop source still applies obsolete patch: {obsolete_patch}")
 
     for required_dependency in [
         "qterminal",
@@ -273,11 +205,7 @@ def validate_desktop_polish() -> None:
     for required in ["[Wallet]", "Enabled=false", "First Use=false"]:
         if required not in kwallet_defaults:
             fail(f"KWallet system default is missing: {required}")
-    expected_sizes = {
-        "aero7-start-orb.png": (46, 138),
-        "aero7-start-orb-small.png": (42, 126),
-        "aero7-watermark.png": (350, 50),
-    }
+    expected_sizes = {"aero7-watermark.png": (350, 50)}
     for asset, expected_size in expected_sizes.items():
         actual_size = png_size(desktop_assets / asset)
         if actual_size != expected_size:

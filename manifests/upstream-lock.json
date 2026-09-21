@@ -61,11 +61,11 @@
     "aerothemeplasma-desktop-git": {
       "source_type": "pinned-vcs",
       "source_revisions": {
-        "https://github.com/memegeko/aerothemeplasma": "9c2d850f0907cd7d33c81e8a3fcc00abae3abb9b"
+        "https://github.com/aero7-open-project/aerothemeplasma": "3ef3253e88bd886ef31f55e5eb39d82305d78f62"
       },
-      "pkgbuild_sha256": "499be78b459e03ea90f00dcb8ad9b8165fe9e0c8b8c6cb892ec42fcc879cc171",
-      "srcinfo_sha256": "dcdeab28081eb4251017d54a9d3b3881fd64d150b41237dae787df673e0b230f",
-      "reviewed_at": "2026-08-30T14:15:00Z"
+      "pkgbuild_sha256": "2948b7c930176ec017266529076a17c0d8c99e4517724c1417178ec0b3db51b9",
+      "srcinfo_sha256": "8fa663d3d7f4ced3b516c1f8e3244ceec50d9d8f2559a71dd5317f12fb694bde",
+      "reviewed_at": "2026-09-21T00:00:00Z"
     },
     "aero7-computer-management-git": {
       "source_type": "pinned-vcs",
@@ -100,11 +100,13 @@
       "reviewed_at": "2026-07-31T00:00:00Z"
     },
     "aero7-file-explorer": {
-      "source_type": "local",
-      "source_revisions": {},
-      "pkgbuild_sha256": "2cb2a7315e416210e8b75b18a231a89a96687687a416001c9a7e497c726c623a",
-      "srcinfo_sha256": "804214de9667ad20e76ff93b3bd1487999708480e1dc8fda9231d7d15dc25bb8",
-      "reviewed_at": "2026-09-04T13:52:49Z"
+      "source_type": "pinned-vcs",
+      "source_revisions": {
+        "https://github.com/aero7-open-project/aero7-file-explorer": "3770c0e0d98262af094718b5d821e7286ceba5d4"
+      },
+      "pkgbuild_sha256": "fa18b81d7f39aee01345ff92aa0676775d223832d87768ef795112805c370a5b",
+      "srcinfo_sha256": "56d1fc1ce4e3e70456f32d0aea17c12fa4b54b6ee1536d72ce99e027e9ed4891",
+      "reviewed_at": "2026-09-21T00:00:00Z"
     },
     "aero7-gwenview": {
       "source_type": "pinned-vcs",
@@ -133,20 +135,22 @@
       "reviewed_at": "2026-07-31T00:00:00Z"
     },
     "aero7-gadgets": {
-      "source_type": "local",
-      "source_revisions": {},
-      "pkgbuild_sha256": "e2d5fd062a102ce343937d640aef414ecbdec4e0a6fb33d5b4bd2f23a63e1717",
-      "srcinfo_sha256": "b5f35c0251579e5cbfc61b31faca0610c934be9fec743d0a255b0816bc21a15a",
-      "reviewed_at": "2026-09-04T13:52:49Z"
+      "source_type": "pinned-vcs",
+      "source_revisions": {
+        "https://github.com/aero7-open-project/aero7-desktop": "07bb91f696f01e2411337c8ef0c575a50dd4bf13"
+      },
+      "pkgbuild_sha256": "c2fd7f0e0e499df6778b71b29efda5ccd99261d5f6703d42b462977f7da9fab0",
+      "srcinfo_sha256": "174004f2f46b946430ff3252767cd62e8c6222c6ea90af7b704fc75de90acd0f",
+      "reviewed_at": "2026-09-21T00:00:00Z"
     },
     "aero7-internet-explorer": {
       "source_type": "pinned-vcs",
       "source_revisions": {
-        "https://github.com/aero7-open-project/aero7-desktop": "ad0338e49d3e0549f12e6e5e9bc0e28b54bc93a4"
+        "https://github.com/aero7-open-project/aero7-desktop": "07bb91f696f01e2411337c8ef0c575a50dd4bf13"
       },
-      "pkgbuild_sha256": "718c25c492d6f04157da9c667d61755d8e92a2b38bc1c91d0fd9d52af4c5da22",
-      "srcinfo_sha256": "4ec2f0e05a1e138db1b2631778bf3064ed0b214b3b1e74b97c8c57c56ca8f237",
-      "reviewed_at": "2026-09-04T13:52:49Z"
+      "pkgbuild_sha256": "e3d189d4d4c70cf45ddb857e9add2c3c257ee2b251582fa16803e4755fc2ae57",
+      "srcinfo_sha256": "0a512d9be8527f72233c85a98301ec65b2611ded55d7f8aebaa25cc87a9b7a07",
+      "reviewed_at": "2026-09-21T00:00:00Z"
     },
     "aero7-programs-center-git": {
       "source_type": "pinned-vcs",
@@ -160,11 +164,11 @@
     "aero7-desktop": {
       "source_type": "pinned-vcs",
       "source_revisions": {
-        "https://github.com/aero7-open-project/aero7-desktop": "ad0338e49d3e0549f12e6e5e9bc0e28b54bc93a4"
+        "https://github.com/aero7-open-project/aero7-desktop": "07bb91f696f01e2411337c8ef0c575a50dd4bf13"
       },
-      "pkgbuild_sha256": "ee15b0672d24dc8d093a90e31cfdab78d8082db3b0899f19ac7288da4bf20ca1",
-      "srcinfo_sha256": "76c000cb76afd7ab97005bbb63a2066f9c5d74f8d112131f09b730c052e83888",
-      "reviewed_at": "2026-09-04T13:52:49Z"
+      "pkgbuild_sha256": "b9fca91aea2bc3e0b0143ab4692e75a7cc0de9afdc805a85e24139e44f34f3ce",
+      "srcinfo_sha256": "1573625f48a817f08259b46380457b836466e296c5ae62b907e36081c09e8454",
+      "reviewed_at": "2026-09-21T00:00:00Z"
     },
     "winxplorer": {
       "source_type": "pinned-vcs",
