@@ -47,16 +47,16 @@
     "aeroshell-smod-git": {
       "aur_url": "https://aur.archlinux.org/aeroshell-smod-git.git",
       "aur_commit": "d26a819ec3eb32a9630d6b658591b51c4fd1732f",
-      "pkgbuild_sha256": "a4c2f532b61d4793d392f3d629ab513201b51ab23b182dd307b390e38e18d9a7",
-      "srcinfo_sha256": "4438d0baf027b2a0fec691e3a9ff0c897187e3409d8f177df5666d373ff78e2e",
-      "reviewed_at": "2026-07-20T18:03:22Z"
+      "pkgbuild_sha256": "b420b588c3b5de69a97e5899ade1c08f95dfefceee2166e0e06c15849145b045",
+      "srcinfo_sha256": "a0aa9ca902ad62fde701b2914bbcd5cea734bf4d5c4aa3971a4962459a89f12b",
+      "reviewed_at": "2026-09-23T17:12:00Z"
     },
     "uac-polkit-agent-git": {
       "aur_url": "https://aur.archlinux.org/uac-polkit-agent-git.git",
       "aur_commit": "3b54efd7f22856330b27722cca2a873b78a95b0d",
-      "pkgbuild_sha256": "8f89d4a5f7ab55da0cc8a40ff9b210e7ffe2b84a167a48875117200776b54169",
-      "srcinfo_sha256": "6f9f720fcca4d5c731654fc9fb7f32663acd863cd48cc337a85d384bcba2b8ca",
-      "reviewed_at": "2026-07-20T18:03:22Z"
+      "pkgbuild_sha256": "f4f128fd33577cad461f0f45a817ad7a6432b773be7e7b3128ad418feb92288a",
+      "srcinfo_sha256": "f9057c97e073dab02686cb41b9138bf86b9d3c5464eb38a8736a26917171eb58",
+      "reviewed_at": "2026-09-23T17:12:00Z"
     },
     "aerothemeplasma-desktop-git": {
       "source_type": "pinned-vcs",
@@ -120,9 +120,9 @@
     "linux-control-panel": {
       "source_type": "local",
       "source_revisions": {},
-      "pkgbuild_sha256": "3a2019e2f44842aaa6e41a5ab96fc8fdcd811c20abbaf6465d300acf471ece95",
-      "srcinfo_sha256": "d5695df15a89d08a742ac293dd0b4df19d3ede75f13109dd822603bdfc421921",
-      "reviewed_at": "2026-09-04T13:52:49Z"
+      "pkgbuild_sha256": "b2761719522c2e7b0ca1964ab64a561fe79e3417e97a076b0915aad8f8af387b",
+      "srcinfo_sha256": "fcbe3a8355ba265d9522cd81d12b4550b482a211390a6424b41cdd4ba0b579c4",
+      "reviewed_at": "2026-09-23T17:12:00Z"
     },
     "aero7-kolourpaint": {
       "source_type": "pinned-vcs",
@@ -157,9 +157,9 @@
       "source_revisions": {
         "https://gitgud.io/aero7-open-project/aero7-programs-center": "0405a2ef42c96d253a9436b3413fdccfe7c1cb09"
       },
-      "pkgbuild_sha256": "ec330c5fec7ff424a1d32a2fa5b5c69923f7b3930513084e72318eaf17a3fa24",
-      "srcinfo_sha256": "38296ed4b2a50b3c74b217ca697ec7bda5d780f555c4524bf67c733e451ef885",
-      "reviewed_at": "2026-09-04T13:52:49Z"
+      "pkgbuild_sha256": "5dd8f5ecb94631becca3d564b47a7012e206f6c498cc4a2bb3f03afebddd4b43",
+      "srcinfo_sha256": "224378478716a5c32f3b2e39aa12c869ad25ff7edbddacf731a7638426e723b7",
+      "reviewed_at": "2026-09-23T17:12:00Z"
     },
     "aero7-desktop": {
       "source_type": "pinned-vcs",

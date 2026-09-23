@@ -160,6 +160,50 @@ def validate_workflows() -> None:
 
 
 def validate_desktop_polish() -> None:
+    integration_dependencies = {
+        "linux-control-panel": {
+            "required": {"pacman-contrib", "fakeroot", "libnotify"},
+            "forbidden": {"ufw", "firewalld"},
+        },
+        "aeroshell-smod-git": {
+            "required": set(),
+            "forbidden": {"pkgconf"},
+        },
+        "uac-polkit-agent-git": {
+            "required": {"polkit-kde-agent"},
+            "forbidden": set(),
+        },
+    }
+    for package, policy in integration_dependencies.items():
+        srcinfo = parse_srcinfo(REPO / "packages" / package / ".SRCINFO")
+        dependencies = set(srcinfo.get("depends", []))
+        missing = policy["required"] - dependencies
+        forbidden = policy["forbidden"] & dependencies
+        if missing:
+            fail(f"{package} is missing runtime dependencies: {sorted(missing)}")
+        if forbidden:
+            fail(f"{package} has forbidden runtime dependencies: {sorted(forbidden)}")
+
+    control_srcinfo = parse_srcinfo(
+        REPO / "packages" / "linux-control-panel" / ".SRCINFO"
+    )
+    control_optional = set(control_srcinfo.get("optdepends", []))
+    for prefix in ("firewalld:", "ufw:"):
+        if not any(item.startswith(prefix) for item in control_optional):
+            fail(f"linux-control-panel is missing optional firewall policy: {prefix}")
+
+    smod_srcinfo = parse_srcinfo(
+        REPO / "packages" / "aeroshell-smod-git" / ".SRCINFO"
+    )
+    if "pkgconf" not in set(smod_srcinfo.get("makedepends", [])):
+        fail("aeroshell-smod-git must keep pkgconf as a build dependency")
+
+    programs_pkgbuild = (
+        REPO / "packages" / "aero7-programs-center-git" / "PKGBUILD"
+    ).read_text(encoding="utf-8")
+    if "aero7-offline-package-inventory.patch" not in programs_pkgbuild:
+        fail("Programs Center does not preserve the offline package inventory")
+
     desktop_pkgbuild = (
         REPO / "packages" / "aerothemeplasma-desktop-git" / "PKGBUILD"
     ).read_text(encoding="utf-8")

@@ -2,7 +2,7 @@
 
 pkgname=('uac-polkit-agent-git')
 pkgver=6.7.0_816.rd8c2262
-pkgrel=1
+pkgrel=2
 pkgdesc="Polkit authenticator with a User Account Control interface for AeroShell desktops"
 arch=(x86_64)
 url="https://github.com/aeroshell-desktop/uac-polkit-agent"
@@ -19,6 +19,7 @@ depends=(gcc-libs
          knotifications
          kwindowsystem
          polkit-qt6
+         polkit-kde-agent
          qt6-base
          qt6-declarative)
 makedepends=(git

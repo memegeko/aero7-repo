@@ -1,16 +1,18 @@
 pkgname=linux-control-panel
 pkgver=0.1.0
-pkgrel=38
+pkgrel=56
 pkgdesc='Aero7 system settings hub for Linux and Plasma 6'
 arch=('x86_64')
 url='https://gitgud.io/aero7-open-project/aero7-control-panel'
 license=('GPL-3.0-or-later')
 depends=('cups' 'glibc' 'kwidgetsaddons' 'kwindowsystem' 'openssl' 'qt6-base'
-         'qt6-multimedia' 'zlib' 'python' 'plasma-desktop' 'plasma-nm' 'polkit' 'iptables' 'ufw'
+         'qt6-multimedia' 'zlib' 'python' 'plasma-desktop' 'plasma-nm' 'polkit' 'iptables'
          'hunspell' 'hunspell-en_us' 'hunspell-nl' 'accountsservice'
          'networkmanager' 'pipewire-pulse' 'wireplumber' 'upower'
-         'power-profiles-daemon' 'shadow' 'layer-shell-qt')
+         'power-profiles-daemon' 'shadow' 'layer-shell-qt' 'pacman-contrib' 'fakeroot' 'libnotify')
 optdepends=('bluez-utils: Bluetooth discovery, pairing and connection management'
+            'firewalld: Firewall backend for fresh Aero7 installations'
+            'ufw: Preserved firewall backend for existing Aero7 installations'
             'malcontent: Parental Controls optional feature'
             'deja-dup: Backup and Restore optional feature'
             'snapper: System Recovery snapshot backend on Btrfs'
@@ -26,8 +28,8 @@ optdepends=('bluez-utils: Bluetooth discovery, pairing and connection management
             'colord: Color Management optional feature'
             'aero7-programs-center-git: Programs Center Beta optional feature')
 makedepends=('aero7-qt' 'cmake' 'ninja')
-source=('linux-control-panel-0.1.0-r38.tar.gz')
-sha256sums=('870f4852b99e7125167ff4068def02a25302e5ca1958b49d65dfe0e96c23c546')
+source=('linux-control-panel-0.1.0-r50.tar.gz')
+sha256sums=('dd89291c8c00e89b8727c45068fa2eb9c1381bfe8ccbc38ae2b6d6075c695914')
 
 build() {
   cmake -S linux-control -B build -G Ninja \

@@ -196,13 +196,13 @@
         "qt6-wayland",
         "kwindowsystem",
         "kwidgetsaddons",
-        "pkgconf",
         "qt6-base"
       ],
       "makedepends": [
         "git",
         "extra-cmake-modules",
         "kdoctools",
+        "pkgconf",
         "vulkan-headers"
       ],
       "provides": [
@@ -230,6 +230,7 @@
         "knotifications",
         "kwindowsystem",
         "polkit-qt6",
+        "polkit-kde-agent",
         "qt6-base",
         "qt6-declarative"
       ],
@@ -652,7 +653,6 @@
         "plasma-nm",
         "polkit",
         "iptables",
-        "ufw",
         "hunspell",
         "hunspell-en_us",
         "hunspell-nl",
@@ -663,7 +663,10 @@
         "upower",
         "power-profiles-daemon",
         "shadow",
-        "layer-shell-qt"
+        "layer-shell-qt",
+        "pacman-contrib",
+        "fakeroot",
+        "libnotify"
       ],
       "makedepends": [
         "aero7-qt",
