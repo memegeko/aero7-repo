@@ -89,6 +89,7 @@ Do not use `SigLevel = Never` or `TrustAll`.
 - [Building](docs/BUILDING.md)
 - [Signing](docs/SIGNING.md)
 - [Publishing](docs/PUBLISHING.md)
+- [Package repository notifications](docs/NOTIFICATIONS.md)
 - [Recovery](docs/RECOVERY.md)
 - [Update policy](docs/UPDATE-POLICY.md)
 - [KDE stable downstream strategy](docs/KDE-DOWNSTREAM-STRATEGY.md)

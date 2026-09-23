@@ -1,0 +1,16 @@
+[Unit]
+Description=Aero7 public package-update notifications
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/home/admin/aero7-site/.runtime/bin/ntfy serve --config /home/admin/aero7-site/.config/ntfy/server.yml
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ReadWritePaths=/home/admin/aero7-site/storage/ntfy
+
+[Install]
+WantedBy=default.target

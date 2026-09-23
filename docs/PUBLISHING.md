@@ -1,5 +1,11 @@
 # Publishing
 
+> **Hosting transition:** the package payload is moving from GitHub Pages to
+> `https://aero7.org/repo/$arch`. GitHub workflows below document the former
+> release gate and remain historical until the website publisher has completed
+> end-to-end repository validation. Do not weaken the two-stage approval gate
+> during the transition.
+
 The currently published Beta 1 repository remains available, but publication
 of newer packages is frozen until Aero7's explicitly approved final release.
 Normal `build-packages` runs compile, sign, test, and retain a private staging
@@ -32,3 +38,10 @@ refuses to use a build when the manifest and staging ID differ.
 If GitHub Pages rejects the final artifact due to size, keep the staged build
 intact and document the storage problem. Do not create a substitute public
 release, delete packages, or weaken validation to make Pages pass.
+
+The replacement website flow preserves the same separation: build, sign and
+validate on the builder; transfer over SSH into a non-public incoming path;
+verify on the website server; atomically activate; then smoke-test the public
+database. Only that final successful public check may call
+`scripts/notify-release.sh repository-published BUILD_ID`. Build failures are
+sent only to the private builder channel.

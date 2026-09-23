@@ -1,0 +1,17 @@
+base-url: "https://notify.aero7.org"
+listen-http: "127.0.0.1:2586"
+behind-proxy: true
+cache-file: "/home/admin/aero7-site/storage/ntfy/cache.db"
+auth-file: "/home/admin/aero7-site/storage/ntfy/user.db"
+auth-default-access: "deny-all"
+web-root: "/"
+enable-signup: false
+enable-login: false
+attachment-cache-dir: "/home/admin/aero7-site/storage/ntfy/attachments"
+attachment-total-size-limit: "256M"
+attachment-file-size-limit: "5M"
+attachment-expiry-duration: "24h"
+visitor-request-limit-burst: 30
+visitor-request-limit-replenish: "30s"
+log-level: "info"
+log-format: "json"

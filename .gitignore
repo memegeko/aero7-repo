@@ -7,6 +7,8 @@
 *.kbx
 *.rev
 *.token
+*.conf.local
+notifications.conf
 *.pem
 *.p12
 *.pfx

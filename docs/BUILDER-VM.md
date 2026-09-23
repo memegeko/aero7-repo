@@ -1,6 +1,6 @@
 # Builder VM
 
-Status: `MANUAL ACTION REQUIRED`
+Status: `ACTIVE — admin@192.168.2.14`
 
 ## Discovery Result
 
@@ -28,6 +28,7 @@ Discovery was run from the development host on 2026-07-20.
 access as passing. It warned that the unprivileged user lacks the cgroup
 `devices` controller and secure guest support.
 
+The original host discovery below is retained as historical setup evidence.
 The unqualified `virsh` connection showed no VMs, networks, or pools. The
 system connection showed `archlinux-2` running, but most management calls such
 as `net-list`, `pool-list`, `net-dumpxml`, and `pool-dumpxml` failed with:
@@ -36,9 +37,9 @@ as `net-list`, `pool-list`, `net-dumpxml`, and `pool-dumpxml` failed with:
 authentication failed: access denied by policy
 ```
 
-`sudo -n true` failed because a password is required. Because this automation
-cannot provide interactive host sudo credentials, the builder VM has not been
-created yet.
+`sudo -n true` failed because a password was required on that host. The
+dedicated builder was subsequently provisioned separately and is now active at
+`192.168.2.14`.
 
 ## Selected Builder Resources
 
@@ -56,6 +57,12 @@ When libvirt management is available, use:
 | Firmware | UEFI with OVMF |
 | Agent | `qemu-guest-agent` |
 | User | `aero7build` |
+
+The active builder is reachable as `admin@192.168.2.14`; package jobs run as
+the dedicated `aero7build` account. Its signing key fingerprint must remain
+`72C79ABBBBE96446DD3324042694BFE1090F4FD6`. Notification credentials live in
+`/home/aero7build/.config/aero7-builder/notifications.conf` with mode `0600`.
+They are not stored in the source checkout or build logs.
 
 The RAM selection stays under roughly 60 percent of currently available host
 memory. The disk selection requires the large mounted storage or another pool
