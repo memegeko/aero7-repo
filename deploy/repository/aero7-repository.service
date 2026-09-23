@@ -1,0 +1,18 @@
+[Unit]
+Description=Aero7 signed package repository and build status
+After=network-online.target
+
+[Service]
+Type=simple
+Environment=AERO7_REPOSITORY_ROOT=/home/admin/aero7-site/storage/pacman-root
+Environment=AERO7_REPOSITORY_PORT=2587
+ExecStart=/home/admin/aero7-site/.runtime/bin/node /home/admin/aero7-site/bin/aero7-repository-server.mjs
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ReadOnlyPaths=/home/admin/aero7-site/storage/pacman-root
+
+[Install]
+WantedBy=default.target

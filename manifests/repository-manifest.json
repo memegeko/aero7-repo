@@ -1,7 +1,7 @@
 {
   "repository": "aero7",
   "status": "beta2-source-ready-artifacts-withheld",
-  "published_url": "https://memegeko.github.io/aero7-repo/$arch",
+  "published_url": "https://aero7.org/repo/$arch",
   "signing_fingerprint": "72C79ABBBBE96446DD3324042694BFE1090F4FD6",
   "public_key": "keys/aero7-repository.asc",
   "package_set_complete": false,

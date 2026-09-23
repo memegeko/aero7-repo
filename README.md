@@ -78,7 +78,7 @@ The published pacman endpoint is:
 ```ini
 [aero7]
 SigLevel = Required DatabaseRequired
-Server = https://memegeko.github.io/aero7-repo/$arch
+Server = https://aero7.org/repo/$arch
 ```
 
 Do not use `SigLevel = Never` or `TrustAll`.

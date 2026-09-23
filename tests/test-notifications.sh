@@ -12,7 +12,7 @@ builder-failures = https://discord.com/api/webhooks/2/failures
 repository-published = https://discord.com/api/webhooks/3/published
 ntfy-base-url = https://notify.example.test
 ntfy-topic = aero7-updates
-ntfy-token = test-token-placeholder
+ntfy-token = dummy
 EOF
 chmod 600 "$config"
 

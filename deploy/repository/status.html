@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Aero7 Package Build Status</title>
+  <style>
+    :root{font-family:"Segoe UI",Tahoma,sans-serif;color:#17345a;background:#d9edff}
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;background:linear-gradient(#0978d3 0,#4fc9f0 42%,#e9f8ff 100%);padding:42px 18px}
+    .window{max-width:850px;margin:auto;border:1px solid #163c67;border-radius:9px 9px 3px 3px;background:rgba(255,255,255,.94);box-shadow:0 18px 55px #00345d99,0 0 0 1px #fff8 inset;overflow:hidden}
+    header{display:flex;align-items:center;gap:12px;padding:10px 16px;color:#fff;text-shadow:0 1px #174777;background:linear-gradient(#bceaffaa,#287dbdcc 48%,#0c5f9ddd 52%,#80c9f8aa);border-bottom:1px solid #154d7c}
+    header img{width:34px;height:34px}header h1{font-size:20px;font-weight:400;margin:0;flex:1}.state{padding:4px 12px;border-radius:11px;background:#315d85aa;border:1px solid #fff8;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+    main{padding:28px}.summary{display:grid;grid-template-columns:1fr auto;gap:8px 25px;align-items:end}.summary h2{margin:0;color:#164a89;font-size:25px;font-weight:400}.summary p{margin:5px 0 0;color:#496276}.percent{font-size:31px;color:#0c568e}
+    .track{height:24px;margin:20px 0 24px;padding:3px;border:1px solid #7b99b4;border-radius:4px;background:linear-gradient(#d7e2eb,#fff);box-shadow:inset 0 1px 3px #5678}.bar{height:100%;min-width:0;border-radius:2px;background:repeating-linear-gradient(120deg,#34c85f 0,#34c85f 12px,#65df81 12px,#65df81 24px);box-shadow:inset 0 1px #d5ffdc;transition:width .5s}
+    dl{display:grid;grid-template-columns:145px 1fr;gap:8px;margin:0;padding:18px;border:1px solid #bfd1e1;background:#f8fcff}dt{font-weight:600;color:#31526f}dd{margin:0;overflow-wrap:anywhere}.message{margin:20px 0 0;padding:13px 15px;background:#eaf5ff;border-left:4px solid #2984ca;color:#294c6b}.error{border-left-color:#c62a22;background:#fff0ef;color:#7b201b}
+    footer{padding:12px 28px;background:#e9f2f9;border-top:1px solid #c1d3e2;color:#5b7184;font-size:12px;display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap}a{color:#075da6}
+    @media(max-width:600px){body{padding:12px}.summary{grid-template-columns:1fr}.percent{font-size:24px}dl{grid-template-columns:1fr}dd{margin-bottom:7px}}
+  </style>
+</head>
+<body>
+  <section class="window">
+    <header><img src="https://aero7.org/assets/aero7-logo.png" alt=""><h1>Aero7 Package Build Status</h1><span class="state" id="state">Loading</span></header>
+    <main>
+      <div class="summary"><div><h2 id="phase">Contacting the builder…</h2><p id="package">Waiting for status data.</p></div><strong class="percent" id="percent">0%</strong></div>
+      <div class="track" role="progressbar" aria-label="Build progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="bar" id="bar"></div></div>
+      <dl>
+        <dt>Build ID</dt><dd id="build">—</dd>
+        <dt>Source commit</dt><dd id="commit">—</dd>
+        <dt>Packages</dt><dd id="count">—</dd>
+        <dt>Started</dt><dd id="started">—</dd>
+        <dt>Last update</dt><dd id="updated">—</dd>
+      </dl>
+      <p class="message" id="message">The status page refreshes automatically.</p>
+    </main>
+    <footer><span>Signed Aero7 repository builder</span><a href="https://aero7.org">Return to aero7.org</a></footer>
+  </section>
+  <script>
+    const $=id=>document.getElementById(id), progress=document.querySelector('[role="progressbar"]');
+    const format=value=>value?new Date(value).toLocaleString():"—";
+    async function refresh(){
+      try{
+        const response=await fetch(`./build.json?t=${Date.now()}`,{cache:"no-store"});
+        if(!response.ok)throw new Error(`HTTP ${response.status}`);
+        const data=await response.json(),percent=Math.max(0,Math.min(100,Number(data.percent)||0));
+        $("state").textContent=data.state||"unknown"; $("phase").textContent=data.phase||"Waiting";
+        $("package").textContent=data.package?`Current package: ${data.package}`:"No package is currently compiling.";
+        $("percent").textContent=`${percent}%`; $("bar").style.width=`${percent}%`; progress.setAttribute("aria-valuenow",percent);
+        $("build").textContent=data.build_id||"—"; $("commit").textContent=data.commit||"—";
+        $("count").textContent=`${data.completed||0} of ${data.total||0}`; $("started").textContent=format(data.started_at); $("updated").textContent=format(data.updated_at);
+        $("message").textContent=data.message||"No additional details."; $("message").classList.toggle("error",data.state==="failed");
+      }catch(error){$("state").textContent="unavailable";$("message").textContent=`Build status is temporarily unavailable: ${error.message}`;$("message").classList.add("error")}
+    }
+    refresh();setInterval(refresh,5000);
+  </script>
+</body>
+</html>

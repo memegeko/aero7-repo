@@ -1,0 +1,14 @@
+{
+  "schema": 1,
+  "state": "queued",
+  "phase": "Preparing",
+  "message": "The Aero7 Beta 2 package build is being prepared.",
+  "package": "",
+  "completed": 0,
+  "total": 23,
+  "percent": 0,
+  "build_id": "pending",
+  "commit": "pending",
+  "started_at": null,
+  "updated_at": null
+}

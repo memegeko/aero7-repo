@@ -55,7 +55,10 @@ public="$staging/public/x86_64"
 mkdir -p -- "$public"
 cp -a "$staging/packages/"*.pkg.tar.zst "$staging/packages/"*.pkg.tar.zst.sig "$public/"
 jq --arg build_id "$build_id" \
-  '.last_successful_build = $build_id' \
+  '.last_successful_build = $build_id
+   | .status = "signed-package-set-ready"
+   | .published_url = "https://aero7.org/repo/$arch"
+   | .package_set_complete = true' \
   "$repo/manifests/repository-manifest.json" > "$public/repository-manifest.json"
 mkdir -p -- "$staging/public/keys"
 cp -a "$repo/keys/aero7-repository.asc" "$staging/public/keys/aero7-repository.asc"
