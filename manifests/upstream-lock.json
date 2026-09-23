@@ -72,8 +72,8 @@
       "source_revisions": {
         "https://gitgud.io/aero7-open-project/aero7-computer-management": "6d7fe79c579f35c5d1471cea57691e4ee28c237a"
       },
-      "pkgbuild_sha256": "f2e4726278fa91d8ba89d52c124f272586e4cb3c494b078460ea73f50bdcc768",
-      "srcinfo_sha256": "a2d6030eefc622f73381212711e19974722f222d4d0221feb1695bb6421c0544",
+      "pkgbuild_sha256": "827bc7970636432f803fa4adb8c8c880235d4a48c9e65cf595ab264ab8938967",
+      "srcinfo_sha256": "10c4c9636bb9b96570e43f16e010d5198aab283c2317494c9fc0ed6051edecbf",
       "reviewed_at": "2026-09-04T13:52:49Z"
     },
     "aero7-device-manager": {

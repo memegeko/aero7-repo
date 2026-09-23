@@ -1,6 +1,6 @@
 pkgname=aero7-computer-management-git
 pkgver=0.2.0.r20.g6d7fe79
-pkgrel=1
+pkgrel=2
 pkgdesc='Aero7-native Computer Management console for Linux'
 arch=('x86_64')
 url='https://gitgud.io/aero7-open-project/aero7-computer-management'
@@ -32,6 +32,8 @@ check() {
 
 package() {
   DESTDIR="$pkgdir" cmake --install build
+  # The standalone aero7-device-manager package is the authoritative owner.
+  rm -f "$pkgdir/usr/share/applications/aero7-device-manager.desktop"
   install -Dm644 aero7-computer-management/LICENSE \
     "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
 }
