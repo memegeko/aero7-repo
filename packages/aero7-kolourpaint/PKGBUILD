@@ -1,25 +1,61 @@
 pkgname=aero7-kolourpaint
 pkgver=25.12.3
-pkgrel=2
+pkgrel=9
 pkgdesc='Aero7-styled paint program with a ribbon interface'
 arch=('x86_64')
 url='https://invent.kde.org/albert-tomanek/kolourpaint/-/tree/saribbon-aero'
 license=('GPL-2.0-or-later' 'LGPL-2.0-or-later' 'MIT')
 depends=('glibc' 'kconfig' 'kconfigwidgets' 'kcoreaddons' 'kcrash' 'kguiaddons'
          'ki18n' 'kio' 'kwidgetsaddons' 'kxmlgui' 'libstdc++' 'qt6-base'
-         'qt6-svg')
+         'qt6-svg' 'aero7-file-explorer>=25.12.3-36')
 makedepends=('aero7-qt' 'extra-cmake-modules' 'git' 'kdoctools' 'ninja')
 provides=("kolourpaint=$pkgver" 'saribbonbar=2.9.2')
 conflicts=('kolourpaint' 'saribbonbar')
 source=("aero-kolourpaint::git+https://invent.kde.org/albert-tomanek/kolourpaint.git#commit=0a0debee63d9902b1dd6dafdddad41f21549c5b7"
         "saribbon::git+https://github.com/czyt1988/SARibbon.git#commit=540624e98a53cff47fc1b0531d9129ae3a7fe6b2"
-        'aero7.patch')
+        'aero7.patch'
+        'aero7-ribbon-style-lifetime.patch'
+        'aero7-ribbon-close-test.cpp'
+        'aero7-ribbon-startup-layout.patch'
+        'aero7-ribbon-layout-probe.cpp'
+        'aero7-ribbon-layout-test.sh'
+        'aero7-classic-layout.conf'
+        'aero7-ribbon-icon-cache.patch'
+        'aero7-ribbon-colour-cache-test.cpp'
+        'aero7-common-dialog.patch'
+        'aero7-common-dialog-probe.cpp'
+        'aero7-common-dialog-test.sh'
+        'aero7-document-workflow.patch'
+        'aero7-document-workflow-probe.cpp'
+        'aero7-document-workflow-test.sh')
 sha256sums=('SKIP'
             'SKIP'
-            '8d46f2f1117270185e3314ae7c75a4b388c16b26fedbf75f65e922e9200a0873')
+            '8d46f2f1117270185e3314ae7c75a4b388c16b26fedbf75f65e922e9200a0873'
+            '7c6be0575bdf01d73c9bd7fd6dcfb154732b8e0f52dcae2d77a4fae72e59ceaf'
+            '101580f78c759551a4bd9b189cc966d4fe42fd347c17aa47c796742768064b47'
+            '012669950d7532bfe38fba273451ebd9c9c14cb0bb6bedfed2b34163d900cf87'
+            '6bb43cbf617bd9c7337ec6e51f616f8de6014178046f4a6914ab82bf64519769'
+            'f6fb3fa123b003139edb7caa9b28ff7f23ac4cc0dfe1bd0f0c225c0c71ae4577'
+            '3997a9d6dd34c2967162893949fb7879994a8c06163f5a8d98e67eb6731aa9e8'
+            '9ea292985770dd7cd465394792b0a0ade1f585e57eb6b93fcb960833d96a457e'
+            '5ea976e159afc89101c8b7815fce515cb7b9aaee16dfd2d2084a4658c2db8fe4'
+            '03ede31258d775eb31a7cc4e5bf9610c892091ed894977d06477a168276cc0e8'
+            '51bac7246e0c8a0ec4b7ad2b261832bdb4ce733ba1666bcc180d72bfd355e4af'
+            'eba4bc7cb9eae4e5ac2abb1656bfca83ffd5bf3452e0794518da893af0f7a371'
+            '5a205e9f86d459c161409cd37f46ae072af5f60c91af5dc262987f4c7b68ce99'
+            '7bcbed1403bde359463ffe8bf8aa5f108e60b896977a8251c4d5a7d32c24f15b'
+            '1b47b80bf4d8798ed563d95143242d2537cddcecef880ad74c6ee059a80bcead')
 
 prepare() {
   patch -d aero-kolourpaint -Np1 < aero7.patch
+  patch -d aero-kolourpaint -Np1 < aero7-ribbon-startup-layout.patch
+  patch -d aero-kolourpaint -Np1 < aero7-common-dialog.patch
+  patch -d aero-kolourpaint -Np1 < aero7-document-workflow.patch
+  # The pinned SARibbon translation unit uses CRLF; normalize its line endings
+  # before applying the focused lifetime patch.
+  sed -i 's/\r$//' saribbon/src/SARibbonBar/SARibbonToolButton.cpp
+  patch -d saribbon -Np1 < aero7-ribbon-style-lifetime.patch
+  patch -d saribbon -Np1 < aero7-ribbon-icon-cache.patch
 }
 
 build() {
@@ -36,9 +72,40 @@ build() {
   cmake --build build
 }
 
+check() {
+  c++ -std=c++17 -fPIC aero7-ribbon-close-test.cpp \
+    -I"$srcdir/saribbon/src/SARibbonBar" -L"$srcdir/saribbon-build/lib" \
+    -Wl,-rpath,"$srcdir/saribbon-build/lib" -lSARibbonBar \
+    $(pkg-config --cflags --libs Qt6Widgets) -o aero7-ribbon-close-test
+  QT_QPA_PLATFORM=offscreen ./aero7-ribbon-close-test
+  c++ -std=c++17 -fPIC aero7-ribbon-colour-cache-test.cpp \
+    -I"$srcdir/saribbon/src/SARibbonBar" -L"$srcdir/saribbon-build/lib" \
+    -Wl,-rpath,"$srcdir/saribbon-build/lib" -lSARibbonBar \
+    $(pkg-config --cflags --libs Qt6Widgets) -o aero7-ribbon-colour-cache-test
+  QT_QPA_PLATFORM=offscreen ./aero7-ribbon-colour-cache-test
+  bash "$srcdir/aero7-ribbon-layout-test.sh" \
+    "$srcdir/build/bin/kolourpaint" "$srcdir/saribbon-build/lib"
+  bash "$srcdir/aero7-common-dialog-test.sh" \
+    "$srcdir/build/bin/kolourpaint" "$srcdir/saribbon-build/lib" \
+    "${Aero7CommonDialogs_ROOT:-/usr}"
+  bash "$srcdir/aero7-document-workflow-test.sh" \
+    "$srcdir/build/bin/kolourpaint" "$srcdir/saribbon-build/lib" \
+    "${Aero7CommonDialogs_ROOT:-/usr}"
+}
+
 package() {
   DESTDIR="$pkgdir" cmake --install build
   DESTDIR="$pkgdir" cmake --install saribbon-build --prefix /usr
+  # Brand the installed launcher itself, so menus and software inventory agree.
+  # Keep the upstream desktop ID, executable, icon, MIME types and translations
+  # of descriptive text; localized application names must not restore the old brand.
+  local desktop="$pkgdir/usr/share/applications/org.kde.kolourpaint.desktop"
+  sed -i -E 's/^(Name(\[[^]]+\])?)=.*/\1=Paint/' "$desktop"
+  grep -qx 'Name=Paint' "$desktop" || return 1
+  if grep -E '^Name(\[[^]]+\])?=' "$desktop" | grep -v '=Paint$'; then
+    printf 'Paint launcher still contains a different localized application name.\n' >&2
+    return 1
+  fi
   install -Dm644 aero-kolourpaint/COPYING "$pkgdir/usr/share/licenses/$pkgname/COPYING"
   install -Dm644 aero-kolourpaint/COPYING.DOC "$pkgdir/usr/share/licenses/$pkgname/COPYING.DOC"
   install -Dm644 aero-kolourpaint/COPYING.LIB "$pkgdir/usr/share/licenses/$pkgname/COPYING.LIB"

@@ -1,0 +1,28 @@
+diff --git a/mainWindow/kpMainWindow.cpp b/mainWindow/kpMainWindow.cpp
+--- a/mainWindow/kpMainWindow.cpp
++++ b/mainWindow/kpMainWindow.cpp
+@@ -246,6 +246,12 @@ void kpMainWindow::init()
+ 
+     setAutoSaveSettings();
+ 
++    // Restore the complete mode after XMLGUI has restored toolbar visibility.
++    // Showing the ribbon alone leaves the legacy menu, main toolbar and color
++    // dock visible on fresh launches. Use the same layout/palette placement as
++    // a user-requested mode change, once every affected widget exists.
++    slotShowRibbonToggled(d->configShowRibbon);
++
+     // our non-XMLGUI tools-toolbar will get initially the toolButtonStyle as
+     // all other toolbars, but we want to show only icons for the tools by default
+     // (have to do this _after_ setAutoSaveSettings as that applies the default settings)
+diff --git a/mainWindow/kpMainWindow_Ribbon.cpp b/mainWindow/kpMainWindow_Ribbon.cpp
+--- a/mainWindow/kpMainWindow_Ribbon.cpp
++++ b/mainWindow/kpMainWindow_Ribbon.cpp
+@@ -136,7 +136,7 @@ void kpMainWindow::setupRibbon()
+     /* File menu */
+ 
+     auto fileButton = new SARibbonApplicationButton(this);
+-    fileButton->setText(QLatin1String(""));
++    fileButton->setText(i18n("&File"));
+     fileButton->setMenu(getActionNamed(menuBar()->actions(), QLatin1String("file"))->menu());
+     d->ribbon->setApplicationButton(fileButton);
+ 

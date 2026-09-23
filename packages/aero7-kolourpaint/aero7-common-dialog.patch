@@ -1,0 +1,207 @@
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -48,6 +48,7 @@
+ 
+ find_package(SARibbonBar REQUIRED)
+ find_package(Aero7Qt REQUIRED)
++find_package(Aero7CommonDialogs 1 CONFIG REQUIRED)
+ 
+ add_definitions(-DQT_USE_QSTRINGBUILDER)
+ 
+@@ -352,6 +353,7 @@
+     Qt6::PrintSupport
+     SARibbonBar::SARibbonBar
+     Aero7Qt::Aero7Qt
++    Aero7::CommonDialogs
+     kolourpaint_lgpl
+ )
+ 
+--- a/mainWindow/kpMainWindow_File.cpp
++++ b/mainWindow/kpMainWindow_File.cpp
+@@ -8,6 +8,7 @@
+ 
+ #include "kpMainWindow.h"
+ #include "kpMainWindowPrivate.h"
++#include <aero7commondialog.h>
+ 
+ #include <QAction>
+ #include <QApplication>
+@@ -15,20 +16,24 @@
+ #include <QDialog>
+ #include <QDialogButtonBox>
+ #include <QFileDialog>
++#include <QFileInfo>
+ #include <QImageReader>
+ #include <QImageWriter>
+ #include <QLabel>
+ #include <QMimeDatabase>
++#include <QMap>
+ #include <QPainter>
+ #include <QPixmap>
+ #include <QPrintDialog>
+ #include <QPrintPreviewDialog>
+ #include <QPrinter>
++#include <QPushButton>
+ #include <QScreen>
+ #include <QSize>
+ #include <QSpinBox>
+ #include <QTimer>
+ #include <QVBoxLayout>
++#include <memory>
+ 
+ #include <KActionCollection>
+ #include <KConfigGroup>
+@@ -59,6 +64,12 @@
+ #include "../scan/sanedialog.h"
+ #endif // HAVE_KSANE
+ 
++namespace {
++// Mounted network folders work in the common dialog. Keep the existing KIO
++// browser available explicitly for protocols that are not mounted locally.
++constexpr int BrowseOtherLocations = QDialog::Accepted + 1;
++}
++
+ // private
+ void kpMainWindow::setupFileMenuActions()
+ {
+@@ -401,19 +412,32 @@
+ 
+             filter += glob;
+ 
+-            // I want to show the mime comment AND the file glob pattern,
+-            // but to avoid that the "All Supported Files" entry shows ALL glob patterns,
+-            // I must add the pattern here a second time so that QFileDialog::HideNameFilterDetails
+-            // can hide the first pattern and I still see the second one
+-            filterList << mime.comment() + QStringLiteral(" (%1)(%2)").arg(glob).arg(glob);
++            filterList << mime.comment() + QStringLiteral(" (%1)").arg(glob);
+         }
+     }
+ 
+     filterList.prepend(i18n("All Supported Files (%1)", filter));
+ 
++    Aero7CommonDialog native(allowMultipleURLs ? Aero7CommonDialog::Mode::OpenFiles
++                                              : Aero7CommonDialog::Mode::OpenFile,
++                            QStringLiteral("aero7-paint-open"), this);
++    native.setNameFilters(filterList);
++    native.setWindowTitle(caption);
++    auto *otherLocations = new QPushButton(i18n("Network location…"));
++    native.setCustomWidget(otherLocations);
++    connect(otherLocations, &QPushButton::clicked, &native, [&native]() { native.done(BrowseOtherLocations); });
++    const int result = native.exec();
++    if (result == QDialog::Accepted) {
++        QList<QUrl> urls;
++        for (const QString &path : native.selectedFiles())
++            urls.append(QUrl::fromLocalFile(path));
++        return urls;
++    }
++    if (result != BrowseOtherLocations)
++        return {};
++
+     QFileDialog fd(this);
+     fd.setNameFilters(filterList);
+-    fd.setOption(QFileDialog::HideNameFilterDetails);
+     fd.setWindowTitle(caption);
+ 
+     if (allowMultipleURLs) {
+@@ -794,27 +818,74 @@
+ 
+     auto *saveOptionsWidget = new kpDocumentSaveOptionsWidget(imageToBeSaved, fdSaveOptions, docMetaInfo, this);
+ 
+-    KFileCustomDialog fd(QUrl(startURL), this);
+-    fd.setOperationMode(KFileWidget::Saving);
+-    fd.setWindowTitle(caption);
+-    fd.setCustomWidget(saveOptionsWidget);
+-    KFileWidget *fw = fd.fileWidget();
+-    fw->setConfirmOverwrite(true);
+-    fw->setFilters(KFileFilter::fromMimeTypes(mimeTypes), KFileFilter::fromMimeType(fdSaveOptions.mimeType()));
+-    if (localOnly) {
+-        fw->setMode(KFile::File | KFile::LocalOnly);
+-    }
+-
+-    saveOptionsWidget->setVisualParent(&fd);
+-
+-    connect(fw, &KFileWidget::filterChanged, saveOptionsWidget, [saveOptionsWidget](const KFileFilter &filter) {
+-        const QStringList patterns = filter.mimePatterns();
+-        if (!patterns.isEmpty()) {
+-            saveOptionsWidget->setMimeType(patterns.first());
++    Aero7CommonDialog native(Aero7CommonDialog::Mode::SaveFile, QStringLiteral("aero7-paint-save"), this);
++    native.setWindowTitle(caption);
++    QMimeDatabase mimeDatabase;
++    QMap<QString, QString> mimeForFilter;
++    QStringList filters;
++    QString initialFilter;
++    for (const QString &mimeName : mimeTypes) {
++        const QMimeType mime = mimeDatabase.mimeTypeForName(mimeName);
++        const QString filter = mime.comment() + QStringLiteral(" (%1)").arg(mime.globPatterns().join(QLatin1Char(' ')));
++        filters.append(filter);
++        mimeForFilter.insert(filter, mimeName);
++        if (mimeName == fdSaveOptions.mimeType())
++            initialFilter = filter;
++    }
++    native.setNameFilters(filters);
++    native.selectNameFilter(initialFilter);
++    native.setDefaultSuffix(mimeDatabase.mimeTypeForName(fdSaveOptions.mimeType()).preferredSuffix());
++    const QUrl initialUrl(startURL);
++    if (initialUrl.isLocalFile() || initialUrl.isRelative()) {
++        const QString path = initialUrl.isLocalFile() ? initialUrl.toLocalFile() : startURL;
++        if (!path.isEmpty()) {
++            const QFileInfo info(path);
++            native.setInitialDirectory(info.isDir() ? info.absoluteFilePath() : info.absolutePath());
++            if (!info.isDir()) native.setSuggestedFileName(info.fileName());
+         }
+-    });
++    }
++    auto *options = new QWidget;
++    auto *optionsLayout = new QVBoxLayout(options);
++    optionsLayout->setContentsMargins(0, 0, 0, 0);
++    optionsLayout->addWidget(saveOptionsWidget);
++    if (!localOnly) {
++        auto *otherLocations = new QPushButton(i18n("Network location…"));
++        optionsLayout->addWidget(otherLocations);
++        connect(otherLocations, &QPushButton::clicked, &native, [&native]() { native.done(BrowseOtherLocations); });
++    }
++    native.setCustomWidget(options);
++    saveOptionsWidget->setVisualParent(&native);
++    connect(&native, &Aero7CommonDialog::filterChanged, saveOptionsWidget,
++            [saveOptionsWidget, mimeForFilter](const QString &filter) {
++                if (mimeForFilter.contains(filter)) saveOptionsWidget->setMimeType(mimeForFilter.value(filter));
++            });
++
++    const bool remoteStart = !initialUrl.isEmpty() && !initialUrl.isLocalFile() && !initialUrl.isRelative();
++    int result = remoteStart && !localOnly ? BrowseOtherLocations : native.exec();
++    QList<QUrl> selectedUrls;
++    std::unique_ptr<KFileCustomDialog> remoteDialog;
++    if (result == BrowseOtherLocations) {
++        remoteDialog = std::make_unique<KFileCustomDialog>(initialUrl, this);
++        remoteDialog->setOperationMode(KFileWidget::Saving);
++        remoteDialog->setWindowTitle(caption);
++        remoteDialog->setCustomWidget(saveOptionsWidget);
++        saveOptionsWidget->setVisualParent(remoteDialog.get());
++        KFileWidget *fw = remoteDialog->fileWidget();
++        fw->setConfirmOverwrite(true);
++        fw->setFilters(KFileFilter::fromMimeTypes(mimeTypes),
++                       KFileFilter::fromMimeType(saveOptionsWidget->documentSaveOptions().mimeType()));
++        connect(fw, &KFileWidget::filterChanged, saveOptionsWidget, [saveOptionsWidget](const KFileFilter &filter) {
++            const QStringList patterns = filter.mimePatterns();
++            if (!patterns.isEmpty()) saveOptionsWidget->setMimeType(patterns.first());
++        });
++        result = remoteDialog->exec();
++        selectedUrls = fw->selectedUrls();
++    } else if (result == QDialog::Accepted) {
++        for (const QString &path : native.selectedFiles())
++            selectedUrls.append(QUrl::fromLocalFile(path));
++    }
+ 
+-    if (fd.exec() == QDialog::Accepted) {
++    if (result == QDialog::Accepted) {
+         kpDocumentSaveOptions newSaveOptions = saveOptionsWidget->documentSaveOptions();
+ #if DEBUG_KP_MAIN_WINDOW
+         newSaveOptions.printDebug("\tnewSaveOptions");
+@@ -830,7 +901,6 @@
+             *chosenSaveOptions = newSaveOptions;
+         }
+ 
+-        const QList<QUrl> selectedUrls = fw->selectedUrls();
+         if (selectedUrls.isEmpty()) { // shouldn't happen
+             return {};
+         }

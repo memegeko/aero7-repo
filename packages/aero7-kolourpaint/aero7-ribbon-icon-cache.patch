@@ -1,0 +1,19 @@
+diff --git a/src/SARibbonBar/SARibbonToolButton.cpp b/src/SARibbonBar/SARibbonToolButton.cpp
+--- a/src/SARibbonBar/SARibbonToolButton.cpp
++++ b/src/SARibbonBar/SARibbonToolButton.cpp
+@@ -258,1 +258,3 @@
+     mutable bool mIconCacheValid { false };                 ///< 图标缓存是否有效
++    mutable qint64 mCachedIconKey { 0 };
++    mutable qreal mCachedIconDevicePixelRatio { 0 };
+@@ -959,1 +961,5 @@
+-    if (mIconCacheValid && mCachedIconSize == iconsize && mCachedIconMode == mode && mCachedIconState == state) {
++    const qint64 iconKey = opt.icon.cacheKey();
++    const qreal devicePixelRatio = SA::widgetDevicePixelRatio(q_ptr);
++    if (mIconCacheValid && mCachedIconKey == iconKey
++        && mCachedIconDevicePixelRatio == devicePixelRatio
++        && mCachedIconSize == iconsize && mCachedIconMode == mode && mCachedIconState == state) {
+@@ -964,1 +970,3 @@
+-    mCachedIconPixmap = SA::iconToPixmap(opt.icon, iconsize, SA::widgetDevicePixelRatio(q_ptr), mode, state);
++    mCachedIconPixmap = SA::iconToPixmap(opt.icon, iconsize, devicePixelRatio, mode, state);
++    mCachedIconKey = iconKey;
++    mCachedIconDevicePixelRatio = devicePixelRatio;

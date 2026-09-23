@@ -1,0 +1,18 @@
+diff --git a/mainWindow/kpMainWindow.cpp b/mainWindow/kpMainWindow.cpp
+--- a/mainWindow/kpMainWindow.cpp
++++ b/mainWindow/kpMainWindow.cpp
+@@ -96,9 +96,12 @@ void kpMainWindow::readGeneralSettings()
+     kpToolEnvironment::drawAntiAliased = cfg.readEntry(kpSettingDrawAntiAliased, true);
+ 
+     if (cfg.hasKey(kpSettingOpenImagesInSameWindow)) {
+-        d->configOpenImagesInSameWindow = cfg.readEntry(kpSettingOpenImagesInSameWindow, false);
++        d->configOpenImagesInSameWindow = cfg.readEntry(kpSettingOpenImagesInSameWindow, true);
+     } else {
+-        d->configOpenImagesInSameWindow = false;
++        // New profiles use one document window for File > Open/New, including
++        // the existing save/discard/cancel guard. Preserve an explicit user
++        // preference for separate windows instead of rewriting it on upgrade.
++        d->configOpenImagesInSameWindow = true;
+ #if DEBUG_KP_MAIN_WINDOW
+         qCDebug(kpLogMainWindow) << "\tconfigOpenImagesInSameWindow: first time"
+                                  << " - writing default: " << d->configOpenImagesInSameWindow;

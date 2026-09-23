@@ -1,0 +1,21 @@
+diff --git a/src/SARibbonBar/SARibbonToolButton.cpp b/src/SARibbonBar/SARibbonToolButton.cpp
+index e20ced9..3ca74cb 100644
+--- a/src/SARibbonBar/SARibbonToolButton.cpp
++++ b/src/SARibbonBar/SARibbonToolButton.cpp
+@@ -1080,9 +1080,13 @@ SARibbonToolButton::SARibbonToolButton(QAction* defaultAction, QWidget* parent)
+  * @brief SARibbonToolButton析构函数
+  * \endif
+  */
+-SARibbonToolButton::~SARibbonToolButton()
+-{
+-}
++SARibbonToolButton::~SARibbonToolButton()
++{
++    // Detach the private proxy style while it is still alive. QWidget destroys
++    // child menus only after d_ptr, and their QWidgetActions can reparent
++    // default widgets during teardown, consulting this button's style again.
++    setStyle(nullptr);
++}
+ 
+ /**
+  * @brief Sets the layout factor for fine-tuning the button's appearance / 设置布局系数以微调按钮外观

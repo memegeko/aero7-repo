@@ -1,7 +1,7 @@
 pkgbase = aero7-kolourpaint
 	pkgdesc = Aero7-styled paint program with a ribbon interface
 	pkgver = 25.12.3
-	pkgrel = 2
+	pkgrel = 9
 	url = https://invent.kde.org/albert-tomanek/kolourpaint/-/tree/saribbon-aero
 	arch = x86_64
 	license = GPL-2.0-or-later
@@ -25,6 +25,7 @@ pkgbase = aero7-kolourpaint
 	depends = libstdc++
 	depends = qt6-base
 	depends = qt6-svg
+	depends = aero7-file-explorer>=25.12.3-36
 	provides = kolourpaint=25.12.3
 	provides = saribbonbar=2.9.2
 	conflicts = kolourpaint
@@ -32,8 +33,36 @@ pkgbase = aero7-kolourpaint
 	source = aero-kolourpaint::git+https://invent.kde.org/albert-tomanek/kolourpaint.git#commit=0a0debee63d9902b1dd6dafdddad41f21549c5b7
 	source = saribbon::git+https://github.com/czyt1988/SARibbon.git#commit=540624e98a53cff47fc1b0531d9129ae3a7fe6b2
 	source = aero7.patch
+	source = aero7-ribbon-style-lifetime.patch
+	source = aero7-ribbon-close-test.cpp
+	source = aero7-ribbon-startup-layout.patch
+	source = aero7-ribbon-layout-probe.cpp
+	source = aero7-ribbon-layout-test.sh
+	source = aero7-classic-layout.conf
+	source = aero7-ribbon-icon-cache.patch
+	source = aero7-ribbon-colour-cache-test.cpp
+	source = aero7-common-dialog.patch
+	source = aero7-common-dialog-probe.cpp
+	source = aero7-common-dialog-test.sh
+	source = aero7-document-workflow.patch
+	source = aero7-document-workflow-probe.cpp
+	source = aero7-document-workflow-test.sh
 	sha256sums = SKIP
 	sha256sums = SKIP
 	sha256sums = 8d46f2f1117270185e3314ae7c75a4b388c16b26fedbf75f65e922e9200a0873
+	sha256sums = 7c6be0575bdf01d73c9bd7fd6dcfb154732b8e0f52dcae2d77a4fae72e59ceaf
+	sha256sums = 101580f78c759551a4bd9b189cc966d4fe42fd347c17aa47c796742768064b47
+	sha256sums = 012669950d7532bfe38fba273451ebd9c9c14cb0bb6bedfed2b34163d900cf87
+	sha256sums = 6bb43cbf617bd9c7337ec6e51f616f8de6014178046f4a6914ab82bf64519769
+	sha256sums = f6fb3fa123b003139edb7caa9b28ff7f23ac4cc0dfe1bd0f0c225c0c71ae4577
+	sha256sums = 3997a9d6dd34c2967162893949fb7879994a8c06163f5a8d98e67eb6731aa9e8
+	sha256sums = 9ea292985770dd7cd465394792b0a0ade1f585e57eb6b93fcb960833d96a457e
+	sha256sums = 5ea976e159afc89101c8b7815fce515cb7b9aaee16dfd2d2084a4658c2db8fe4
+	sha256sums = 03ede31258d775eb31a7cc4e5bf9610c892091ed894977d06477a168276cc0e8
+	sha256sums = 51bac7246e0c8a0ec4b7ad2b261832bdb4ce733ba1666bcc180d72bfd355e4af
+	sha256sums = eba4bc7cb9eae4e5ac2abb1656bfca83ffd5bf3452e0794518da893af0f7a371
+	sha256sums = 5a205e9f86d459c161409cd37f46ae072af5f60c91af5dc262987f4c7b68ce99
+	sha256sums = 7bcbed1403bde359463ffe8bf8aa5f108e60b896977a8251c4d5a7d32c24f15b
+	sha256sums = 1b47b80bf4d8798ed563d95143242d2537cddcecef880ad74c6ee059a80bcead
 
 pkgname = aero7-kolourpaint
