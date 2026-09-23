@@ -1,7 +1,7 @@
 pkgbase = aerothemeplasma-desktop-git
 	pkgdesc = An Aero-inspired classic desktop shell for KDE Plasma
 	pkgver = 6.7.0_752.r8c7d820
-	pkgrel = 1
+	pkgrel = 2
 	url = https://gitgud.io/aero7-open-project/aerothemeplasma
 	arch = x86_64
 	groups = aerothemeplasma

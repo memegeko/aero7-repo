@@ -2,7 +2,7 @@
 
 pkgname=('aerothemeplasma-desktop-git')
 pkgver=6.7.0_752.r8c7d820
-pkgrel=1
+pkgrel=2
 pkgdesc="An Aero-inspired classic desktop shell for KDE Plasma"
 arch=(x86_64)
 url="https://gitgud.io/aero7-open-project/aerothemeplasma"
@@ -104,7 +104,7 @@ build() {
 }
 
 check() {
-  ctest --test-dir build --output-on-failure
+  QT_QPA_PLATFORM=offscreen ctest --test-dir build --output-on-failure
 }
 
 package() {
