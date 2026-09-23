@@ -1,6 +1,6 @@
 pkgbase = aeroshell-smod-git
 	pkgdesc = KDecoration3 decoration engine for AeroShell-based desktops
-	pkgver = 6.7.0_37.r1f21dee
+	pkgver = 6.7.4_61.rff4ab15
 	pkgrel = 2
 	url = https://gitgud.io/aeroshell/smod
 	arch = x86_64
