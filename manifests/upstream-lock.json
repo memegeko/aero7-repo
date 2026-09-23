@@ -130,8 +130,8 @@
         "https://invent.kde.org/albert-tomanek/kolourpaint": "0a0debee63d9902b1dd6dafdddad41f21549c5b7",
         "https://github.com/czyt1988/SARibbon": "540624e98a53cff47fc1b0531d9129ae3a7fe6b2"
       },
-      "pkgbuild_sha256": "dd82ecd646a5808166c198ae387e4c0f56b118577872651fc2c77d6b47f555a7",
-      "srcinfo_sha256": "53373b4b7df2fc3c1ce766a018bebe4c2d3df5fcb2738c200107e4edb2aa8ce7",
+      "pkgbuild_sha256": "235cee6e9dcb3c77def9759f783f8edba81aeeb7fc63ee9ac681a0fdbcd9499d",
+      "srcinfo_sha256": "ef1718fc6da2dd4b0b7eb09e3a4fd0be406312acead3ea48f95242f5165b9900",
       "reviewed_at": "2026-09-23T00:00:00Z"
     },
     "aero7-gadgets": {

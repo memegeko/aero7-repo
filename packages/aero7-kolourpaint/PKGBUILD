@@ -41,10 +41,10 @@ sha256sums=('SKIP'
             '5ea976e159afc89101c8b7815fce515cb7b9aaee16dfd2d2084a4658c2db8fe4'
             '03ede31258d775eb31a7cc4e5bf9610c892091ed894977d06477a168276cc0e8'
             '51bac7246e0c8a0ec4b7ad2b261832bdb4ce733ba1666bcc180d72bfd355e4af'
-            'eba4bc7cb9eae4e5ac2abb1656bfca83ffd5bf3452e0794518da893af0f7a371'
+            'b82cdf61e42d2bbe95b33c2ac1bc35899cc50ba09c4774c71001df0fefab06ab'
             '5a205e9f86d459c161409cd37f46ae072af5f60c91af5dc262987f4c7b68ce99'
             '7bcbed1403bde359463ffe8bf8aa5f108e60b896977a8251c4d5a7d32c24f15b'
-            '1b47b80bf4d8798ed563d95143242d2537cddcecef880ad74c6ee059a80bcead')
+            '6e72e1ba5bb3fbe8505362cd13c4e6f9ed6db60b1ee87adaa2dcc8142711ddf0')
 
 prepare() {
   patch -d aero-kolourpaint -Np1 < aero7.patch
