@@ -1,7 +1,7 @@
 pkgbase = aero7-desktop
 	pkgdesc = Aero7-owned Wayland desktop session, recovery, migration, and shell integration
 	pkgver = 0.2.0
-	pkgrel = 35
+	pkgrel = 36
 	url = https://gitgud.io/aero7-open-project/aero7-desktop
 	arch = x86_64
 	license = MIT
@@ -17,6 +17,8 @@ pkgbase = aero7-desktop
 	depends = qt6-declarative
 	depends = networkmanager
 	depends = pipewire-pulse
+	depends = ttf-dejavu
+	depends = ttf-liberation
 	depends = aero7-file-explorer
 	depends = aero7-gadgets
 	depends = aero7-internet-explorer

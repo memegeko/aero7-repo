@@ -166,8 +166,8 @@
       "source_revisions": {
         "https://gitgud.io/aero7-open-project/aero7-desktop": "7831dded87842c75a14cd71b9a19d4f6f6e71a79"
       },
-      "pkgbuild_sha256": "e22284876c134c4f3a6428d047e15d8b62be4b223e96197bfffac68539849bb5",
-      "srcinfo_sha256": "5d3dd5f9376f76232736443a2d1afb63c5ea71045a72f0768536433cdffa9f46",
+      "pkgbuild_sha256": "d243f5fc0322e9d07f56016790418063a45f1f9474e077e75f2fc91a901e083e",
+      "srcinfo_sha256": "018b3d11a5d7f60def784070dd4cc9c25a013e15effa1e0519a72d722e7ba783",
       "reviewed_at": "2026-09-21T00:00:00Z"
     },
     "winxplorer": {
