@@ -53,10 +53,14 @@ esac
 
 mkdir -p -- "$staging_root/$build_id/packages" "$staging_root/$build_id/namcap" "$source_root/$build_id" "$log_root"
 
+recipe_dir="$repo/packages/$package"
 workdir="$source_root/$build_id/$package"
 rm -rf -- "$workdir"
 mkdir -p -- "$workdir"
-cp -a "$repo/packages/$package/." "$workdir/"
+cp -a "$recipe_dir/." "$workdir/"
+find "$workdir" -maxdepth 1 -type f \
+  \( -name '*.pkg.tar.zst' -o -name '*.pkg.tar.zst.sig' \) \
+  -delete
 
 if [[ ! -d "$chroot_dir/root" ]]; then
   mkdir -p -- "$chroot_dir"
