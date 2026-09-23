@@ -49,10 +49,10 @@ Aero7 Device Manager, optional Programs Center Beta, and searchable
 administration-module shortcuts. Packages are built
 in a clean Arch chroot, signed, and validated as one complete repository set.
 The complete signed 23-package Beta 2 set is published at
-`https://aero7.org/repo/$arch`. Build
-`20260923T143447Z-95961ec9460c` passed the clean-builder, repository-signature,
-public pacman synchronization, and public-download checks. Live build and
-publication progress is available at <https://aero7.org/repo/status/>.
+`https://aero7.org/repo/$arch`. The published package set passed the clean
+builder, repository-signature, public pacman synchronization, and
+public-download checks. The current build ID and live publication progress are
+available at <https://aero7.org/repo/status/>.
 Pushing source alone does not promote future packages or publish either ISO.
 
 The `testing` branch pins Desktop and Internet Explorer to `7831dde`, Gadgets
