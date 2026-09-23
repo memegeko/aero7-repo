@@ -47,7 +47,7 @@
     "aeroshell-smod-git": {
       "aur_url": "https://aur.archlinux.org/aeroshell-smod-git.git",
       "aur_commit": "d26a819ec3eb32a9630d6b658591b51c4fd1732f",
-      "pkgbuild_sha256": "806e043d19a181e095d651820bf298e3dcb3c2c97c62dff769c945a5792040c6",
+      "pkgbuild_sha256": "a4c2f532b61d4793d392f3d629ab513201b51ab23b182dd307b390e38e18d9a7",
       "srcinfo_sha256": "4438d0baf027b2a0fec691e3a9ff0c897187e3409d8f177df5666d373ff78e2e",
       "reviewed_at": "2026-07-20T18:03:22Z"
     },
