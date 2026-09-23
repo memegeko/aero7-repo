@@ -48,17 +48,19 @@ native Gadgets 3 runtime, separate Aero7 Computer Management console, renamed
 Aero7 Device Manager, optional Programs Center Beta, and searchable
 administration-module shortcuts. Packages are built
 in a clean Arch chroot, signed, and validated as one complete repository set.
-The existing 20-package Beta 1 endpoint remains online. The Beta 2 recipes and
-exact source pins are public for review, while the new signed binary payload is
-withheld until its build report and the complete Beta 2 release gate are
-approved. Pushing source does not promote packages or publish either ISO.
+The complete signed 23-package Beta 2 set is published at
+`https://aero7.org/repo/$arch`. Build
+`20260923T143447Z-95961ec9460c` passed the clean-builder, repository-signature,
+public pacman synchronization, and public-download checks. Live build and
+publication progress is available at <https://aero7.org/repo/status/>.
+Pushing source alone does not promote future packages or publish either ISO.
 
 The `testing` branch pins Desktop and Internet Explorer to `7831dde`, Gadgets
 to the same reviewed Desktop revision, File Explorer to `3770c0e0d`, and the
 integrated AeroThemePlasma source to `3ef3253`. The obsolete patch stack and
 superseded source archives were removed; those fixes now live in their actual
-source repositories. A new signed repository build is still required before
-these recipes reach the pacman endpoint.
+source repositories. These recipes are now the package set served by the
+signed pacman endpoint.
 
 The reviewed companion application recipes are included in the signed beta set. Their
 exact upstream revisions are pinned, all source patches apply cleanly, and all
