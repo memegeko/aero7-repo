@@ -30,6 +30,10 @@ for package in "${expected[@]}"; do
     printf 'test-repository: missing signature for %s\n' "$pkg" >&2
     exit 1
   }
+  if bsdtar -tf "$pkg" | grep -Eq '(^|/)(\.git|\.svn|\.hg|\.bzr)(/|$)'; then
+    printf 'test-repository: VCS metadata is packaged in %s\n' "${pkg##*/}" >&2
+    exit 1
+  fi
 done
 
 for required in aero7.db aero7.db.sig aero7.db.tar.zst aero7.db.tar.zst.sig aero7.files aero7.files.sig aero7.files.tar.zst aero7.files.tar.zst.sig repository-manifest.json; do

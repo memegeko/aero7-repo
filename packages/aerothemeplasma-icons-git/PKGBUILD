@@ -2,7 +2,7 @@
 
 pkgname=('aerothemeplasma-icons-git')
 pkgver=11.r96950b8
-pkgrel=2
+pkgrel=3
 pkgdesc="Icon theme designed for AeroThemePlasma"
 license=('AGPL-3.0-or-later')
 arch=(any)
@@ -29,7 +29,13 @@ prepare() {
 package() {
   install -dm 755 "$pkgdir"/usr/share/icons/
   find "$srcdir/${pkgname%}" -mindepth 1 -maxdepth 1 -type d \
+    ! -name '.*' \
     -exec cp -r -- {} "$pkgdir/usr/share/icons/" \;
+  if find "$pkgdir" -type d \( -name .git -o -name .svn -o -name .hg -o -name .bzr \) \
+      -print -quit | grep -q .; then
+    error 'VCS metadata was copied into the icon package'
+    return 1
+  fi
   install -Dm644 "$srcdir/${pkgname%}/LICENSE" \
     "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
   install -Dm644 "$srcdir/${pkgname%}/README.md" \

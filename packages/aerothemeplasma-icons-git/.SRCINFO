@@ -1,7 +1,7 @@
 pkgbase = aerothemeplasma-icons-git
 	pkgdesc = Icon theme designed for AeroThemePlasma
 	pkgver = 11.r96950b8
-	pkgrel = 2
+	pkgrel = 3
 	url = https://gitgud.io/aeroshell/atp/aerothemeplasma-icons
 	arch = any
 	groups = aerothemeplasma

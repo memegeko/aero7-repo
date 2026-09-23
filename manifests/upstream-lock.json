@@ -29,9 +29,9 @@
       "source_revisions": {
         "https://gitgud.io/aeroshell/atp/aerothemeplasma-icons": "96950b8028a5d960cb683280fe5f1d9e33e6b8a2"
       },
-      "pkgbuild_sha256": "ca8e3f1f029f932e4609f3ae25a388bc5708b449b1734d7bef007b91bbf51bbb",
-      "srcinfo_sha256": "0872961434d6e497f7b8e1dfcf9eb1d506d2088776f89f873996ad1559231345",
-      "reviewed_at": "2026-08-16T22:35:00Z"
+      "pkgbuild_sha256": "a88907c124bd0b3375093f69dc1aed214abed84a8ccbcdf41d15f6dad963d2e2",
+      "srcinfo_sha256": "06cfdfdb935d0b38cb1b40e4568c6f4025a28cd53182469a7f00b6eb4c09295c",
+      "reviewed_at": "2026-09-23T00:00:00Z"
     },
     "aerothemeplasma-sounds-git": {
       "source_type": "pinned-vcs",
