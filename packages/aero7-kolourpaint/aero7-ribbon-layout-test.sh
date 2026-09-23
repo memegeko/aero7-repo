@@ -3,6 +3,7 @@
 # Runs the real Paint executable with a QA-only observation library.
 set -Eeuo pipefail
 binary=$(realpath -e "${1:?Paint executable}")
+binary_dir=$(dirname -- "$binary")
 library_dir=$(realpath -e "${2:?SARibbon library directory}")
 inputs=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
 evidence=$(mktemp -d "${TMPDIR:-/tmp}/aero7-paint-layout.XXXXXX")
@@ -21,7 +22,8 @@ for scenario in default default-reopen classic classic-reopen; do
         XDG_CONFIG_HOME="$evidence/$mode/config" \
         XDG_DATA_HOME="$evidence/$mode/data" \
         XDG_CACHE_HOME="$evidence/$mode/cache" \
-        LD_PRELOAD="$evidence/probe.so" LD_LIBRARY_PATH="$library_dir${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}" \
+        LD_PRELOAD="$evidence/probe.so" \
+        LD_LIBRARY_PATH="$binary_dir:$library_dir${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}" \
         AERO7_QA_EXPECT_RIBBON="$expected" \
         "$binary" > "$evidence/$scenario.log" 2>&1
     status=$?
