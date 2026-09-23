@@ -3,7 +3,7 @@ pkgver=25.12.3
 pkgrel=56
 pkgdesc='Aero7 File Explorer with Windows 7 shell behavior and appearance'
 arch=('x86_64')
-url='https://github.com/aero7-open-project/aero7-file-explorer'
+url='https://gitgud.io/aero7-open-project/aero7-file-explorer'
 license=('GPL-2.0-or-later')
 depends=('baloo' 'baloo-widgets' 'glibc' 'kbookmarks' 'kcodecs'
          'kcolorscheme' 'kcompletion' 'kconfig' 'kconfigwidgets' 'kcoreaddons'

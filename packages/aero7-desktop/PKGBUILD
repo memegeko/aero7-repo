@@ -3,7 +3,7 @@ pkgver=0.2.0
 pkgrel=35
 pkgdesc='Aero7-owned Wayland desktop session, recovery, migration, and shell integration'
 arch=('x86_64')
-url='https://github.com/aero7-open-project/aero7-desktop'
+url='https://gitgud.io/aero7-open-project/aero7-desktop'
 license=('MIT')
 depends=(
   'bash'

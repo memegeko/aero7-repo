@@ -4,7 +4,7 @@ pkgrel=7
 pkgdesc='Permanent Aero7 Internet Explorer identity backed by an installed modern browser'
 arch=('x86_64')
 options=('!debug')
-url='https://github.com/aero7-open-project/aero7-desktop'
+url='https://gitgud.io/aero7-open-project/aero7-desktop'
 license=('MIT')
 depends=(
   'aero7-qt'

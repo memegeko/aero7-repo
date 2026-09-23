@@ -164,8 +164,8 @@ def validate_desktop_polish() -> None:
         REPO / "packages" / "aerothemeplasma-desktop-git" / "PKGBUILD"
     ).read_text(encoding="utf-8")
     for required in [
-        'url="https://github.com/aero7-open-project/aerothemeplasma"',
-        "#commit=3ef3253e88bd886ef31f55e5eb39d82305d78f62",
+        'url="https://gitgud.io/aero7-open-project/aerothemeplasma"',
+        "#commit=8c7d82027dc82096eea769beab51cfd0e6390d91",
         '"${pkgname%}/LICENSE"',
         '"${pkgname%}/THIRD_PARTY.md"',
         "aero7-kwalletrc",
