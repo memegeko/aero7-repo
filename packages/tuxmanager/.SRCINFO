@@ -13,6 +13,7 @@ pkgbase = tuxmanager
 	depends = libgcc
 	depends = libstdc++
 	depends = qt6-base
+	options = !debug
 	source = tuxmanager-1.0.7.tar.gz::https://github.com/benapetr/TuxManager/archive/v1.0.7.tar.gz
 	sha256sums = 3afed9fe99871b09ff27339056afbad94643bd4eb6ff8a67ad716ef9410804be
 

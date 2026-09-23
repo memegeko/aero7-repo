@@ -88,8 +88,8 @@
     "tuxmanager": {
       "aur_url": "https://aur.archlinux.org/tuxmanager.git",
       "aur_commit": "b089f580b7694990fdfa081c575690060477e4f6",
-      "pkgbuild_sha256": "571ddf66aba363924d68f6584ace151a3441507b10a4e1b10aa0568ee7507573",
-      "srcinfo_sha256": "0d1c318d67c20b5fcffb3866263c0f7ab230a66677f5a118c79354a694636315",
+      "pkgbuild_sha256": "af267ce5e7de9b422934eaf28131655517407ad67541ff1b884074a7782a7fae",
+      "srcinfo_sha256": "a082157ee1afbdede373d554a2587928fbfe4e0e2e4509ec4bad7972173f2958",
       "reviewed_at": "2026-07-21T17:54:48Z"
     },
     "aero7-qt": {
