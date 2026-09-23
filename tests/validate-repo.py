@@ -240,6 +240,14 @@ def validate_desktop_polish() -> None:
     for required in [
         "'aero7-watermark.png'",
         'Assets/aero7-branding-r3.png',
+        "'aero7-beta2-integration.patch'",
+        "'Aero7OnScreenKeyboard.qml'",
+        "'aero7-login-background.jpg'",
+        "'aero7-sddm-runtime-test.py'",
+        'patch -d "${pkgname%}" -Np1 < aero7-beta2-integration.patch',
+        'SMOD/Aero7OnScreenKeyboard.qml',
+        'for background_name in background default-background preview.png',
+        'aero7-package-branding.png',
     ]:
         if required not in desktop_pkgbuild:
             fail(f"Aero7 SDDM branding package integration is missing: {required}")
@@ -254,6 +262,16 @@ def validate_desktop_polish() -> None:
         actual_size = png_size(desktop_assets / asset)
         if actual_size != expected_size:
             fail(f"{asset} has size {actual_size}, expected {expected_size}")
+    expected_desktop_asset_hashes = {
+        "aero7-beta2-integration.patch": "9397da5031d7c29043b6c4344f06979342ea90b7af2d67f2f2811ef3af194d22",
+        "Aero7OnScreenKeyboard.qml": "e56d78b54366bee688a4eece2a0a4bdf6f8a0f490d3319a4285f4734ade8a7bd",
+        "aero7-login-background.jpg": "65e825c2dcc1b0c80d14896a6108199d825f8dc7b44724f22fe19d8b308fb7e7",
+        "aero7-sddm-runtime-test.py": "bf7e44188d7a682d7aa0eddf865ced1569c0f518a8c04d47445d04e8571d0d9d",
+    }
+    for asset, expected_hash in expected_desktop_asset_hashes.items():
+        actual_hash = sha256(desktop_assets / asset)
+        if actual_hash != expected_hash:
+            fail(f"{asset} hash {actual_hash} does not match accepted Beta 2 integration")
 
     retained_themes = {
         "aerothemeplasma-icons-git": "96950b8028a5d960cb683280fe5f1d9e33e6b8a2",

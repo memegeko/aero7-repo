@@ -1,0 +1,712 @@
+diff --git a/plasma/color_scheme/Aero.colors b/plasma/color_scheme/Aero.colors
+index 72bdb04..1e14f96 100644
+--- a/plasma/color_scheme/Aero.colors
++++ b/plasma/color_scheme/Aero.colors
+@@ -33,18 +33,18 @@ ForegroundPositive=39,174,96
+ ForegroundVisited=128,0,128
+ 
+ [Colors:Complementary]
+-BackgroundAlternate=59,64,69
+-BackgroundNormal=49,54,59
+-DecorationFocus=30,146,255
+-DecorationHover=61,174,230
+-ForegroundActive=147,206,233
+-ForegroundInactive=175,176,179
+-ForegroundLink=61,174,230
++BackgroundAlternate=227,227,227
++BackgroundNormal=240,240,240
++DecorationFocus=51,153,255
++DecorationHover=153,204,255
++ForegroundActive=51,153,255
++ForegroundInactive=96,96,96
++ForegroundLink=0,0,255
+ ForegroundNegative=231,76,60
+ ForegroundNeutral=253,188,75
+-ForegroundNormal=239,240,241
++ForegroundNormal=0,0,0
+ ForegroundPositive=46,204,113
+-ForegroundVisited=61,174,230
++ForegroundVisited=128,0,128
+ 
+ [Colors:Selection]
+ BackgroundAlternate=51,153,255
+diff --git a/plasma/layout-templates/io.gitgud.wackyideas.taskbar/contents/layout.js b/plasma/layout-templates/io.gitgud.wackyideas.taskbar/contents/layout.js
+index 23a27a1..c89ba04 100644
+--- a/plasma/layout-templates/io.gitgud.wackyideas.taskbar/contents/layout.js
++++ b/plasma/layout-templates/io.gitgud.wackyideas.taskbar/contents/layout.js
+@@ -1,3 +1,9 @@
++// Aero7 owns the taskbar layout. Remove the stock Plasma panel (and any stale
++// Aero duplicates) before creating the one canonical Aero panel.
++var existingPanels = panels();
++for (var existingIndex = 0; existingIndex < existingPanels.length; ++existingIndex) {
++    existingPanels[existingIndex].remove();
++}
+ var panel = new Panel("io.gitgud.wackyideas.panel");
+ var panelScreen = panel.screen
+ 
+@@ -50,7 +56,13 @@ if (panel.formFactor === "horizontal") {
+ 
+ panel.addWidget("io.gitgud.wackyideas.SevenStart")
+ //panel.addWidget("org.kde.plasma.showActivityManager")
+-panel.addWidget("io.gitgud.wackyideas.seventasks")
++var tasks = panel.addWidget("io.gitgud.wackyideas.seventasks")
++tasks.currentConfigGroup = ["General"]
++tasks.writeConfig("launchers", [
++    "applications:qterminal.desktop",
++    "applications:org.aero7.FileExplorer.desktop",
++    "applications:aero7-internet-explorer.desktop"
++])
+ 
+ /* Next up is determining whether to add the Input Method Panel
+  * widget to the panel or not. This is done based on whether
+diff --git a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/config/main.xml b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/config/main.xml
+index 3e53dc9..3223a19 100644
+--- a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/config/main.xml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/config/main.xml
+@@ -22,7 +22,7 @@
+       <default>true</default>
+     </entry>
+     <entry name="orbWidth" type="Int">
+-      <default>0</default>
++      <default>40</default>
+     </entry>
+     <entry name="enableShadow" type="Bool">
+       <default>false</default>
+@@ -42,7 +42,7 @@
+     </entry>
+ 
+     <entry name="defaultRunnerApp" type="String">
+-      <default>krunner --replace</default>
++      <default>execbin</default>
+     </entry>
+     <entry name="appNameFormat" type="Int">
+       <default>0</default>
+diff --git a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/NavGrid.qml b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/NavGrid.qml
+index 4a9cf1a..f632d6c 100644
+--- a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/NavGrid.qml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/NavGrid.qml
+@@ -33,6 +33,8 @@ FocusScope {
+   signal keyNavDown
+ 
+   property alias triggerModel: listView.model
++  property var actionModel: triggerModel
++  property bool allowDrag: true
+   property alias count: listView.count
+   property alias currentIndex: listView.currentIndex
+   property alias currentItem: listView.currentItem
+@@ -114,8 +116,8 @@ FocusScope {
+     }
+     delegate: GenericItem {
+       canNavigate: true
+-      canDrag: true
+-      triggerModel: listView.model
++      canDrag: navGrid.allowDrag
++      triggerModel: navGrid.actionModel
+     }
+   
+     onCurrentIndexChanged: {
+diff --git a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/SearchView.qml b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/SearchView.qml
+old mode 100755
+new mode 100644
+index 5a34a8a..c18fc20
+--- a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/SearchView.qml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/SearchView.qml
+@@ -18,10 +18,12 @@
+     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+ import QtQuick 2.0
++import QtQuick.Layouts 1.15
+ import org.kde.plasma.core 2.0 as PlasmaCore
+ import org.kde.plasma.extras 2.0 as PlasmaExtras
+ import org.kde.plasma.components 3.0 as PlasmaComponents
+ import org.kde.plasma.plasmoid 2.0
++import org.kde.plasma.plasma5support as Plasma5Support
+ 
+ import org.kde.plasma.private.kicker as Kicker
+ import org.kde.kitemmodels as KItemModels
+@@ -31,10 +33,198 @@ import org.kde.kirigami as Kirigami
+ Item {
+     id: searchViewContainer
+ 
+-    property Item itemGrid: runnerGrid
++    property Item itemGrid: resultsGrid
+     property bool queryFinished: false
+     property int repeaterModelIndex: 0
+     property var unfilteredRunnerModel: null
++    property var controlPanelCatalog: []
++    property var computerManagementCatalog: []
++    property var deviceManagerCatalog: []
++    property int runnerResultCount: 0
++
++    function normalized(value) {
++        return String(value || "").trim().toLocaleLowerCase();
++    }
++
++    function appendCatalog(catalog, query, provider, sectionLabel) {
++        for (let i = 0; i < catalog.length; ++i) {
++            const setting = catalog[i];
++            const haystack = normalized(setting.name + " " + setting.description
++                + " " + setting.section + " " + setting.keywords);
++            if (haystack.indexOf(query) === -1) {
++                continue;
++            }
++            combinedResultsModel.append({
++                "key": setting.key,
++                "provider": provider,
++                "sourceRow": -1,
++                "name": setting.name,
++                "display": setting.name,
++                "decoration": setting.icon || "preferences-system",
++                "description": setting.description,
++                "group": sectionLabel,
++                "favoriteId": "",
++                "hasActionList": false,
++                "actionList": [],
++                "url": ""
++            });
++        }
++    }
++
++    function modelData(model, row, role) {
++        return model.data(model.index(row, 0), role);
++    }
++
++    function appendRunnerResults(applicationsOnly) {
++        if (!unfilteredRunnerModel) {
++            return;
++        }
++        const resultCount = filteredRunnerModel.rowCount();
++        for (let row = 0; row < resultCount; ++row) {
++            const groupName = String(modelData(filteredRunnerModel, row, 258)
++                || i18n("Programs"));
++            const isApplication = groupName === i18n("Applications")
++                || groupName === i18n("Programs");
++            if (isApplication !== applicationsOnly) {
++                continue;
++            }
++            const displayName = modelData(filteredRunnerModel, row, Qt.DisplayRole);
++            combinedResultsModel.append({
++                "key": "",
++                "provider": "runner",
++                "sourceRow": row,
++                "name": String(displayName || ""),
++                "display": String(displayName || ""),
++                "decoration": modelData(filteredRunnerModel, row, Qt.DecorationRole),
++                "description": String(modelData(filteredRunnerModel, row, 257) || ""),
++                "group": groupName,
++                "favoriteId": String(modelData(filteredRunnerModel, row, 259) || ""),
++                "hasActionList": Boolean(modelData(filteredRunnerModel, row, 264)),
++                "actionList": modelData(filteredRunnerModel, row, 265) || [],
++                "url": String(modelData(filteredRunnerModel, row, 266) || "")
++            });
++        }
++        runnerResultCount = resultCount;
++    }
++
++    function rebuildCombinedResults() {
++        combinedResultsModel.clear();
++        runnerResultCount = 0;
++        const query = normalized(searchField.text);
++        if (!query) {
++            return;
++        }
++
++        // One unified list: applications first, Aero7 Control Panel and
++        // Device Manager sections next, then files and other runners.
++        // Computer Management pages are normal application desktop entries,
++        // so they naturally appear in the first group without duplicates.
++        appendRunnerResults(true);
++        appendCatalog(controlPanelCatalog, query, "control-panel", i18n("Control Panel"));
++        appendCatalog(deviceManagerCatalog, query, "device-manager", i18n("Device Manager"));
++        appendRunnerResults(false);
++
++    }
++
++    ListModel {
++        id: combinedResultsModel
++        dynamicRoles: true
++    }
++
++    QtObject {
++        id: combinedActionModel
++        property var favoritesModel: filteredRunnerModel.favoritesModel
++
++        function trigger(index, actionId, actionArgument) {
++            if (index < 0 || index >= combinedResultsModel.count) {
++                return false;
++            }
++            const result = combinedResultsModel.get(index);
++            if (result.provider === "runner") {
++                return filteredRunnerModel.trigger(result.sourceRow, actionId, actionArgument);
++            }
++            if (result.provider === "computer-management") {
++                settingsLauncher.exec("/usr/bin/aero7-compmgmt --open " + result.key);
++            } else if (result.provider === "device-manager") {
++                settingsLauncher.exec("/usr/bin/devmgmt --open " + result.key);
++            } else {
++                settingsLauncher.exec("/usr/bin/control --setting " + result.key);
++            }
++            return true;
++        }
++    }
++
++    Plasma5Support.DataSource {
++        id: settingsCatalogLoader
++        engine: "executable"
++        connectedSources: []
++        onNewData: (sourceName, data) => {
++            disconnectSource(sourceName);
++            if (data["exit code"] !== 0) {
++                return;
++            }
++            try {
++                controlPanelCatalog = JSON.parse(data["stdout"] || "[]");
++            } catch (error) {
++                console.warn("SevenStart could not read Control Panel settings:", error);
++                controlPanelCatalog = [];
++            }
++            rebuildCombinedResults();
++        }
++        Component.onCompleted: connectSource("/usr/bin/control --list-settings-json")
++    }
++
++    Plasma5Support.DataSource {
++        id: computerManagementCatalogLoader
++        engine: "executable"
++        connectedSources: []
++        onNewData: (sourceName, data) => {
++            disconnectSource(sourceName);
++            if (data["exit code"] !== 0) {
++                return;
++            }
++            try {
++                computerManagementCatalog = JSON.parse(data["stdout"] || "[]");
++            } catch (error) {
++                console.warn("SevenStart could not read Computer Management settings:", error);
++                computerManagementCatalog = [];
++            }
++            rebuildCombinedResults();
++        }
++        Component.onCompleted: connectSource("/usr/bin/aero7-compmgmt --list-settings-json")
++    }
++
++    Plasma5Support.DataSource {
++        id: deviceManagerCatalogLoader
++        engine: "executable"
++        connectedSources: []
++        onNewData: (sourceName, data) => {
++            disconnectSource(sourceName);
++            if (data["exit code"] !== 0) {
++                return;
++            }
++            try {
++                deviceManagerCatalog = JSON.parse(data["stdout"] || "[]");
++            } catch (error) {
++                console.warn("SevenStart could not read Device Manager sections:", error);
++                deviceManagerCatalog = [];
++            }
++            rebuildCombinedResults();
++        }
++        Component.onCompleted: connectSource("/usr/bin/devmgmt --list-settings-json")
++    }
++
++    Plasma5Support.DataSource {
++        id: settingsLauncher
++        engine: "executable"
++        connectedSources: []
++        onNewData: (sourceName, data) => disconnectSource(sourceName)
++        function exec(command) {
++            if (command) {
++                connectSource(command);
++            }
++        }
++    }
+ 
+     KItemModels.KSortFilterProxyModel {
+         id: filteredRunnerModel
+@@ -66,18 +256,18 @@ Item {
+     function refreshResultsModel() {
+         unfilteredRunnerModel = runnerModel.count ? runnerModel.modelForRow(0) : null;
+         filteredRunnerModel.invalidateFilter();
+-        runnerGrid.model = unfilteredRunnerModel ? filteredRunnerModel : null;
++        rebuildCombinedResults();
+     }
+ 
+     function inhibitMouse() {
+-        runnerGrid.inhibitMouseEvents = 2;
++        itemGrid.inhibitMouseEvents = 2;
+     }
+     function activateCurrentIndex() {
+-        runnerGrid.tryActivate();
++        itemGrid.tryActivate();
+     }
+     function decrementCurrentIndex() {
+         inhibitMouse();
+-        var listView = runnerGrid.flickableItem;
++        var listView = itemGrid.flickableItem;
+         if(listView.currentIndex-1 < 0) {
+             listView.currentIndex = listView.count - 1;
+         } else {
+@@ -86,7 +276,7 @@ Item {
+     }
+     function incrementCurrentIndex() {
+         inhibitMouse();
+-        var listView = runnerGrid.flickableItem;
++        var listView = itemGrid.flickableItem;
+         if(listView.currentIndex+1 >= listView.count) {
+             listView.currentIndex = 0;
+         } else {
+@@ -96,10 +286,12 @@ Item {
+     function onQueryChanged() {
+         queryFinished = false;
+         runnerModel.query = searchField.text;
++        unfilteredRunnerModel = null;
+         filteredRunnerModel.invalidateFilter();
++        rebuildCombinedResults();
+         if (!searchField.text) {
+             unfilteredRunnerModel = null;
+-            runnerGrid.model = null;
++            combinedResultsModel.clear();
+         }
+     }
+     function openContextMenu() {
+@@ -110,7 +302,7 @@ Item {
+ 
+     Connections {
+         function onCountChanged() {
+-            if (runnerModel.count && !runnerGrid.model) {
++            if (runnerModel.count && !unfilteredRunnerModel) {
+                 refreshResultsModel();
+             }
+         }
+@@ -118,7 +310,7 @@ Item {
+             if (runnerModel.count) {
+                 refreshResultsModel();
+                 queryFinished = true;
+-                var listView = runnerGrid.flickableItem;
++                var listView = resultsGrid.flickableItem;
+                 if(listView.count > 0) listView.currentIndex = 0;
+                 //console.log(runnerModel.modelForRow(0).modelForRow(0))
+             }
+@@ -128,23 +320,22 @@ Item {
+     }
+ 
+     NavGrid {
+-        id: runnerGrid
++        id: resultsGrid
+         anchors.fill: parent
+-        property alias model: runnerGrid.triggerModel
+-        triggerModel: null
++        triggerModel: combinedResultsModel
++        actionModel: combinedActionModel
++
+         MouseArea {
+             id: mouseInhibitor
+             anchors.fill: parent
+             z: 99
+             hoverEnabled: true
+-            visible: runnerGrid.inhibitMouseEvents > 0
++            visible: resultsGrid.inhibitMouseEvents > 0
+             onPositionChanged: {
+-                if(runnerGrid.inhibitMouseEvents > 0)
+-                    runnerGrid.inhibitMouseEvents--;
++                if(resultsGrid.inhibitMouseEvents > 0) {
++                    resultsGrid.inhibitMouseEvents--;
++                }
+             }
+         }
+-
+     }
+-
+-
+ }
+diff --git a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/SectionDelegate.qml b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/SectionDelegate.qml
+old mode 100755
+new mode 100644
+index 6a6903b..07e06e4
+--- a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/SectionDelegate.qml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/SectionDelegate.qml
+@@ -26,6 +26,7 @@ import org.kde.kirigami as Kirigami
+ 
+ Item {
+     id: sectionDelegate
++    required property string section
+     width: parent.width
+     height: Kirigami.Units.iconSizes.medium-1 //childrenRect.height
+     objectName: "SectionDelegate"
+diff --git a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/SidePanelItemDelegate.qml b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/SidePanelItemDelegate.qml
+old mode 100755
+new mode 100644
+index b35c8ce..9f54857
+--- a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/SidePanelItemDelegate.qml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/SidePanelItemDelegate.qml
+@@ -116,6 +116,7 @@ Item {
+         anchors.verticalCenterOffset: -1
+         style: Text.Sunken
+         styleColor: "transparent"
++        color: "#f7f7f7"
+         text: itemText
+     }
+     PlasmaComponents.Label {
+@@ -128,6 +129,7 @@ Item {
+         anchors.verticalCenterOffset: -1
+         style: Text.Sunken
+         styleColor: "transparent"
++        color: "#ffffff"
+         opacity: 0.66
+         text: itemText
+     }
+diff --git a/plasma/plasmoids/io.gitgud.wackyideas.seventasks/contents/ui/main.qml b/plasma/plasmoids/io.gitgud.wackyideas.seventasks/contents/ui/main.qml
+index 1cc8662..d89a3d1 100644
+--- a/plasma/plasmoids/io.gitgud.wackyideas.seventasks/contents/ui/main.qml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.seventasks/contents/ui/main.qml
+@@ -66,7 +66,7 @@ PlasmoidItem {
+             text: i18n("Task Manager")
+             icon.name: "ksysguardd"
+             onTriggered: {
+-                menu_executable.exec("kstart ksysguard");
++                menu_executable.exec("tux-manager");
+ 
+             }
+         }
+diff --git a/plasma/sddm/sddm-theme-mod/Main.qml b/plasma/sddm/sddm-theme-mod/Main.qml
+old mode 100755
+new mode 100644
+index 8587972..39427bd
+--- a/plasma/sddm/sddm-theme-mod/Main.qml
++++ b/plasma/sddm/sddm-theme-mod/Main.qml
+@@ -102,7 +102,8 @@ Item
+     {
+         id: userDelegate
+ 
+-        Column
++        // Children use explicit anchors; a positioner must not own their y positions.
++        Item
+         {
+             id: delegateColumn
+             width: listView.cellWidth
+@@ -297,9 +298,18 @@ Item
+             }
+         }
+         Component.onCompleted: {
+-            inputPanel.source = Qt.platform.pluginName.includes("wayland") ? "SMOD/VirtualKeyboard_wayland.qml" : "SMOD/VirtualKeyboard.qml"
++            inputPanel.source = "SMOD/Aero7OnScreenKeyboard.qml"
++        }
++        onLoaded: {
++            inputPanel.item.targetField = password
++            inputPanel.item.submitCallback = function() {
++                let index = listView.currentIndex
++                let username = userModel.data(userModel.index(index, 0), Main.UserRoles.NameRole)
++                if (username != null) {
++                    sddm.login(username, password.text, session.index)
++                }
++            }
+         }
+-        onStatusChanged: if (status === Loader.Ready && item) item.activated = active
+         onKeyboardActiveChanged: {
+             if (keyboardActive) {
+                 inputPanel.z = 99;
+@@ -359,11 +369,8 @@ Item
+                 narratorCheck.enabled = reply.narratorAvailable
+                 stickyKeysCheck.checked = reply.stickyKeys
+                 filterKeysCheck.checked = reply.filterKeys
+-                if (!reply.narratorAvailable) {
+-                    accessStatus.text = i18nd("aerothemeplasma-sddm-theme", "Narrator is unavailable because Orca is not installed.")
+-                } else {
+-                    accessStatus.text = ""
+-                }
++                accessStatus.text = reply.narratorAvailable ? ""
++                    : i18nd("aerothemeplasma-sddm-theme", "Narrator is unavailable because Orca is not installed.")
+             } else {
+                 accessDialog.applyLocalSettings()
+                 accessStatus.text = i18nd("aerothemeplasma-sddm-theme", "Accessibility settings applied.")
+@@ -479,7 +486,7 @@ Item
+         Item
+         {
+             id: userlistpage
+-            anchors.fill: parent
++            // StackLayout owns this page's size and position.
+ 
+             GridView
+             {
+@@ -581,7 +588,8 @@ Item
+         {
+             id: loginpage
+ 
+-            Column
++            // Preserve the centered anchor origin without competing with child anchors.
++            Item
+             {
+                 id: mainColumn
+                 anchors.centerIn: parent
+@@ -1029,14 +1037,24 @@ Item
+         anchors.bottom: parent.bottom
+         anchors.bottomMargin: 23
+         anchors.horizontalCenter: parent.horizontalCenter
+-        source: Qt.resolvedUrl("Assets/branding-white.png")
++        source: Qt.resolvedUrl("Assets/aero7-branding-r3.png")
++        // The source canvas preserves the historical 350x50 theme slot, but
++        // the actual Aero7 wordmark occupies its first 225 pixels. Crop that
++        // transparent tail so the visible logo, rather than its canvas, is
++        // centered on every display.
++        sourceClipRect: Qt.rect(0, 0, 225, 50)
++        width: Math.min(225, parent.width - 40)
++        height: width * 50 / 225
++        fillMode: Image.PreserveAspectFit
++        smooth: true
++        mipmap: true
+         visible: pages.currentIndex != Main.LoginPage.Startup
+     }
+     SMOD.GenericButton {
+             id: switchLayoutButton
+ 
+-            property int currentIndex: keyboard.currentLayout
+-            onCurrentIndexChanged: keyboard.currentLayout = currentIndex
++            readonly property int currentIndex: keyboard.currentLayout
++            readonly property var currentLayout: keyboard.layouts[currentIndex]
+ 
+             anchors {
+                 top: parent.top
+@@ -1053,18 +1071,13 @@ Item
+             KeyNavigation.tab: pages.currentIndex === Main.LoginPage.SelectUser ? listView : password
+             KeyNavigation.down: pages.currentIndex === Main.LoginPage.SelectUser ? listView : password
+ 
+-            text: keyboard.layouts && currentIndex >= 0 && currentIndex < keyboard.layouts.length
+-                ? keyboard.layouts[currentIndex].shortName : ""
++            text: currentLayout ? currentLayout.shortName : ""
+             onClicked: {
+-                if (!keyboard.layouts || keyboard.layouts.length === 0) {
+-                    currentIndex = 0
+-                    return
+-                }
+-                if (currentIndex < 0 || currentIndex >= keyboard.layouts.length) {
+-                    currentIndex = 0
+-                    return
++                const count = keyboard.layouts.length
++                if (count > 0) {
++                    keyboard.currentLayout = currentIndex >= 0 && currentIndex < count
++                        ? (currentIndex + 1) % count : 0
+                 }
+-                currentIndex = (currentIndex + 1) % keyboard.layouts.length
+             }
+ 
+             visible: keyboard.layouts.length > 1 && pages.currentIndex != Main.LoginPage.Startup
+@@ -1356,6 +1369,7 @@ Item
+ 
+         indicator.width: 0
+         indicator.height: 0
++        Accessible.name: i18nd("aerothemeplasma-sddm-theme", "Ease of Access and desktop environment")
+ 
+         background: Image
+         {
+@@ -1451,18 +1465,48 @@ Item
+                 return session.index === this.index
+             }
+             Component.onCompleted: {
++                var entries = [];
+                 for(var i = 0; i < sessionModel.count; i++) {
+                     const NameRole = sessionModel.KItemModels.KRoleNames.role("name");
+                     const name = sessionModel.data(sessionModel.index(i, 0), NameRole);
++                    entries.push({name: name, index: i});
++                }
++
++                function sessionRank(name) {
++                    if(name === "Aero7 Desktop (Safe Mode)") return 0;
++                    if(name === "Aero7 Desktop") return 1;
++                    if(name.indexOf("AeroThemePlasma") === 0) return 2;
++                    if(name.indexOf("Plasma") === 0) return 3;
++                    return 100;
++                }
++
++                entries.sort(function(left, right) {
++                    var rankDifference = sessionRank(left.name) - sessionRank(right.name);
++                    return rankDifference !== 0 ? rankDifference : left.index - right.index;
++                });
++
++                for(var entryIndex = 0; entryIndex < entries.length; entryIndex++) {
++                    var entry = entries[entryIndex];
+                     var menuitem = createMenuItem();
+-                    menuitem.text = name;
+-                    menuitem.index = i;
+-                    var func = isIndex.bind({index: i});
++                    menuitem.text = entry.name;
++                    menuitem.index = entry.index;
++                    var func = isIndex.bind({index: entry.index});
+                     menuitem.checkable = true;
+                     menuitem.checked = Qt.binding(func);
+-                    menuitem.triggered.connect(changeVal.bind({index: i}));
++                    menuitem.triggered.connect(changeVal.bind({index: entry.index}));
+                     session.addAction(menuitem);
+                 }
++
++                session.addItem(createMenuSeparator());
++                var keyboardItem = createMenuItem();
++                keyboardItem.text = i18nd("aerothemeplasma-sddm-theme", "On-Screen Keyboard");
++                keyboardItem.checkable = false;
++                keyboardItem.icon.source = Qt.resolvedUrl("Assets/keyboard.png");
++                keyboardItem.triggered.connect(function() {
++                    password.forceActiveFocus();
++                    inputPanel.showHide();
++                });
++                session.addAction(keyboardItem);
+             }
+ 
+         }
+diff --git a/plasma/shells/io.gitgud.wackyideas.desktop/contents/components/GenericButton.qml b/plasma/shells/io.gitgud.wackyideas.desktop/contents/components/GenericButton.qml
+index 0eea6a1..b9c946e 100644
+--- a/plasma/shells/io.gitgud.wackyideas.desktop/contents/components/GenericButton.qml
++++ b/plasma/shells/io.gitgud.wackyideas.desktop/contents/components/GenericButton.qml
+@@ -84,6 +84,7 @@ Control {
+     PlasmaComponents.Label {
+         id: btnLabel
+ 
++        color: "white"
+         anchors.fill: parent
+ 
+         text: genericButton.text
+diff --git a/plasma/shells/io.gitgud.wackyideas.desktop/contents/layout.js b/plasma/shells/io.gitgud.wackyideas.desktop/contents/layout.js
+index 23a27a1..c89ba04 100644
+--- a/plasma/shells/io.gitgud.wackyideas.desktop/contents/layout.js
++++ b/plasma/shells/io.gitgud.wackyideas.desktop/contents/layout.js
+@@ -1,3 +1,9 @@
++// Aero7 owns the taskbar layout. Remove the stock Plasma panel (and any stale
++// Aero duplicates) before creating the one canonical Aero panel.
++var existingPanels = panels();
++for (var existingIndex = 0; existingIndex < existingPanels.length; ++existingIndex) {
++    existingPanels[existingIndex].remove();
++}
+ var panel = new Panel("io.gitgud.wackyideas.panel");
+ var panelScreen = panel.screen
+ 
+@@ -50,7 +56,13 @@ if (panel.formFactor === "horizontal") {
+ 
+ panel.addWidget("io.gitgud.wackyideas.SevenStart")
+ //panel.addWidget("org.kde.plasma.showActivityManager")
+-panel.addWidget("io.gitgud.wackyideas.seventasks")
++var tasks = panel.addWidget("io.gitgud.wackyideas.seventasks")
++tasks.currentConfigGroup = ["General"]
++tasks.writeConfig("launchers", [
++    "applications:qterminal.desktop",
++    "applications:org.aero7.FileExplorer.desktop",
++    "applications:aero7-internet-explorer.desktop"
++])
+ 
+ /* Next up is determining whether to add the Input Method Panel
+  * widget to the panel or not. This is done based on whether
+diff --git a/plasma/shells/io.gitgud.wackyideas.desktop/contents/lockscreen/AuthUI.qml b/plasma/shells/io.gitgud.wackyideas.desktop/contents/lockscreen/AuthUI.qml
+index 4554f72..fc84854 100644
+--- a/plasma/shells/io.gitgud.wackyideas.desktop/contents/lockscreen/AuthUI.qml
++++ b/plasma/shells/io.gitgud.wackyideas.desktop/contents/lockscreen/AuthUI.qml
+@@ -539,6 +539,12 @@ Item {
+         }
+ 
+         source: "../images/branding.png"
++        sourceClipRect: Qt.rect(0, 0, 225, 50)
++        width: Math.min(225, parent.width - 40)
++        height: width * 50 / 225
++        fillMode: Image.PreserveAspectFit
++        smooth: true
++        mipmap: true
+ 
+         visible: opacity > 0
+         opacity: !inputPanel.keyboardActive

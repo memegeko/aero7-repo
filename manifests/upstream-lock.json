@@ -63,8 +63,8 @@
       "source_revisions": {
         "https://gitgud.io/aero7-open-project/aerothemeplasma": "8c7d82027dc82096eea769beab51cfd0e6390d91"
       },
-      "pkgbuild_sha256": "42010589c7d80299743ce82f4afcdeda0c493847064e40845c681a9ec365bb16",
-      "srcinfo_sha256": "63892bb93e36f2ac6596c24a7fd517b0b2d4ffcfa2b5cba8959b91cec1412c7b",
+      "pkgbuild_sha256": "34db9760a1ce7dbebc4ec9a767fba81a4f7c6a0250df13d98f6eb6b67d0fedbb",
+      "srcinfo_sha256": "71d5efd31a137b439686f9d8d7841a5f323fbe0d4c8490330d4e53f60182afb5",
       "reviewed_at": "2026-09-21T00:00:00Z"
     },
     "aero7-computer-management-git": {
