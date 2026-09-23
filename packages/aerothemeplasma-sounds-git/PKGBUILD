@@ -2,7 +2,7 @@
 
 pkgname=('aerothemeplasma-sounds-git')
 pkgver=4.r55d2f5f
-pkgrel=2
+pkgrel=3
 pkgdesc="Aero7 sound theme collection for KDE Plasma"
 license=('AGPL-3.0-or-later')
 arch=(any)
@@ -23,7 +23,13 @@ pkgver() {
 package() {
   install -dm 755 "$pkgdir"/usr/share/sounds/
   find "$srcdir/${pkgname%}" -mindepth 1 -maxdepth 1 -type d \
+    ! -name '.*' \
     -exec cp -r -- {} "$pkgdir/usr/share/sounds/" \;
+  if find "$pkgdir" -type d \( -name .git -o -name .svn -o -name .hg -o -name .bzr \) \
+      -print -quit | grep -q .; then
+    error 'VCS metadata was copied into the sound package'
+    return 1
+  fi
 
   # Brand every user-visible theme, directory, and legacy source filename as
   # Aero7. Event IDs and audio data stay unchanged so Plasma resolves the same
