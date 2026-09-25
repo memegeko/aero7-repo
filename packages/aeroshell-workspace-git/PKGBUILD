@@ -1,8 +1,8 @@
 # Maintainer: WackyIdeas <wackyideas@disroot.org>
 
 pkgname=('aeroshell-workspace-git')
-pkgver=6.7.0_19.r39e96c7
-pkgrel=1
+pkgver=6.7.5_22.rad919f4
+pkgrel=2
 pkgdesc="Various components required by AeroShell-based desktops"
 arch=(x86_64)
 url="https://github.com/aeroshell-desktop/aeroshell-workspace"
@@ -27,14 +27,21 @@ depends=(gcc-libs
 makedepends=(git
              extra-cmake-modules)
 options=('!debug')
-source=("${pkgname}::git+${url}.git")
-sha256sums=('SKIP')
+source=("${pkgname}::git+${url}.git#commit=ad919f4cbf67cd0bedc5b7710b5b5738ce12d006"
+        'aero7-window-color-single-window.patch')
+sha256sums=('SKIP'
+            '2b20efd581af0bc3cd8fb536abf9a37b6970041c4a0dcab89ebaf8e541a4ecf1')
 conflicts=(aeroshell-workspace)
 provides=(aeroshell-workspace)
 
 pkgver() {
   cd "$srcdir/${pkgname%}"
   echo "$(grep 'set(PROJECT_VERSION ' CMakeLists.txt | cut -d '"' -f 2)_$(git rev-list --count HEAD).r$(git rev-parse --short HEAD)"
+}
+
+prepare() {
+  cd "$srcdir/${pkgname%}"
+  patch -Np1 -i "$srcdir/aero7-window-color-single-window.patch"
 }
 
 build() {

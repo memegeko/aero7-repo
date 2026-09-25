@@ -1,7 +1,7 @@
 pkgbase = aeroshell-workspace-git
 	pkgdesc = Various components required by AeroShell-based desktops
-	pkgver = 6.7.0_19.r39e96c7
-	pkgrel = 1
+	pkgver = 6.7.5_22.rad919f4
+	pkgrel = 2
 	url = https://github.com/aeroshell-desktop/aeroshell-workspace
 	arch = x86_64
 	license = AGPL-3.0-or-later
@@ -27,7 +27,9 @@ pkgbase = aeroshell-workspace-git
 	provides = aeroshell-workspace
 	conflicts = aeroshell-workspace
 	options = !debug
-	source = aeroshell-workspace-git::git+https://github.com/aeroshell-desktop/aeroshell-workspace.git
+	source = aeroshell-workspace-git::git+https://github.com/aeroshell-desktop/aeroshell-workspace.git#commit=ad919f4cbf67cd0bedc5b7710b5b5738ce12d006
+	source = aero7-window-color-single-window.patch
 	sha256sums = SKIP
+	sha256sums = 2b20efd581af0bc3cd8fb536abf9a37b6970041c4a0dcab89ebaf8e541a4ecf1
 
 pkgname = aeroshell-workspace-git

@@ -1,0 +1,36 @@
+diff --git a/aeroshell-kcmloader/main.cpp b/aeroshell-kcmloader/main.cpp
+index 877fe0b..7aeffcf 100644
+--- a/aeroshell-kcmloader/main.cpp
++++ b/aeroshell-kcmloader/main.cpp
+@@ -5,6 +5,7 @@
+ #include <KConfigGroup>
+ #include <QString>
+ #include <QJsonObject>
++#include <QTimer>
+ 
+ int main(int argc, char *argv[])
+ {
+@@ -29,6 +30,23 @@ int main(int argc, char *argv[])
+     obj.insert("standalone", QJsonValue(true));
+     dialog.addModule(KPluginMetaData(obj, modulePath), QVariantList{QStringLiteral("KWin/Effect")});
+     dialog.winId();
++    // The KCM opens Aero7's Window Color editor itself. Keep its host dialog
++    // alive for the module, but do not paint that dialog as a second window.
++    dialog.setAttribute(Qt::WA_DontShowOnScreen, true);
+     dialog.open();
++    bool editorWasShown = false;
++    QTimer editorWatch;
++    editorWatch.setInterval(100);
++    QObject::connect(&editorWatch, &QTimer::timeout, &a, [&]() {
++        for (QWidget *window : QApplication::topLevelWidgets()) {
++            if (window != &dialog && window->isVisible()) {
++                editorWasShown = true;
++                return;
++            }
++        }
++        if (editorWasShown)
++            a.quit();
++    });
++    editorWatch.start();
+     return a.exec();
+ }

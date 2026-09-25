@@ -1,7 +1,7 @@
 pkgbase = linux-control-panel
 	pkgdesc = Aero7 system settings hub for Linux and Plasma 6
 	pkgver = 0.1.0
-	pkgrel = 58
+	pkgrel = 59
 	url = https://gitgud.io/aero7-open-project/aero7-control-panel
 	arch = x86_64
 	license = GPL-3.0-or-later
@@ -52,7 +52,7 @@ pkgbase = linux-control-panel
 	optdepends = modemmanager: Mobile Broadband and Modem optional feature
 	optdepends = colord: Color Management optional feature
 	optdepends = aero7-programs-center-git: Programs Center Beta optional feature
-	source = linux-control-panel-0.1.0-r58.tar.gz
-	sha256sums = 5f35f5909030e723e5eaf314c9eb3bc284bc1dfc25a2a4eb873c415058970f74
+	source = linux-control-panel-0.1.0-r59.tar.gz
+	sha256sums = d27f0cc3b85a1d988fd97d042287ccea7e0c8127eb1dfca5c512ac51cd833ee9
 
 pkgname = linux-control-panel
