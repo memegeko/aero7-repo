@@ -1,6 +1,6 @@
 pkgname=aero7-file-explorer
 pkgver=25.12.3
-pkgrel=57
+pkgrel=58
 pkgdesc='Aero7 File Explorer with Windows 7 shell behavior and appearance'
 arch=('x86_64')
 url='https://gitgud.io/aero7-open-project/aero7-file-explorer'
@@ -15,7 +15,7 @@ makedepends=('aero7-qt' 'extra-cmake-modules' 'git' 'ninja')
 provides=("dolphin=$pkgver" 'aero7-dolphin')
 conflicts=('dolphin' 'aero7-dolphin')
 replaces=('aero7-dolphin')
-_commit=54b399b3b050744ff211aec8d5717a08601b110a
+_commit=05c5cf980f2f0ed36d15b827bb8e948ab0d5e8d8
 source=("aero7-file-explorer::git+$url.git#commit=$_commit")
 sha256sums=('SKIP')
 
