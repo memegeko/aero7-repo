@@ -2,7 +2,7 @@
 
 pkgname=('aerothemeplasma-sounds-git')
 pkgver=4.r55d2f5f
-pkgrel=3
+pkgrel=4
 pkgdesc="Aero7 sound theme collection for KDE Plasma"
 license=('AGPL-3.0-or-later')
 arch=(any)
@@ -41,6 +41,22 @@ package() {
     renamed="${renamed//Windows/Aero7}"
     [[ "$base" == "$renamed" ]] || mv -- "$path" "${path%/*}/$renamed"
   done < <(find "$pkgdir/usr/share/sounds" -depth -name '*Windows*' -print0)
+
+  # The freedesktop event files are symlinks into og/. Renaming the WAV files
+  # alone leaves every event link pointing at a name that no longer exists.
+  local link target renamed_target
+  while IFS= read -r -d '' link; do
+    target="$(readlink -- "$link")"
+    renamed_target="${target//Windows 7/Aero7}"
+    renamed_target="${renamed_target//Windows/Aero7}"
+    if [[ "$target" != "$renamed_target" ]]; then
+      ln -sfn -- "$renamed_target" "$link"
+    fi
+    if [[ ! -e "$link" ]]; then
+      error "Sound event has no audio file: ${link#"$pkgdir"} -> $(readlink -- "$link")"
+      return 1
+    fi
+  done < <(find "$pkgdir/usr/share/sounds" -type l -print0)
 
   while IFS= read -r -d '' theme; do
     theme_name="$(basename -- "${theme%/index.theme}")"
