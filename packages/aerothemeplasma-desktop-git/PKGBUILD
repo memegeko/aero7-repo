@@ -1,8 +1,8 @@
 # Maintainer: WackyIdeas <wackyideas@disroot.org>
 
 pkgname=('aerothemeplasma-desktop-git')
-pkgver=6.7.0_752.r8c7d820
-pkgrel=3
+pkgver=6.7.0_753.r49f3403
+pkgrel=4
 pkgdesc="An Aero-inspired classic desktop shell for KDE Plasma"
 arch=(x86_64)
 url="https://gitgud.io/aero7-open-project/aerothemeplasma"
@@ -80,7 +80,7 @@ makedepends=(git
              vulkan-headers)
 checkdepends=(python)
 options=('!debug')
-source=("${pkgname}::git+${url}.git#commit=8c7d82027dc82096eea769beab51cfd0e6390d91"
+source=("${pkgname}::git+${url}.git#commit=49f340344edfe4871f1f2c42bd220c470103197e"
         'aero7-beta2-integration.patch'
         'Aero7OnScreenKeyboard.qml'
         'aero7-login-background.jpg'
@@ -103,7 +103,10 @@ backup=('etc/xdg/kwalletrc')
 
 pkgver() {
   cd "$srcdir/${pkgname%}"
-  echo "$(grep 'set(PROJECT_VERSION ' CMakeLists.txt | cut -d '"' -f 2)_$(git rev-list --count HEAD).r$(git rev-parse --short HEAD)"
+  # The testing mirror has a shorter history than the previous package source.
+  # Keep package versions increasing from the last published 752 revision.
+  local revision=$((752 + $(git rev-list --count fd68c11730ca1dce173a229d441c5e9ed0aebcb8..HEAD)))
+  echo "$(grep 'set(PROJECT_VERSION ' CMakeLists.txt | cut -d '"' -f 2)_${revision}.r$(git rev-parse --short HEAD)"
 }
 
 prepare() {
