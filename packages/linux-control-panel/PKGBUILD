@@ -1,6 +1,6 @@
 pkgname=linux-control-panel
 pkgver=0.1.0
-pkgrel=56
+pkgrel=57
 pkgdesc='Aero7 system settings hub for Linux and Plasma 6'
 arch=('x86_64')
 url='https://gitgud.io/aero7-open-project/aero7-control-panel'
@@ -28,8 +28,8 @@ optdepends=('bluez-utils: Bluetooth discovery, pairing and connection management
             'colord: Color Management optional feature'
             'aero7-programs-center-git: Programs Center Beta optional feature')
 makedepends=('aero7-qt' 'cmake' 'ninja')
-source=('linux-control-panel-0.1.0-r50.tar.gz')
-sha256sums=('dd89291c8c00e89b8727c45068fa2eb9c1381bfe8ccbc38ae2b6d6075c695914')
+source=('linux-control-panel-0.1.0-r57.tar.gz')
+sha256sums=('5797a15c7ec3de34c83882e56e6b65a6a5c2f0206ca1fb913e6b2e4fb359d5e7')
 
 build() {
   cmake -S linux-control -B build -G Ninja \
