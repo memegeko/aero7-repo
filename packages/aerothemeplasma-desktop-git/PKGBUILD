@@ -1,7 +1,7 @@
 # Maintainer: WackyIdeas <wackyideas@disroot.org>
 
 pkgname=('aerothemeplasma-desktop-git')
-pkgver=6.7.0_754.r9ebfac0
+pkgver=6.7.0_755.rf441f7b
 pkgrel=1
 pkgdesc="An Aero-inspired classic desktop shell for KDE Plasma"
 arch=(x86_64)
@@ -80,7 +80,7 @@ makedepends=(git
              vulkan-headers)
 checkdepends=(python)
 options=('!debug')
-source=("${pkgname}::git+${url}.git#commit=9ebfac043eacab538a254eeac1106d549cc3e474"
+source=("${pkgname}::git+${url}.git#commit=f441f7b619b8dfa013f5ca6eb9c4799422b5cafc"
         'aero7-beta2-integration.patch'
         'Aero7OnScreenKeyboard.qml'
         'aero7-login-background.jpg'

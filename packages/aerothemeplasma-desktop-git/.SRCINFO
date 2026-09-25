@@ -1,6 +1,6 @@
 pkgbase = aerothemeplasma-desktop-git
 	pkgdesc = An Aero-inspired classic desktop shell for KDE Plasma
-	pkgver = 6.7.0_754.r9ebfac0
+	pkgver = 6.7.0_755.rf441f7b
 	pkgrel = 1
 	url = https://gitgud.io/aero7-open-project/aerothemeplasma
 	arch = x86_64
@@ -82,7 +82,7 @@ pkgbase = aerothemeplasma-desktop-git
 	conflicts = aerothemeplasma-desktop
 	options = !debug
 	backup = etc/xdg/kwalletrc
-	source = aerothemeplasma-desktop-git::git+https://gitgud.io/aero7-open-project/aerothemeplasma.git#commit=9ebfac043eacab538a254eeac1106d549cc3e474
+	source = aerothemeplasma-desktop-git::git+https://gitgud.io/aero7-open-project/aerothemeplasma.git#commit=f441f7b619b8dfa013f5ca6eb9c4799422b5cafc
 	source = aero7-beta2-integration.patch
 	source = Aero7OnScreenKeyboard.qml
 	source = aero7-login-background.jpg
