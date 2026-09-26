@@ -201,8 +201,11 @@ def validate_desktop_polish() -> None:
     programs_pkgbuild = (
         REPO / "packages" / "aero7-programs-center-git" / "PKGBUILD"
     ).read_text(encoding="utf-8")
-    if "aero7-offline-package-inventory.patch" not in programs_pkgbuild:
-        fail("Programs Center does not preserve the offline package inventory")
+    if "aero7-offline-package-inventory.patch" in programs_pkgbuild:
+        fail("Programs Center still applies the retired offline-inventory patch")
+    for dependency in ("appstream-qt", "archlinux-appstream-data", "flatpak"):
+        if dependency not in programs_pkgbuild:
+            fail(f"Programs Center is missing required catalog dependency: {dependency}")
 
     desktop_pkgbuild = (
         REPO / "packages" / "aerothemeplasma-desktop-git" / "PKGBUILD"

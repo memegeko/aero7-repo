@@ -54,6 +54,10 @@ builder, repository-signature, public pacman synchronization, and
 public-download checks. The current build ID and live publication progress are
 available at <https://aero7.org/repo/status/>.
 Pushing source alone does not promote future packages or publish either ISO.
+The `testing` recipe for Programs Center now pins `bd84818` (version
+`1:0.2.0.r18.gbd84818-1`). It builds from GitGud with the offline inventory
+already integrated upstream. This candidate is **not** in the signed public
+repository until a builder run is validated and explicitly published.
 
 The `testing` branch pins Desktop and Internet Explorer to `7831dde`, Gadgets
 to the same reviewed Desktop revision, File Explorer to `3770c0e0d`, and the
