@@ -1,7 +1,7 @@
 pkgbase = aero7-file-explorer
 	pkgdesc = Aero7 File Explorer with Windows 7 shell behavior and appearance
 	pkgver = 25.12.3
-	pkgrel = 61
+	pkgrel = 62
 	url = https://gitgud.io/aero7-open-project/aero7-file-explorer
 	arch = x86_64
 	license = GPL-2.0-or-later
@@ -49,6 +49,6 @@ pkgbase = aero7-file-explorer
 	source = aero7-file-explorer::git+https://gitgud.io/aero7-open-project/aero7-file-explorer.git#commit=d8a1a619bc169b4eba7964750a34a4c35c74793b
 	source = aero7-managed-drive-visibility.patch
 	sha256sums = SKIP
-	sha256sums = 7aa9c0e5f28e9461abc5a0269efee753176e90a2a0beb95406bd76dd1b38d38e
+	sha256sums = 1c431662230d25d0fdd28e121ab150dc2f3a8382f8db3405b193ad2c7c57913a
 
 pkgname = aero7-file-explorer

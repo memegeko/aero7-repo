@@ -124,3 +124,208 @@ index 0f5893959..b0eb301fd 100644
      void computerSystemDriveOpensRoot()
      {
          Aero7ComputerView computer;
+diff --git a/src/dolphinplacesmodelsingleton.cpp b/src/dolphinplacesmodelsingleton.cpp
+index 21f6acfeb..337be8d09 100644
+--- a/src/dolphinplacesmodelsingleton.cpp
++++ b/src/dolphinplacesmodelsingleton.cpp
+@@ -298,7 +298,7 @@ DolphinPlacesModel::DolphinPlacesModel(QObject *parent)
+     }
+     refreshStoragePlaces();
+     // Native KIO device entries retain mount/eject actions. Re-evaluate their
+-    // visibility after mount changes, without persisting synthetic drive links.
++    // visibility and the managed fixed-drive links after mount changes.
+     new Aero7Storage::MountWatcher(this, [this] { refreshStoragePlaces(); });
+     connect(this, &QAbstractItemModel::rowsInserted, this, [this] {
+         QTimer::singleShot(0, this, &DolphinPlacesModel::refreshStoragePlaces);
+@@ -320,8 +320,11 @@ void DolphinPlacesModel::refreshStoragePlaces()
+     QHash<QString, QString> names;
+     for (const auto &entry : Aero7Storage::mounted())
+         if (entry.root != QLatin1String("/")) names.insert(entry.root, entry.name);
++    const QSet<QString> managedRoots = Aero7Storage::managedStartupMountRoots();
++    m_managedDriveRoots = managedRoots;
+     const bool namesChanged = names != m_storageNames;
+     m_storageNames = names;
++    QSet<QString> visibleNativeRoots;
+     for (int row = 0; row < rowCount(); ++row) {
+         const QModelIndex item = index(row, 0);
+         if (!isDevice(item)) continue;
+@@ -348,6 +351,56 @@ void DolphinPlacesModel::refreshStoragePlaces()
+         const bool hidden = !Aero7Storage::deviceVisible(access && access->isAccessible(),
+                                                        visibleMount, ignored, filesystem, removable);
+         if (isHidden(item) != hidden) setPlaceHidden(item, hidden);
++        if (!hidden && visibleMount)
++            visibleNativeRoots.insert(QDir::cleanPath(deviceUrl.toLocalFile()));
++    }
++
++    // Solid does not always expose fixed fstab disks in KFilePlacesModel. The
++    // Computer view already knows about them, so give those same mounted disks
++    // a real, keyboard-activatable sidebar place rather than painting a dead
++    // icon or exposing every Linux mount under Computer.
++    QStringList managedPaths;
++    for (const QString &path : managedRoots) managedPaths.append(path);
++    managedPaths.sort();
++    QModelIndex after;
++    for (int row = 0; row < rowCount(); ++row) {
++        const QModelIndex item = index(row, 0);
++        if (url(item).isLocalFile()
++            && url(item).toLocalFile() == specialPlacePath(QStringLiteral("Local Disk (C:)"))) {
++            after = item;
++            break;
++        }
++    }
++    for (const QString &path : std::as_const(managedPaths)) {
++        if (!names.contains(path) || visibleNativeRoots.contains(path)) continue;
++        const QUrl driveUrl = QUrl::fromLocalFile(path);
++        QModelIndex place;
++        for (int row = 0; row < rowCount(); ++row) {
++            const QModelIndex item = index(row, 0);
++            if (!isDevice(item) && url(item).matches(driveUrl, QUrl::StripTrailingSlash)) {
++                place = item;
++                break;
++            }
++        }
++        if (!place.isValid()) {
++            addPlace(names.value(path), driveUrl, QStringLiteral("drive-harddisk"), QString(), after);
++            for (int row = 0; row < rowCount(); ++row) {
++                const QModelIndex item = index(row, 0);
++                if (!isDevice(item) && url(item).matches(driveUrl, QUrl::StripTrailingSlash)) {
++                    place = item;
++                    break;
++                }
++            }
++        }
++        if (place.isValid()) after = place;
++    }
++    for (int row = 0; row < rowCount(); ++row) {
++        const QModelIndex item = index(row, 0);
++        if (isDevice(item) || !url(item).isLocalFile()) continue;
++        const QString path = QDir::cleanPath(url(item).toLocalFile());
++        if (!managedRoots.contains(path)) continue;
++        const bool hidden = !names.contains(path) || visibleNativeRoots.contains(path);
++        if (isHidden(item) != hidden) setPlaceHidden(item, hidden);
+     }
+     if (namesChanged && rowCount() > 0)
+         Q_EMIT dataChanged(index(0, 0), index(rowCount() - 1, 0),
+@@ -403,12 +456,17 @@ QVariant DolphinPlacesModel::data(const QModelIndex &index, int role) const
+ {
+     switch (role) {
+     case Qt::DisplayRole:
+-        if (isDevice(index) && url(index).isLocalFile()) {
++        if (url(index).isLocalFile()) {
+             const auto name = m_storageNames.constFind(QDir::cleanPath(url(index).toLocalFile()));
+-            if (name != m_storageNames.cend()) return *name;
++            if (name != m_storageNames.cend()
++                && (isDevice(index) || m_managedDriveRoots.contains(QDir::cleanPath(url(index).toLocalFile()))))
++                return *name;
+         }
+         break;
+     case Qt::DecorationRole:
++        if (!isDevice(index) && url(index).isLocalFile()
++            && m_managedDriveRoots.contains(QDir::cleanPath(url(index).toLocalFile())))
++            return QIcon::fromTheme(QStringLiteral("drive-harddisk"));
+         if (url(index).isLocalFile()
+             && url(index).toLocalFile() == specialPlacePath(QStringLiteral("Local Disk (C:)"))) {
+             // Existing profiles may still have the pre-fork generic disk icon
+@@ -434,6 +492,9 @@ QVariant DolphinPlacesModel::data(const QModelIndex &index, int role) const
+         if (itemUrl.isLocalFile()
+             && itemUrl.toLocalFile() == specialPlacePath(QStringLiteral("Local Disk (C:)")))
+             return QStringLiteral("Computer");
++        if (!isDevice(index) && itemUrl.isLocalFile()
++            && m_managedDriveRoots.contains(QDir::cleanPath(itemUrl.toLocalFile())))
++            return QStringLiteral("Computer");
+         if (itemUrl.isLocalFile()
+             && itemUrl.toLocalFile() == specialPlacePath(QStringLiteral("Network")))
+             return QStringLiteral("Network");
+diff --git a/src/dolphinplacesmodelsingleton.h b/src/dolphinplacesmodelsingleton.h
+index a16a28ee6..3d8074067 100644
+--- a/src/dolphinplacesmodelsingleton.h
++++ b/src/dolphinplacesmodelsingleton.h
+@@ -10,6 +10,7 @@
+ #include <QScopedPointer>
+ #include <QString>
+ #include <QHash>
++#include <QSet>
+ #include <QUrl>
+ #include <QVector>
+ 
+@@ -64,6 +65,7 @@ private:
+     bool m_isEmpty = false;
+     bool m_panelsLocked = true; // common-case, panels are locked
+     QHash<QString, QString> m_storageNames;
++    QSet<QString> m_managedDriveRoots;
+     QVector<Favorite> m_favorites;
+ };
+ 
+diff --git a/src/tests/dolphinmainwindowtest.cpp b/src/tests/dolphinmainwindowtest.cpp
+index 936ebe08c..7a9bc9466 100644
+--- a/src/tests/dolphinmainwindowtest.cpp
++++ b/src/tests/dolphinmainwindowtest.cpp
+@@ -15,6 +15,7 @@
+ #include "dolphinplacesmodelsingleton.h"
+ #include "dolphincontextmenu.h"
+ #include "aero7libraries.h"
++#include "aero7storage.h"
+ #include <KFilePlacesModel>
+ #include "kitemviews/kfileitemmodel.h"
+ #include "kitemviews/kfileitemmodelrolesupdater.h"
+@@ -96,6 +97,7 @@ private Q_SLOTS:
+     void testAero7SystemDriveActivation();
+     void testAero7BreadcrumbSurvivesPlacesRefresh();
+     void testAero7NoInventedCdPlace();
++    void testAero7ManagedDriveSidebar();
+     void testAero7PlacesMenuRejectsInvalidOrForeignIndex();
+     void testAero7PlacesMenuUsesNativeStorageCapabilities();
+     void testAero7PlacesMenuDoesNotTearDownBookmarks();
+@@ -891,6 +893,52 @@ void DolphinMainWindowTest::testAero7NoInventedCdPlace()
+                 != QUrl::fromLocalFile(oldPath));
+ }
+ 
++void DolphinMainWindowTest::testAero7ManagedDriveSidebar()
++{
++    QString drivePath;
++    QString driveName;
++    for (const auto &drive : Aero7Storage::mounted()) {
++        if (!Aero7Storage::isManagedStartupMount(drive.root)) continue;
++        drivePath = drive.root;
++        driveName = drive.name;
++        break;
++    }
++    if (drivePath.isEmpty()) QSKIP("No mounted Aero7-managed internal disk in this environment");
++
++    auto *panel = m_mainWindow->m_placesPanel;
++    auto *places = qobject_cast<DolphinPlacesModel *>(panel->model());
++    QVERIFY(places);
++    QModelIndex driveIndex;
++    for (int row = 0; row < places->rowCount(); ++row) {
++        const QModelIndex item = places->index(row, 0);
++        if (places->url(item) == QUrl::fromLocalFile(drivePath) && !places->isHidden(item)) {
++            driveIndex = item;
++            break;
++        }
++    }
++    QVERIFY2(driveIndex.isValid(), "Mounted managed disk is missing from the Computer sidebar");
++    QCOMPARE(driveIndex.data(Qt::DisplayRole).toString(), driveName);
++    QCOMPARE(driveIndex.data(KFilePlacesModel::GroupRole).toString(), QStringLiteral("Computer"));
++    QVERIFY(!qvariant_cast<QIcon>(driveIndex.data(Qt::DecorationRole)).isNull());
++
++    m_mainWindow->openDirectories({QUrl::fromLocalFile(QDir::homePath())}, false);
++    m_mainWindow->show();
++    QVERIFY(QTest::qWaitForWindowExposed(m_mainWindow.data()));
++    panel->viewport()->update();
++    QTRY_VERIFY([&] {
++        for (const auto &hit : std::as_const(panel->m_aero7NavigationHits))
++            if (hit.index == driveIndex) return true;
++        return false;
++    }());
++    for (const auto &hit : std::as_const(panel->m_aero7NavigationHits)) {
++        if (hit.index != driveIndex) continue;
++        QTest::mouseClick(panel->viewport(), Qt::LeftButton, Qt::NoModifier, hit.rect.center());
++        QTRY_COMPARE(m_mainWindow->activeViewContainer()->url(), QUrl::fromLocalFile(drivePath));
++        return;
++    }
++    QFAIL("Managed disk sidebar hit target disappeared");
++}
++
+ void DolphinMainWindowTest::testAero7PlacesMenuRejectsInvalidOrForeignIndex()
+ {
+     auto *panel = m_mainWindow->m_placesPanel;

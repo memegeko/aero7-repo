@@ -1,6 +1,6 @@
 pkgname=aero7-file-explorer
 pkgver=25.12.3
-pkgrel=61
+pkgrel=62
 pkgdesc='Aero7 File Explorer with Windows 7 shell behavior and appearance'
 arch=('x86_64')
 url='https://gitgud.io/aero7-open-project/aero7-file-explorer'
@@ -19,7 +19,7 @@ _commit=d8a1a619bc169b4eba7964750a34a4c35c74793b
 source=("aero7-file-explorer::git+$url.git#commit=$_commit"
         'aero7-managed-drive-visibility.patch')
 sha256sums=('SKIP'
-            '7aa9c0e5f28e9461abc5a0269efee753176e90a2a0beb95406bd76dd1b38d38e')
+            '1c431662230d25d0fdd28e121ab150dc2f3a8382f8db3405b193ad2c7c57913a')
 
 prepare() {
   cd aero7-file-explorer
