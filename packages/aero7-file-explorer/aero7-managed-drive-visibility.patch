@@ -1,0 +1,126 @@
+diff --git a/src/aero7/aero7computerdialog.cpp b/src/aero7/aero7computerdialog.cpp
+index d586d878e..2668b1def 100644
+--- a/src/aero7/aero7computerdialog.cpp
++++ b/src/aero7/aero7computerdialog.cpp
+@@ -152,7 +152,8 @@ void Aero7ComputerView::refresh()
+     QList<Drive> hard;
+     QList<Drive> removable;
+     for (const auto &entry : Aero7Storage::mounted()) {
+-        (entry.root == QLatin1String("/") ? hard : removable).append({entry, {}});
++        (entry.root == QLatin1String("/") || Aero7Storage::isManagedStartupMount(entry.root)
++            ? hard : removable).append({entry, {}});
+     }
+     auto *devices = findChild<Aero7StorageDevices *>();
+     for (const auto &device : devices->unmounted()) {
+diff --git a/src/aero7/aero7storage.h b/src/aero7/aero7storage.h
+index ba6587342..8cb2d1984 100644
+--- a/src/aero7/aero7storage.h
++++ b/src/aero7/aero7storage.h
+@@ -2,6 +2,9 @@
+ #pragma once
+ 
+ #include <QDir>
++#include <QFile>
++#include <QFileInfo>
++#include <QSet>
+ #include <QStorageInfo>
+ #include <QStringList>
+ #include <algorithm>
+@@ -9,6 +12,36 @@
+ // Private shared presentation policy. No placeholder folders or invented devices.
+ namespace Aero7Storage
+ {
++inline QSet<QString> managedStartupMountRoots(const QByteArray &fstab)
++{
++    QSet<QString> roots;
++    for (const QByteArray &rawLine : fstab.split('\n')) {
++        const QByteArray line = rawLine.trimmed();
++        if (line.isEmpty() || line.startsWith('#')) continue;
++        const QList<QByteArray> fields = line.simplified().split(' ');
++        if (fields.size() < 4 || !fields.at(0).startsWith("UUID=")) continue;
++        const QString root = QString::fromLocal8Bit(fields.at(1));
++        if (root == QLatin1String("/mnt/aero7-")
++            || !root.startsWith(QLatin1String("/mnt/aero7-"))
++            || QDir::cleanPath(root) != root || QFileInfo(root).path() != QLatin1String("/mnt"))
++            continue;
++        const QList<QByteArray> options = fields.at(3).split(',');
++        if (options.contains("x-aero7-managed")) roots.insert(root);
++    }
++    return roots;
++}
++
++inline QSet<QString> managedStartupMountRoots()
++{
++    QFile fstab(QStringLiteral("/etc/fstab"));
++    return fstab.open(QIODevice::ReadOnly) ? managedStartupMountRoots(fstab.readAll()) : QSet<QString>{};
++}
++
++inline bool isManagedStartupMount(const QString &path)
++{
++    return managedStartupMountRoots().contains(QDir::cleanPath(path));
++}
++
+ inline QString sizeText(qint64 bytes)
+ {
+     if (bytes < 0) return QStringLiteral("Unavailable");
+@@ -27,15 +60,21 @@ inline QString sizeText(qint64 bytes)
+     return QStringLiteral("%1 %2").arg(value, 0, 'f', value < 10.0 ? 1 : 0).arg(units.at(unit));
+ }
+ 
+-inline bool visibleRoot(const QString &path, const QString &user)
++inline bool visibleRoot(const QString &path, const QString &user,
++                        const QSet<QString> &managedRoots)
+ {
+     const QString root = QDir::cleanPath(path);
+-    if (root == QLatin1String("/")) return true;
++    if (root == QLatin1String("/") || managedRoots.contains(root)) return true;
+     if (user.isEmpty() || user.contains(QLatin1Char('/'))) return false;
+     return root.startsWith(QStringLiteral("/run/media/%1/").arg(user))
+         || root.startsWith(QStringLiteral("/media/%1/").arg(user));
+ }
+ 
++inline bool visibleRoot(const QString &path, const QString &user)
++{
++    return visibleRoot(path, user, managedStartupMountRoots());
++}
++
+ inline bool visible(const QStorageInfo &storage)
+ {
+     return storage.isValid() && storage.isReady() && storage.bytesTotal() > 0
+@@ -109,7 +148,8 @@ inline QList<Entry> mounted()
+         const bool system = root == QLatin1String("/");
+         result.append({volume, root, displayName(volume.name(), system, system ? 0 : ordinal++),
+                        system ? QStringLiteral("drive-harddisk-root")
+-                              : QStringLiteral("drive-removable-media")});
++                              : isManagedStartupMount(root) ? QStringLiteral("drive-harddisk")
++                                                            : QStringLiteral("drive-removable-media")});
+     }
+     return result;
+ }
+diff --git a/src/tests/aero7commondialogtest.cpp b/src/tests/aero7commondialogtest.cpp
+index 0f5893959..b0eb301fd 100644
+--- a/src/tests/aero7commondialogtest.cpp
++++ b/src/tests/aero7commondialogtest.cpp
+@@ -659,6 +659,22 @@ private Q_SLOTS:
+         QVERIFY(!Aero7Storage::visible(QStorageInfo()));
+     }
+ 
++    void onlyExplicitAero7StartupMountsAreVisible()
++    {
++        const QByteArray fstab =
++            "# UUID=ignored /mnt/aero7-comment ext4 defaults,x-aero7-managed 0 0\n"
++            "UUID=data /mnt/aero7-geeked_ass_drive ext4 defaults,nofail,x-gvfs-show,x-aero7-managed 0 0\n"
++            "UUID=other /mnt/ordinary ext4 defaults,x-aero7-managed 0 0\n"
++            "UUID=hidden /mnt/aero7-hidden ext4 defaults 0 0\n"
++            "UUID=escape /mnt/aero7-../private ext4 defaults,x-aero7-managed 0 0\n"
++            "/dev/sdb1 /mnt/aero7-device ext4 defaults,x-aero7-managed 0 0\n";
++        const QSet<QString> managed = Aero7Storage::managedStartupMountRoots(fstab);
++        QCOMPARE(managed, QSet<QString>{QStringLiteral("/mnt/aero7-geeked_ass_drive")});
++        QVERIFY(Aero7Storage::visibleRoot("/mnt/aero7-geeked_ass_drive", "test", managed));
++        QVERIFY(!Aero7Storage::visibleRoot("/mnt/aero7-hidden", "test", managed));
++        QVERIFY(!Aero7Storage::visibleRoot("/mnt/ordinary", "test", managed));
++    }
++
+     void computerSystemDriveOpensRoot()
+     {
+         Aero7ComputerView computer;

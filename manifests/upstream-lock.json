@@ -102,11 +102,11 @@
     "aero7-file-explorer": {
       "source_type": "pinned-vcs",
       "source_revisions": {
-        "https://gitgud.io/aero7-open-project/aero7-file-explorer": "3770c0e0d98262af094718b5d821e7286ceba5d4"
+        "https://gitgud.io/aero7-open-project/aero7-file-explorer": "d8a1a619bc169b4eba7964750a34a4c35c74793b"
       },
-      "pkgbuild_sha256": "6be9bf6136e3ede2b9fe2527a7564051ef3b7dbee49214d735e4a1b5e1b8bd28",
-      "srcinfo_sha256": "7bd1cb09898c5fb6ffa2b8803ef07867b2716e525838377d1fcaee7f7fe6ecd9",
-      "reviewed_at": "2026-09-21T00:00:00Z"
+      "pkgbuild_sha256": "02e81c822f1cb70e96135853e6cb153c91dbcf2c437ab297581d838bbe84469e",
+      "srcinfo_sha256": "d420e9d57173a7ba974d2cc68753e1232bbd414c9204e31a99671f7c5bb92ad4",
+      "reviewed_at": "2026-09-26T19:13:16Z"
     },
     "aero7-gwenview": {
       "source_type": "pinned-vcs",

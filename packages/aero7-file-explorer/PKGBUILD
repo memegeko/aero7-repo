@@ -1,6 +1,6 @@
 pkgname=aero7-file-explorer
 pkgver=25.12.3
-pkgrel=60
+pkgrel=61
 pkgdesc='Aero7 File Explorer with Windows 7 shell behavior and appearance'
 arch=('x86_64')
 url='https://gitgud.io/aero7-open-project/aero7-file-explorer'
@@ -16,8 +16,15 @@ provides=("dolphin=$pkgver" 'aero7-dolphin')
 conflicts=('dolphin' 'aero7-dolphin')
 replaces=('aero7-dolphin')
 _commit=d8a1a619bc169b4eba7964750a34a4c35c74793b
-source=("aero7-file-explorer::git+$url.git#commit=$_commit")
-sha256sums=('SKIP')
+source=("aero7-file-explorer::git+$url.git#commit=$_commit"
+        'aero7-managed-drive-visibility.patch')
+sha256sums=('SKIP'
+            '7aa9c0e5f28e9461abc5a0269efee753176e90a2a0beb95406bd76dd1b38d38e')
+
+prepare() {
+  cd aero7-file-explorer
+  patch -Np1 -i "$srcdir/aero7-managed-drive-visibility.patch"
+}
 
 build() {
   cmake -S aero7-file-explorer -B build -G Ninja \
