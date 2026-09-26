@@ -105,10 +105,34 @@ index 4a9cf1a..f632d6c 100644
      }
    
      onCurrentIndexChanged: {
+diff --git a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/OftenUsedView.qml b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/OftenUsedView.qml
+index cb0d4a5..bc1bf62 100755
+--- a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/OftenUsedView.qml
++++ b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/OftenUsedView.qml
+@@ -100,11 +100,14 @@ Item {
+             property var favoritesModel: globalFavorites
+             property int favoritesCount: sourceModel.favoritesModel.count
+             onFavoritesCountChanged: Qt.callLater(() => { sourceModel.refresh()});
+-            onCountChanged: Qt.callLater(() => {
+-                if(count > Plasmoid.configuration.numberRows) sourceModel.refresh();
+-            })
+-            function trigger(index, str, ptr) {
+-                sourceModel.trigger(index, str, ptr);
++            function trigger(proxyRow, actionId, actionArgument) {
++                // Hidden pinned and duplicate rows make the proxy row differ
++                // from the activity model row. Launch the displayed app.
++                const sourceIndex = mapToSource(index(proxyRow, 0));
++                if (sourceIndex.row < 0) {
++                    return false;
++                }
++                return sourceModel.trigger(sourceIndex.row, actionId, actionArgument);
+             }
+             function normalizedName(value) {
+                 return String(value || "").trim().toLocaleLowerCase();
 diff --git a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/SearchView.qml b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/SearchView.qml
 old mode 100755
 new mode 100644
-index 5a34a8a..c18fc20
+index 5a34a8a..9df92df
 --- a/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/SearchView.qml
 +++ b/plasma/plasmoids/io.gitgud.wackyideas.SevenStart/contents/ui/SearchView.qml
 @@ -18,10 +18,12 @@
@@ -124,7 +148,7 @@ index 5a34a8a..c18fc20
  
  import org.kde.plasma.private.kicker as Kicker
  import org.kde.kitemmodels as KItemModels
-@@ -31,10 +33,198 @@ import org.kde.kirigami as Kirigami
+@@ -31,10 +33,207 @@ import org.kde.kirigami as Kirigami
  Item {
      id: searchViewContainer
  
@@ -137,6 +161,15 @@ index 5a34a8a..c18fc20
 +    property var computerManagementCatalog: []
 +    property var deviceManagerCatalog: []
 +    property int runnerResultCount: 0
++
++    // Keep local Aero7 settings responsive while coalescing expensive
++    // KRunner queries during a burst of typing.
++    Timer {
++        id: queryDelay
++        interval: 120
++        repeat: false
++        onTriggered: runnerModel.query = searchField.text
++    }
 +
 +    function normalized(value) {
 +        return String(value || "").trim().toLocaleLowerCase();
@@ -324,7 +357,7 @@ index 5a34a8a..c18fc20
  
      KItemModels.KSortFilterProxyModel {
          id: filteredRunnerModel
-@@ -66,18 +256,18 @@ Item {
+@@ -66,18 +265,18 @@ Item {
      function refreshResultsModel() {
          unfilteredRunnerModel = runnerModel.count ? runnerModel.modelForRow(0) : null;
          filteredRunnerModel.invalidateFilter();
@@ -347,7 +380,7 @@ index 5a34a8a..c18fc20
          if(listView.currentIndex-1 < 0) {
              listView.currentIndex = listView.count - 1;
          } else {
-@@ -86,7 +276,7 @@ Item {
+@@ -86,7 +285,7 @@ Item {
      }
      function incrementCurrentIndex() {
          inhibitMouse();
@@ -356,31 +389,37 @@ index 5a34a8a..c18fc20
          if(listView.currentIndex+1 >= listView.count) {
              listView.currentIndex = 0;
          } else {
-@@ -96,10 +286,12 @@ Item {
+@@ -95,11 +294,13 @@ Item {
+     }
      function onQueryChanged() {
          queryFinished = false;
-         runnerModel.query = searchField.text;
+-        runnerModel.query = searchField.text;
+-        filteredRunnerModel.invalidateFilter();
++        queryDelay.stop();
 +        unfilteredRunnerModel = null;
-         filteredRunnerModel.invalidateFilter();
 +        rebuildCombinedResults();
          if (!searchField.text) {
-             unfilteredRunnerModel = null;
+-            unfilteredRunnerModel = null;
 -            runnerGrid.model = null;
-+            combinedResultsModel.clear();
++            runnerModel.query = "";
++        } else {
++            queryDelay.start();
          }
      }
      function openContextMenu() {
-@@ -110,7 +302,7 @@ Item {
+@@ -110,15 +311,16 @@ Item {
  
      Connections {
          function onCountChanged() {
 -            if (runnerModel.count && !runnerGrid.model) {
-+            if (runnerModel.count && !unfilteredRunnerModel) {
++            if (runnerModel.query === searchField.text
++                    && runnerModel.count && !unfilteredRunnerModel) {
                  refreshResultsModel();
              }
          }
-@@ -118,7 +310,7 @@ Item {
-             if (runnerModel.count) {
+         function onQueryFinished() {
+-            if (runnerModel.count) {
++            if (runnerModel.query === searchField.text) {
                  refreshResultsModel();
                  queryFinished = true;
 -                var listView = runnerGrid.flickableItem;
@@ -388,7 +427,7 @@ index 5a34a8a..c18fc20
                  if(listView.count > 0) listView.currentIndex = 0;
                  //console.log(runnerModel.modelForRow(0).modelForRow(0))
              }
-@@ -128,23 +320,22 @@ Item {
+@@ -128,23 +330,22 @@ Item {
      }
  
      NavGrid {
@@ -457,7 +496,7 @@ index b35c8ce..9f54857
          text: itemText
      }
 diff --git a/plasma/plasmoids/io.gitgud.wackyideas.seventasks/contents/ui/main.qml b/plasma/plasmoids/io.gitgud.wackyideas.seventasks/contents/ui/main.qml
-index 1cc8662..d89a3d1 100644
+index 23e45e1..1781ed4 100644
 --- a/plasma/plasmoids/io.gitgud.wackyideas.seventasks/contents/ui/main.qml
 +++ b/plasma/plasmoids/io.gitgud.wackyideas.seventasks/contents/ui/main.qml
 @@ -66,7 +66,7 @@ PlasmoidItem {

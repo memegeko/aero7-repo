@@ -61,11 +61,11 @@
     "aerothemeplasma-desktop-git": {
       "source_type": "pinned-vcs",
       "source_revisions": {
-        "https://gitgud.io/aero7-open-project/aerothemeplasma": "8c7d82027dc82096eea769beab51cfd0e6390d91"
+        "https://gitgud.io/aero7-open-project/aerothemeplasma": "97378eb18beb2c917ea599dcbcb52d317c784b2e"
       },
-      "pkgbuild_sha256": "34db9760a1ce7dbebc4ec9a767fba81a4f7c6a0250df13d98f6eb6b67d0fedbb",
-      "srcinfo_sha256": "71d5efd31a137b439686f9d8d7841a5f323fbe0d4c8490330d4e53f60182afb5",
-      "reviewed_at": "2026-09-21T00:00:00Z"
+      "pkgbuild_sha256": "da1ba1ae8dc8df4e1b0967c6da09867af746d316158c5f1d92bfa2b44604c0ed",
+      "srcinfo_sha256": "75459da3de56a285c4d2e84b37f6d76ab5aa2d001a03633b1b2d2b0bdf6ce15c",
+      "reviewed_at": "2026-09-26T17:09:42Z"
     },
     "aero7-computer-management-git": {
       "source_type": "pinned-vcs",
