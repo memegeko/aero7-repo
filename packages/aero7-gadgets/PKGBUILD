@@ -10,7 +10,7 @@ makedepends=('cmake' 'dbus' 'git' 'kservice' 'ninja')
 provides=('win-gadgets')
 conflicts=('win-gadgets' 'win-gadgets-git')
 install="$pkgname.install"
-_commit=56977099a3a3d810801936d0091c322b8b112c30
+_commit=5f8ee70d640aea5f56ec078f271666bc6c2ce804
 source=("aero7-desktop::git+$url.git#commit=$_commit")
 sha256sums=('SKIP')
 

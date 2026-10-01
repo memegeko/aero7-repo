@@ -1,5 +1,5 @@
 pkgname=aerothemeplasma-desktop-git
-pkgver=6.7.0_760
+pkgver=6.7.0_761
 pkgrel=1
 pkgdesc='Aero7 desktop shell, taskbar, Start, login theme, and native helpers'
 arch=('x86_64')
@@ -34,7 +34,7 @@ options=('!debug')
 # Theme source and accepted branding/defaults are maintained inside Desktop.
 # Do not reapply the retired package overlays to this integrated source.
 _source_name=aero7-desktop-0.2.0
-_commit=56977099a3a3d810801936d0091c322b8b112c30
+_commit=5f8ee70d640aea5f56ec078f271666bc6c2ce804
 source=("$_source_name::git+$url.git#commit=$_commit")
 sha256sums=('SKIP')
 

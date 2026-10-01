@@ -18,7 +18,7 @@ pkgbase = aero7-gadgets
 	provides = win-gadgets
 	conflicts = win-gadgets
 	conflicts = win-gadgets-git
-	source = aero7-desktop::git+https://github.com/aero7-open-project/aero7-desktop.git#commit=56977099a3a3d810801936d0091c322b8b112c30
+	source = aero7-desktop::git+https://github.com/aero7-open-project/aero7-desktop.git#commit=5f8ee70d640aea5f56ec078f271666bc6c2ce804
 	sha256sums = SKIP
 
 pkgname = aero7-gadgets

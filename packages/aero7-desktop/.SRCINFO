@@ -1,7 +1,7 @@
 pkgbase = aero7-desktop
 	pkgdesc = Aero7-owned Wayland desktop session and shell integration
 	pkgver = 0.2.0
-	pkgrel = 44
+	pkgrel = 45
 	url = https://github.com/aero7-open-project/aero7-desktop
 	arch = x86_64
 	license = MIT
@@ -38,7 +38,7 @@ pkgbase = aero7-desktop
 	optdepends = aero7-programs-center-git: optional Programs Center Beta
 	optdepends = aero7-credential-vault: optional encrypted Credential Manager
 	options = !debug
-	source = aero7-desktop-0.2.0::git+https://github.com/aero7-open-project/aero7-desktop.git#commit=56977099a3a3d810801936d0091c322b8b112c30
+	source = aero7-desktop-0.2.0::git+https://github.com/aero7-open-project/aero7-desktop.git#commit=5f8ee70d640aea5f56ec078f271666bc6c2ce804
 	sha256sums = SKIP
 
 pkgname = aero7-desktop

@@ -1,6 +1,6 @@
 pkgbase = aerothemeplasma-desktop-git
 	pkgdesc = Aero7 desktop shell, taskbar, Start, login theme, and native helpers
-	pkgver = 6.7.0_760
+	pkgver = 6.7.0_761
 	pkgrel = 1
 	url = https://github.com/aero7-open-project/aero7-desktop
 	arch = x86_64
@@ -84,7 +84,7 @@ pkgbase = aerothemeplasma-desktop-git
 	conflicts = aerothemeplasma-desktop
 	options = !debug
 	backup = etc/xdg/kwalletrc
-	source = aero7-desktop-0.2.0::git+https://github.com/aero7-open-project/aero7-desktop.git#commit=56977099a3a3d810801936d0091c322b8b112c30
+	source = aero7-desktop-0.2.0::git+https://github.com/aero7-open-project/aero7-desktop.git#commit=5f8ee70d640aea5f56ec078f271666bc6c2ce804
 	sha256sums = SKIP
 
 pkgname = aerothemeplasma-desktop-git

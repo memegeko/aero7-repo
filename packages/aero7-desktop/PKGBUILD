@@ -1,6 +1,6 @@
 pkgname=aero7-desktop
 pkgver=0.2.0
-pkgrel=44
+pkgrel=45
 pkgdesc="Aero7-owned Wayland desktop session and shell integration"
 arch=('x86_64')
 options=('!debug')
@@ -39,7 +39,7 @@ optdepends=(
 )
 makedepends=('cmake' 'ninja' 'gettext' 'git')
 # Session and theme use the same tested combined Desktop commit.
-_commit=56977099a3a3d810801936d0091c322b8b112c30
+_commit=5f8ee70d640aea5f56ec078f271666bc6c2ce804
 source=("$pkgname-$pkgver::git+$url.git#commit=$_commit")
 sha256sums=('SKIP')
 
