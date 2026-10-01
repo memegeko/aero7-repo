@@ -362,10 +362,13 @@
         "x86_64"
       ],
       "depends": [
-        "appstream",
+        "qt6-base",
         "pacman",
-        "polkit",
-        "qt6-base"
+        "appstream",
+        "appstream-qt",
+        "archlinux-appstream-data",
+        "flatpak",
+        "polkit"
       ],
       "makedepends": [
         "cmake",
@@ -749,6 +752,7 @@
         "qt6-5compat",
         "qt6-wayland",
         "qt6-declarative",
+        "qt6-base",
         "kconfigwidgets",
         "ksvg",
         "wayland",
@@ -794,7 +798,6 @@
         "spectacle",
         "kcalc",
         "featherpad",
-        "qt6-base",
         "aero7-gadgets",
         "aero7-computer-management",
         "aero7-file-explorer",
@@ -802,6 +805,8 @@
         "tuxmanager"
       ],
       "makedepends": [
+        "cmake",
+        "ninja",
         "git",
         "extra-cmake-modules",
         "plasma-wayland-protocols",
@@ -822,14 +827,21 @@
       "depends": [
         "bash",
         "python",
+        "fontconfig",
+        "ttf-dejavu",
         "systemd",
         "kwin",
         "plasma-workspace",
         "qt6-declarative",
+        "qt6-base",
+        "libvlc",
+        "taglib",
+        "xorg-xwayland",
         "networkmanager",
         "pipewire-pulse",
-        "ttf-dejavu",
-        "ttf-liberation",
+        "vlc",
+        "vlc-gui-skins2",
+        "vlc-plugin-ffmpeg",
         "aero7-file-explorer",
         "aero7-gadgets",
         "aero7-internet-explorer",

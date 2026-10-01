@@ -211,18 +211,40 @@ def validate_desktop_polish() -> None:
         REPO / "packages" / "aerothemeplasma-desktop-git" / "PKGBUILD"
     ).read_text(encoding="utf-8")
     for required in [
-        'url="https://gitgud.io/aero7-open-project/aerothemeplasma"',
-        "#commit=8c7d82027dc82096eea769beab51cfd0e6390d91",
-        '"${pkgname%}/LICENSE"',
-        '"${pkgname%}/THIRD_PARTY.md"',
-        "aero7-kwalletrc",
-        '"$pkgdir/etc/xdg/kwalletrc"',
+        "url='https://github.com/aero7-open-project/aero7-desktop'",
+        '"$_source_name/theme"',
+        '"$_source_name/theme/LICENSE"',
+        '"$_source_name/theme/THIRD_PARTY.md"',
+        "backup=('etc/xdg/kwalletrc')",
+        'dbus-run-session --',
+        'ctest --test-dir build --output-on-failure',
     ]:
         if required not in desktop_pkgbuild:
-            fail(f"Aero7 desktop fork metadata is missing: {required}")
-    for obsolete_patch in ["aero7-desktop-polish.patch", "aero7-search-sections.patch"]:
+            fail(f"Combined Aero7 theme recipe metadata is missing: {required}")
+    for obsolete_patch in ["aero7-desktop-polish.patch", "aero7-search-sections.patch",
+                           "aero7-beta2-integration.patch", "aero7-watermark.png",
+                           "Aero7OnScreenKeyboard.qml", "aero7-login-background.jpg",
+                           "aero7-sddm-runtime-test.py"]:
         if obsolete_patch in desktop_pkgbuild:
             fail(f"integrated desktop source still applies obsolete patch: {obsolete_patch}")
+
+    # All packages owned by Desktop must use the same reviewed source. Check
+    # against the lock, not a stale hardcoded revision from a retired mirror.
+    desktop_source = "https://github.com/aero7-open-project/aero7-desktop"
+    locks = load_json(REPO / "manifests" / "upstream-lock.json")["packages"]
+    combined_revision = locks["aero7-desktop"]["source_revisions"].get(desktop_source)
+    if not combined_revision:
+        fail("Desktop has no canonical GitHub source pin")
+    for package in ["aero7-desktop", "aerothemeplasma-desktop-git",
+                    "aero7-gadgets", "aero7-internet-explorer"]:
+        if locks[package].get("source_revisions") != {desktop_source: combined_revision}:
+            fail(f"{package} does not share the tested combined Desktop source")
+        recipe = (REPO / "packages" / package / "PKGBUILD").read_text(encoding="utf-8")
+        if desktop_source not in recipe or f"_commit={combined_revision}" not in recipe:
+            fail(f"{package} recipe does not use the combined source pin")
+    session_recipe = (REPO / "packages/aero7-desktop/PKGBUILD").read_text(encoding="utf-8")
+    if session_recipe.count("-DAERO7_BUILD_THEME=OFF") != 2:
+        fail("Session build/check must disable theme to prevent duplicate ownership")
 
     for required_dependency in [
         "qterminal",
@@ -240,21 +262,8 @@ def validate_desktop_polish() -> None:
     ]:
         if obsolete in desktop_pkgbuild:
             fail(f"desktop branding is still overlaid during packaging: {obsolete}")
-    for required in [
-        "'aero7-watermark.png'",
-        'Assets/aero7-branding-r3.png',
-        "'aero7-beta2-integration.patch'",
-        "'Aero7OnScreenKeyboard.qml'",
-        "'aero7-login-background.jpg'",
-        "'aero7-sddm-runtime-test.py'",
-        'patch -d "${pkgname%}" -Np1 < aero7-beta2-integration.patch',
-        'SMOD/Aero7OnScreenKeyboard.qml',
-        'for background_name in background default-background preview.png',
-        'aero7-package-branding.png',
-    ]:
-        if required not in desktop_pkgbuild:
-            fail(f"Aero7 SDDM branding package integration is missing: {required}")
-
+    # Retain the historical assets for provenance only. Installation and
+    # runtime layout/branding checks now run inside the pinned Desktop source.
     desktop_assets = REPO / "packages" / "aerothemeplasma-desktop-git"
     kwallet_defaults = (desktop_assets / "aero7-kwalletrc").read_text(encoding="utf-8")
     for required in ["[Wallet]", "Enabled=false", "First Use=false"]:
@@ -266,7 +275,7 @@ def validate_desktop_polish() -> None:
         if actual_size != expected_size:
             fail(f"{asset} has size {actual_size}, expected {expected_size}")
     expected_desktop_asset_hashes = {
-        "aero7-beta2-integration.patch": "9397da5031d7c29043b6c4344f06979342ea90b7af2d67f2f2811ef3af194d22",
+        "aero7-beta2-integration.patch": "a9bca86de10c27b1b0d385526a9c045308e83d97e76c92aa0c9460e92a209286",
         "Aero7OnScreenKeyboard.qml": "e56d78b54366bee688a4eece2a0a4bdf6f8a0f490d3319a4285f4734ade8a7bd",
         "aero7-login-background.jpg": "65e825c2dcc1b0c80d14896a6108199d825f8dc7b44724f22fe19d8b308fb7e7",
         "aero7-sddm-runtime-test.py": "bf7e44188d7a682d7aa0eddf865ced1569c0f518a8c04d47445d04e8571d0d9d",

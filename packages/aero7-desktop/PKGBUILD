@@ -1,21 +1,29 @@
 pkgname=aero7-desktop
 pkgver=0.2.0
-pkgrel=40
-pkgdesc='Aero7-owned Wayland desktop session, recovery, migration, and shell integration'
+pkgrel=44
+pkgdesc="Aero7-owned Wayland desktop session and shell integration"
 arch=('x86_64')
-url='https://gitgud.io/aero7-open-project/aero7-desktop'
-license=('MIT')
+options=('!debug')
+url="https://github.com/aero7-open-project/aero7-desktop"
+license=('MIT' 'AGPL-3.0-or-later')
 depends=(
   'bash'
   'python'
+  'fontconfig'
+  'ttf-dejavu'
   'systemd'
   'kwin'
   'plasma-workspace'
   'qt6-declarative'
+  'qt6-base'
+  'libvlc'
+  'taglib'
+  'xorg-xwayland'
   'networkmanager'
   'pipewire-pulse'
-  'ttf-dejavu'
-  'ttf-liberation'
+  'vlc'
+  'vlc-gui-skins2'
+  'vlc-plugin-ffmpeg'
   'aero7-file-explorer'
   'aero7-gadgets'
   'aero7-internet-explorer'
@@ -25,24 +33,31 @@ depends=(
   'aero7-device-manager'
   'aero7-computer-management-git'
 )
+optdepends=(
+  'aero7-programs-center-git: optional Programs Center Beta'
+  'aero7-credential-vault: optional encrypted Credential Manager'
+)
 makedepends=('cmake' 'ninja' 'gettext' 'git')
-_commit=4f626b4a8a3f78b76bfb952c423b57a6190f8727
-source=("$pkgname::git+$url.git#commit=$_commit")
+# Session and theme use the same tested combined Desktop commit.
+_commit=56977099a3a3d810801936d0091c322b8b112c30
+source=("$pkgname-$pkgver::git+$url.git#commit=$_commit")
 sha256sums=('SKIP')
 
 build() {
-  cmake -S "$srcdir/$pkgname" -B build -G Ninja \
+  cmake -S "$pkgname-$pkgver" -B build -G Ninja \
     -DCMAKE_BUILD_TYPE=None \
     -DCMAKE_INSTALL_PREFIX=/usr \
     -DCMAKE_INSTALL_LIBEXECDIR=lib \
-    -DBUILD_TESTING=OFF
+    -DAERO7_BUILD_THEME=OFF \
+    -DBUILD_TESTING=OFF \
+    -DAERO7_INSTALL_TEST_TOOLS="${AERO7_INSTALL_TEST_TOOLS:-OFF}"
   cmake --build build
 }
 
 check() {
-  cmake -S "$srcdir/$pkgname" -B test-build -G Ninja \
+  cmake -S "$pkgname-$pkgver" -B test-build -G Ninja \
     -DCMAKE_BUILD_TYPE=None \
-    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DAERO7_BUILD_THEME=OFF \
     -DBUILD_TESTING=ON
   cmake --build test-build
   ctest --test-dir test-build --output-on-failure
@@ -50,17 +65,11 @@ check() {
 
 package() {
   DESTDIR="$pkgdir" cmake --install build
-
-  # The maintained File Explorer package owns the executable and desktop
-  # identity.  The session source retains a compatibility wrapper for
-  # standalone development installs, but the repository package must not
-  # overlap files owned by aero7-file-explorer.
-  rm -f "$pkgdir/usr/bin/aero7-file-explorer"
-  rm -f "$pkgdir/usr/share/applications/org.aero7.fileexplorer.desktop"
-
-  install -Dm644 "$srcdir/$pkgname/LICENSE" \
+  install -Dm644 "$pkgname-$pkgver/LICENSE" \
     "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
-  install -Dm644 "$srcdir/$pkgname/docs/RECOVERY.md" \
+  install -Dm644 "$pkgname-$pkgver/assets/media-player/ICON-LICENSE" \
+    "$pkgdir/usr/share/licenses/$pkgname/ICON-LICENSE"
+  install -Dm644 "$pkgname-$pkgver/docs/RECOVERY.md" \
     "$pkgdir/usr/share/doc/$pkgname/RECOVERY.md"
   install -d "$pkgdir/usr/lib/systemd/user/graphical-session.target.wants"
   local unit
