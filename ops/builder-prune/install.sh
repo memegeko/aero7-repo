@@ -3,10 +3,10 @@ set -Eeuo pipefail
 
 mode="${1:-}"
 bundle="${2:-}"
-[[ "$mode" == --check || "$mode" == --install ]] && [[ -n "$bundle" && "$#" -eq 2 ]] || {
+if [[ "$mode" != --check && "$mode" != --install ]] || [[ -z "$bundle" || "$#" -ne 2 ]]; then
   printf 'Usage: install.sh --check|--install BUNDLE_DIRECTORY\n' >&2
   exit 2
-}
+fi
 
 wrapper_sha=7e2d7cbc59747d95ee52a9321033eaeace7de1ab9cc48beb8978ca2ace5e23fc
 helper_sha=fcdf6671028473e16fbf59f2efe8bfa4037b7e2d33b955fe487096d7406e2b80
@@ -57,10 +57,10 @@ fi
   printf 'install-builder-prune: run only the root-owned /root installer copy\n' >&2
   exit 1
 }
-[[ "$(stat -c %u "$0")" -eq 0 ]] && [[ "$(stat -c %a "$0")" == 700 ]] || {
+if [[ "$(stat -c %u "$0")" -ne 0 ]] || [[ "$(stat -c %a "$0")" != 700 ]]; then
   printf 'install-builder-prune: installer ownership or mode is unsafe\n' >&2
   exit 1
-}
+fi
 
 # Copy unprivileged uploads into root-owned tmpfs before verifying or installing;
 # no file is executed as root from the writable upload directory.
