@@ -32,7 +32,8 @@ payloads into root-owned `/run` storage and checks them again before installing:
 | `/usr/local/libexec/aero7/prune-builder.sh` | root:root `0755` | Reviewed existing retention helper; executes as `aero7build` |
 | `/etc/sudoers.d/aero7-prune-builder-safe` | root:root `0440` | `admin` may run only the gate without a password or environment override |
 
-The installer refuses to replace a different installed payload. It validates
+The installer accepts a new install or the reviewed first wrapper hash for one
+fixed wrapper upgrade; it refuses other installed payloads. It validates
 the entire sudoers configuration after installation. It **does not clean up
 storage** during installation.
 
@@ -54,8 +55,9 @@ helper then runs **as `aero7build`**, keeps the current build and its sources,
 keeps the two newest complete staging builds, and deletes only older valid-ID
 staging/source directories. It never uses `--remove-current-sources`.
 
-If cleanup exits successfully with at least 20 GiB free, the wrapper restarts
-the runner if it was active. Check GitHub's runner **online** status; a running
+If cleanup exits successfully with at least 20 GiB free, the wrapper starts
+the runner if it was active or its systemd unit is enabled. This also resumes
+an enabled runner left stopped by an earlier failed cleanup. Check GitHub's runner **online** status; a running
 systemd wrapper alone is insufficient. On process, checksum, retention, or
 free-space failure the command exits nonzero and leaves the runner stopped if
 it had already been stopped. Investigate the exact failure before retrying.

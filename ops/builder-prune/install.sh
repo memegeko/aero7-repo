@@ -8,7 +8,8 @@ if [[ "$mode" != --check && "$mode" != --install ]] || [[ -z "$bundle" || "$#" -
   exit 2
 fi
 
-wrapper_sha=7e2d7cbc59747d95ee52a9321033eaeace7de1ab9cc48beb8978ca2ace5e23fc
+wrapper_sha=15d6426a531895bf59fdea384f9bf2b29538d19e80025eb1b3504615915856bf
+prior_wrapper_sha=7e2d7cbc59747d95ee52a9321033eaeace7de1ab9cc48beb8978ca2ace5e23fc
 helper_sha=fcdf6671028473e16fbf59f2efe8bfa4037b7e2d33b955fe487096d7406e2b80
 sudoers_sha=255c82dca13f7fc6b19b89f7d09a74f09f01b255862ab934e5c678a7fa6f71fd
 wrapper_name=aero7-prune-builder-safe
@@ -81,7 +82,19 @@ for item in "$wrapper_target:$wrapper_sha" "$helper_target:$helper_sha" "$sudoer
   target="${item%%:*}"
   expected="${item#*:}"
   if [[ -e "$target" || -L "$target" ]]; then
-    check_hash "$target" "$expected"
+    if [[ "$target" == "$wrapper_target" ]]; then
+      [[ -f "$target" && ! -L "$target" ]] || {
+        printf 'install-builder-prune: existing wrapper is not a regular file\n' >&2
+        exit 1
+      }
+      actual="$(sha256sum "$target" | awk '{print $1}')"
+      [[ "$actual" == "$wrapper_sha" || "$actual" == "$prior_wrapper_sha" ]] || {
+        printf 'install-builder-prune: existing wrapper is not an approved version\n' >&2
+        exit 1
+      }
+    else
+      check_hash "$target" "$expected"
+    fi
     [[ "$(stat -c %u:%g "$target")" == 0:0 ]] || {
       printf 'install-builder-prune: existing target is not root-owned: %s\n' "$target" >&2
       exit 1

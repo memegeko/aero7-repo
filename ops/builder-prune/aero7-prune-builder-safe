@@ -98,7 +98,7 @@ def idle_runner_process(command: str) -> bool:
 
 
 def run(command: list[str], *, timeout: int = 120, env: dict[str, str] | None = None) -> subprocess.CompletedProcess[str]:
-    return subprocess.run(command, text=True, timeout=timeout, env=env, check=False)
+    return subprocess.run(command, text=True, timeout=timeout, env=env, cwd="/", check=False)
 
 
 def main() -> int:
@@ -126,6 +126,7 @@ def main() -> int:
     require(not unexpected, f"build account has an active process; cleanup refused: {unexpected}")
 
     was_active = run(["/usr/bin/systemctl", "is-active", "--quiet", RUNNER_UNIT]).returncode == 0
+    runner_enabled = run(["/usr/bin/systemctl", "is-enabled", "--quiet", RUNNER_UNIT]).returncode == 0
     if was_active:
         stopped = run(["/usr/bin/systemctl", "stop", RUNNER_UNIT], timeout=45)
         require(stopped.returncode == 0, "could not stop the runner; cleanup refused")
@@ -163,12 +164,12 @@ def main() -> int:
     require(result.returncode == 0 and free >= MIN_FREE_BYTES,
             "guarded cleanup did not reach 20 GiB; runner remains stopped")
 
-    if was_active:
+    if was_active or runner_enabled:
         started = run(["/usr/bin/systemctl", "start", RUNNER_UNIT], timeout=45)
         require(started.returncode == 0, "storage recovered, but runner restart failed")
         print("aero7-prune-builder-safe: runner service started; verify GitHub runner online status")
     else:
-        print("aero7-prune-builder-safe: runner was inactive and was left inactive")
+        print("aero7-prune-builder-safe: runner was inactive and disabled; it was left inactive")
     return 0
 
 
