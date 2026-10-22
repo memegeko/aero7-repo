@@ -1,16 +1,17 @@
 pkgname=aero7-programs-center-git
-pkgver=0.1.0.r12.g0405a2e
+pkgver=0.2.0.r21.g7adbbed
 pkgrel=1
+epoch=1
 pkgdesc='Optional graphical software manager for Aero7 Linux (Beta)'
 arch=('x86_64')
 url='https://github.com/aero7-open-project/aero7-programs-center'
 license=('MIT')
-depends=('appstream' 'pacman' 'polkit' 'qt6-base')
+depends=('qt6-base' 'qt6-svg' 'pacman' 'appstream' 'appstream-qt' 'archlinux-appstream-data' 'flatpak' 'polkit')
 makedepends=('cmake' 'git' 'ninja' 'pkgconf')
 provides=('aero7-programs-center')
 conflicts=('aero7-programs-center')
 options=('!debug')
-_commit=0405a2ef42c96d253a9436b3413fdccfe7c1cb09
+_commit=7adbbed186ca7e5eced036ec76c9e1aee4328bc9
 source=("aero7-programs-center::git+$url.git#commit=$_commit")
 sha256sums=('SKIP')
 

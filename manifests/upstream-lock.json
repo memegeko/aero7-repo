@@ -151,11 +151,11 @@
     "aero7-programs-center-git": {
       "source_type": "pinned-vcs",
       "source_revisions": {
-        "https://github.com/aero7-open-project/aero7-programs-center": "0405a2ef42c96d253a9436b3413fdccfe7c1cb09"
+        "https://github.com/aero7-open-project/aero7-programs-center": "7adbbed186ca7e5eced036ec76c9e1aee4328bc9"
       },
-      "pkgbuild_sha256": "d72e802817784d77dcc271b8eac41e8493726f5263f859191a5e29810e22cc7e",
-      "srcinfo_sha256": "d1111a1290de3e15e553d4562e61d72f874c04cc32aca2e819aec9e0c19e2ea6",
-      "reviewed_at": "2026-09-04T13:52:49Z"
+      "pkgbuild_sha256": "ba20c9355204c0ea4206fb7146d8799ccee97d0a66c7f3f7d0ad2e2f18f33294",
+      "srcinfo_sha256": "b8d79db5cf6ef8bdc9e7516669ae9ab0a6bb473ad5063f68527b55d023184470",
+      "reviewed_at": "2026-10-22T18:54:29Z"
     },
     "aero7-desktop": {
       "source_type": "pinned-vcs",
