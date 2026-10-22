@@ -2,9 +2,10 @@
 
 ## Scope and pinned inputs
 
-The source `testing` branch points to
-`051fea34016122461eab12bc02b56501e1d2a10b`. The package recipe pins that
-commit and produces `aero7-programs-center-git` version
+The source `testing` and `beta` branches point to
+`051fea34016122461eab12bc02b56501e1d2a10b`. The `beta` ref was
+fast-forwarded from `7adbbed` after publication; `main` remains unchanged.
+The package recipe pins that commit and produces `aero7-programs-center-git` version
 `1:0.2.0.r22.g051fea3-1`. The dedicated builder VM compiled this package in
 a clean chroot, ran all six package tests, and signed it on 22 October 2026.
 
@@ -136,7 +137,13 @@ The public build-status JSON was refreshed after publication and read back
 over HTTPS with the same SHA256 as the reviewed local record.
 
 The VM gate covers compilation and all six automated tests, including the
-responsive layout checks. A manual visual GUI session on the exact published
-package has not been recorded; do not treat these automated results as that
-acceptance check. Source and package repository `main` branches were not
-changed.
+responsive layout checks. The exact published archive was also extracted and
+its binary launched on the Aero7 host PC without installing a package. Home,
+Internet category, Settings and Firefox detail were visually inspected at
+ordinary and narrow widths; screenshots and a method receipt are in
+`/home/admin/Documents/aero7 folder/Programs-Center-Delta-2026-10-22/host-inspection/`.
+At 720 px, the category results table requires horizontal scrolling and
+shortens program names. This inspection did not exercise installation,
+removal, updates or permission changes. The host's installed package remained
+at its earlier version. Source and package repository `main` branches were
+not changed.
