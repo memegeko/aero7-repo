@@ -2,10 +2,10 @@
 
 ## Scope and pinned inputs
 
-The source branch `aero7-programs-center/beta` points to
-`7adbbed186ca7e5eced036ec76c9e1aee4328bc9`. The package recipe pins that
+The source `testing` branch points to
+`051fea34016122461eab12bc02b56501e1d2a10b`. The package recipe pins that
 commit and produces `aero7-programs-center-git` version
-`1:0.2.0.r21.g7adbbed-1`. The package remains a candidate until the dedicated
+`1:0.2.0.r22.g051fea3-1`. The package remains a candidate until the dedicated
 builder VM compiles it in a clean chroot and signs it.
 
 The public signed repository base is

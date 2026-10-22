@@ -356,10 +356,14 @@
         "x86_64"
       ],
       "depends": [
-        "appstream",
+        "qt6-base",
+        "qt6-svg",
         "pacman",
-        "polkit",
-        "qt6-base"
+        "appstream",
+        "appstream-qt",
+        "archlinux-appstream-data",
+        "flatpak",
+        "polkit"
       ],
       "makedepends": [
         "cmake",

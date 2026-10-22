@@ -1,6 +1,6 @@
 pkgbase = aero7-programs-center-git
 	pkgdesc = Optional graphical software manager for Aero7 Linux (Beta)
-	pkgver = 0.2.0.r21.g7adbbed
+	pkgver = 0.2.0.r22.g051fea3
 	pkgrel = 1
 	epoch = 1
 	url = https://github.com/aero7-open-project/aero7-programs-center
@@ -21,7 +21,7 @@ pkgbase = aero7-programs-center-git
 	provides = aero7-programs-center
 	conflicts = aero7-programs-center
 	options = !debug
-	source = aero7-programs-center::git+https://github.com/aero7-open-project/aero7-programs-center.git#commit=7adbbed186ca7e5eced036ec76c9e1aee4328bc9
+	source = aero7-programs-center::git+https://github.com/aero7-open-project/aero7-programs-center.git#commit=051fea34016122461eab12bc02b56501e1d2a10b
 	sha256sums = SKIP
 
 pkgname = aero7-programs-center-git
