@@ -1,14 +1,14 @@
-# Programs Center 0.2.0 delta release candidate
+# Programs Center 0.2.0 delta release
 
 ## Scope and pinned inputs
 
 The source `testing` branch points to
 `051fea34016122461eab12bc02b56501e1d2a10b`. The package recipe pins that
 commit and produces `aero7-programs-center-git` version
-`1:0.2.0.r22.g051fea3-1`. The package remains a candidate until the dedicated
-builder VM compiles it in a clean chroot and signs it.
+`1:0.2.0.r22.g051fea3-1`. The dedicated builder VM compiled this package in
+a clean chroot, ran all six package tests, and signed it on 22 October 2026.
 
-The public signed repository base is
+The signed repository base for this delta was
 `20260923T180513Z-ce604b74debf`; its `aero7.db` SHA256 is
 `4c5b932d1998e2b2e649cb406e2e55d714abab51f8c6a02c2dd42f22739c9a9b`.
 Its Programs Center is `0.1.0.r12.g0405a2e-4`. The public key fingerprint is
@@ -103,5 +103,40 @@ activation sandbox, the guarded command rejected a changed active base, a
 tampered Aero7 Desktop archive, and an unsigned delta; the public symlink stayed
 on the original release in all cases.
 
-The genuine builder package, its production signatures, website installation,
-and public endpoint update remain pending the builder's storage recovery.
+## Published release evidence, 2026-10-22
+
+The 49 selected old `/var/tmp/Aero7*` QA fixture roots were archived locally,
+fully compared to their VM originals, and removed. The guarded cleanup then
+passed its 20 GiB free-space floor and restarted the GitHub runner. Source
+`testing` commit `051fea3` fixed a real narrow-window command-bar width bug
+while preserving bundled icons and tooltips. The clean VM package build passed
+all six CTests. The first three private runs exposed and resolved an executable
+bit, layout, and epoch filename validation problem; see Actions runs
+`39847157508`, `39847363001`, and `39848752227`.
+
+[Private staging run 39849199544](https://github.com/memegeko/aero7-repo/actions/runs/39849199544)
+passed the signed delta and repository gates. Its build ID is
+`20261022T202916Z-50dfda1fb6fb`, from package-repository commit
+`8ddd9a9a700166179fcd4baaeda030c2f0ee38a0`. The new package is
+`aero7-programs-center-git-1:0.2.0.r22.g051fea3-1-x86_64.pkg.tar.zst`
+(SHA256 `d9276656717bc4bbb99dc214c4d2677bdaa3cc6a9948c03f17bb580dabae7f9b`).
+The guarded website activator was installed separately and matched the
+reviewed script hash. [Publication run 39849634625](https://github.com/memegeko/aero7-repo/actions/runs/39849634625)
+passed and switched the public repository to that signed build.
+
+An independent public HTTPS readback downloaded the repository database,
+Programs Center archive, signatures, and public key. Both signatures verified
+against fingerprint `72C79ABBBBE96446DD3324042694BFE1090F4FD6`; package
+metadata, archive hash and size, database hash, manifest build ID, and the
+23-package count matched the private stage. The other 22 package archives and
+signatures match the previous public release byte-for-byte. Their `desc` and
+`files` database entries also match byte-for-byte. Evidence is in
+`/home/admin/Documents/aero7 folder/Programs-Center-Delta-2026-10-22/`.
+The public build-status JSON was refreshed after publication and read back
+over HTTPS with the same SHA256 as the reviewed local record.
+
+The VM gate covers compilation and all six automated tests, including the
+responsive layout checks. A manual visual GUI session on the exact published
+package has not been recorded; do not treat these automated results as that
+acceptance check. Source and package repository `main` branches were not
+changed.
