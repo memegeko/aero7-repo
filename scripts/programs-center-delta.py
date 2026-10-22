@@ -205,8 +205,8 @@ def check_candidate(package: Path, base: Audit, signed: bool) -> str:
     require(one(info, "pkgname") == TARGET, "candidate is not Programs Center")
     require(one(info, "pkgver") == version, "candidate version differs from reviewed recipe")
     require(one(info, "arch") == "x86_64", "candidate architecture mismatch")
-    filename_version = version.split(":", 1)[-1]
-    require(package.name == f"{TARGET}-{filename_version}-x86_64.pkg.tar.zst",
+    # makepkg keeps the epoch in the archive filename (for example, 1:0.2.0).
+    require(package.name == f"{TARGET}-{version}-x86_64.pkg.tar.zst",
             "candidate filename differs from package metadata")
     require(int(command("vercmp", version, base.versions[TARGET]).strip()) > 0,
             "candidate would not upgrade the public Programs Center")
