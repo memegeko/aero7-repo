@@ -1,0 +1,2 @@
+# One reviewed, root-owned entry point; no arguments or environment overrides.
+admin ALL=(root) NOPASSWD:NOSETENV: /usr/local/sbin/aero7-prune-builder-safe ""

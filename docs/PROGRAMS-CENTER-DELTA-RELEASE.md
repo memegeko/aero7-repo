@@ -23,7 +23,9 @@ and signs the new archive and databases with the existing repository key.
 ## Private build and validation
 
 The builder must have at least 20 GiB available on `/`; its runner must be
-online. After guarded storage recovery, push this candidate branch and dispatch
+online. The one-time access setup and the exact guarded cleanup command are in
+[`BUILDER-PRUNE-ACCESS.md`](BUILDER-PRUNE-ACCESS.md). After guarded storage
+recovery, push this candidate branch and dispatch
 the existing `build-packages` workflow in its private delta mode:
 
 ```bash
