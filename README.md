@@ -6,6 +6,10 @@
 
 Signed binary Arch Linux package repository infrastructure for Aero7.
 
+**Aero7 operating-system Beta 2 is NOT publicly released.** The new package
+set remains in testing pending bug fixes, integration checks, and final
+publication approval. Source recipes are not proof of binary release.
+
 This repository is beta infrastructure. It is intended to make Aero7 Desktop
 installation faster by publishing a signed set of precompiled Aero packages
 and selected companion applications for current Arch Linux x86_64 systems.
