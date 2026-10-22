@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       resume_build_id:
-        description: Existing complete staging build to sign and validate without recompiling
+        description: Existing staging ID, PROGRAMS-CENTER-DELTA, or PROGRAMS-CENTER-DELTA-PUBLISH:BUILD_ID
         required: false
         default: ""
         type: string
@@ -32,6 +32,23 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Keep the Programs Center candidate private
+        env:
+          RESUME_BUILD_ID: ${{ inputs.resume_build_id }}
+          FINAL_RELEASE_CONFIRMATION: ${{ inputs.final_release_confirmation }}
+        run: |
+          if [[ "$GITHUB_REF_NAME" == programs-center-0.2.0-candidate ]]; then
+            if [[ "$RESUME_BUILD_ID" == PROGRAMS-CENTER-DELTA && -z "$FINAL_RELEASE_CONFIRMATION" ]]; then
+              :
+            elif [[ "$RESUME_BUILD_ID" =~ ^PROGRAMS-CENTER-DELTA-PUBLISH:[0-9]{8}T[0-9]{6}Z-[0-9a-f]{12}$ &&
+                    "$FINAL_RELEASE_CONFIRMATION" == PUBLISH-AERO7-FINAL ]]; then
+              :
+            else
+              printf 'This candidate branch accepts only a private delta build or its separately confirmed publication.\n' >&2
+              exit 1
+            fi
+          fi
+
       - name: Verify pinned package metadata
         run: scripts/verify-sources.sh
 
@@ -39,8 +56,18 @@ jobs:
         if: inputs.resume_build_id == ''
         run: scripts/build-all.sh
 
+      - name: Build private Programs Center delta
+        if: inputs.resume_build_id == 'PROGRAMS-CENTER-DELTA' && inputs.final_release_confirmation == ''
+        env:
+          AERO7_SIGNING_FINGERPRINT: 72C79ABBBBE96446DD3324042694BFE1090F4FD6
+        run: |
+          [[ "$GITHUB_REF_NAME" == programs-center-0.2.0-candidate ]]
+          scripts/build-programs-center-delta.sh \
+            20260923T180513Z-ce604b74debf \
+            4c5b932d1998e2b2e649cb406e2e55d714abab51f8c6a02c2dd42f22739c9a9b
+
       - name: Finalize existing staged package set
-        if: inputs.resume_build_id != ''
+        if: inputs.resume_build_id != '' && inputs.resume_build_id != 'PROGRAMS-CENTER-DELTA' && !startsWith(inputs.resume_build_id, 'PROGRAMS-CENTER-DELTA-PUBLISH:')
         env:
           RESUME_BUILD_ID: ${{ inputs.resume_build_id }}
         run: |
@@ -53,16 +80,33 @@ jobs:
 
       - name: Capture validated staging build
         id: staged
+        env:
+          RESUME_BUILD_ID: ${{ inputs.resume_build_id }}
         run: |
-          build_id="$(cat /srv/aero7-builder/current-build-id)"
+          if [[ "$RESUME_BUILD_ID" == PROGRAMS-CENTER-DELTA-PUBLISH:* ]]; then
+            build_id="${RESUME_BUILD_ID#PROGRAMS-CENTER-DELTA-PUBLISH:}"
+          else
+            build_id="$(cat /srv/aero7-builder/current-build-id)"
+          fi
           [[ "$build_id" =~ ^[0-9]{8}T[0-9]{6}Z-[0-9a-f]{12}$ ]]
           test -f "/srv/aero7-builder/staging/$build_id/build-manifest.json"
           printf 'build_id=%s\n' "$build_id" >>"$GITHUB_OUTPUT"
 
       - name: Prepare final repository artifact
         if: inputs.final_release_confirmation == 'PUBLISH-AERO7-FINAL'
+        env:
+          RESUME_BUILD_ID: ${{ inputs.resume_build_id }}
         run: |
-          scripts/promote-build.sh "${{ steps.staged.outputs.build_id }}"
+          if [[ "$RESUME_BUILD_ID" == PROGRAMS-CENTER-DELTA-PUBLISH:* ]]; then
+            build_id="${{ steps.staged.outputs.build_id }}"
+            scripts/publish-programs-center-delta.sh \
+              "$build_id" "/srv/aero7-builder/staging/$build_id/base" \
+              20260923T180513Z-ce604b74debf \
+              4c5b932d1998e2b2e649cb406e2e55d714abab51f8c6a02c2dd42f22739c9a9b \
+              PUBLISH-AERO7-FINAL
+          else
+            scripts/promote-build.sh "${{ steps.staged.outputs.build_id }}"
+          fi
 
       - name: Upload staging report
         uses: actions/upload-artifact@v4
@@ -72,7 +116,7 @@ jobs:
           if-no-files-found: error
 
       - name: Upload final repository artifact
-        if: inputs.final_release_confirmation == 'PUBLISH-AERO7-FINAL'
+        if: inputs.final_release_confirmation == 'PUBLISH-AERO7-FINAL' && !startsWith(inputs.resume_build_id, 'PROGRAMS-CENTER-DELTA-PUBLISH:')
         uses: actions/upload-artifact@v4
         with:
           name: aero7-pacman-repository
