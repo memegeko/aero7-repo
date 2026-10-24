@@ -16,6 +16,17 @@ configuration passed at 720 pixels. The recipe now depends on `noto-fonts`,
 which the app stylesheet already names. The clean builder must pass again
 before signing or publication.
 
+The third private VM run compiled version `1:0.2.0.r26.g5379ea1-2` and passed
+all six CTests. It verified the current 23-package signed base but stopped
+before completing staging because the delta validator wrongly required the
+Programs Center file-path database entry to change. The updated binary keeps
+the same installed paths. The validator now requires the target description
+entry to advance and independently compares its files entry with the archive
+payload; all 22 unrelated entries remain byte-for-byte protected. A focused
+regression covers an unchanged target path list, a stale description, a changed
+unrelated entry, and an incorrect archive file list. A new private signed stage
+and public verification are still required.
+
 The exact currently published base is `20261022T202916Z-50dfda1fb6fb` with
 `aero7.db` SHA-256
 `9974edd62cfff70035d75791b60920992cf7cd060e096d2ee62a87ddefb44ba2`.

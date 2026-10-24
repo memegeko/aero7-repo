@@ -95,6 +95,17 @@ def archive_entries(path: Path, suffix: str) -> dict[str, bytes]:
     return entries
 
 
+def verify_package_files_entry(package: Path, entry: bytes) -> None:
+    """Match the repository file list to the actual target archive payload."""
+    lines = entry.decode().splitlines()
+    require(lines and lines[0] == "%FILES%", "Programs Center files entry is malformed")
+    listed = [line for line in lines[1:] if line]
+    require(len(listed) == len(set(listed)), "Programs Center files entry has duplicate paths")
+    archive = [name.removeprefix("./") for name in command("bsdtar", "-tf", str(package)).splitlines()
+               if not name.startswith((".PKGINFO", ".BUILDINFO", ".MTREE"))]
+    require(set(listed) == set(archive), "Programs Center files entry differs from archive contents")
+
+
 @dataclass
 class Audit:
     build_id: str
@@ -182,6 +193,7 @@ def audit(release: Path, expected_id: str, expected_db_sha: str | None, signed: 
         require(fields["SHA256SUM"] == digest(packages[name]), f"database package hash mismatch: {name}")
         desc[name], files[name] = data, files_by_id[ident]
     require(set(desc) == expected_names, "database entries do not match package files")
+    verify_package_files_entry(packages[TARGET], files[TARGET])
 
     if signed:
         verify_signatures(release, packages)
@@ -332,8 +344,10 @@ def verify_delta(base: Audit, current: Audit, candidate: Path, signed: bool) -> 
     expected_version = check_candidate(candidate, base, signed=signed)
     require(current.versions[TARGET] == expected_version, "Programs Center version mismatch after database update")
     require(digest(current.packages[TARGET]) == digest(candidate), "Programs Center archive differs from candidate")
-    require(base.desc[TARGET] != current.desc[TARGET] and base.files[TARGET] != current.files[TARGET],
-            "Programs Center database entries did not change")
+    # A binary update can keep the exact same installed paths. audit() has
+    # already checked the target files entry against the new archive payload.
+    require(base.desc[TARGET] != current.desc[TARGET],
+            "Programs Center database description did not change")
 
 
 def verify_signed_stage(args: argparse.Namespace) -> None:
