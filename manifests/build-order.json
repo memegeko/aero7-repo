@@ -363,7 +363,8 @@
         "appstream-qt",
         "archlinux-appstream-data",
         "flatpak",
-        "polkit"
+        "polkit",
+        "noto-fonts"
       ],
       "makedepends": [
         "cmake",

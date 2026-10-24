@@ -8,8 +8,13 @@ attempt compiled but the Qt 6.12 offscreen layout gate found an 871-pixel
 minimum at the requested 720-pixel width; nothing was staged or published.
 Source `testing` and `beta` now point to the narrow-width correction
 `5379ea11902f1eb8e5b695f7dcb84b4b1bb159c1`. This candidate pins
-`aero7-programs-center-git 1:0.2.0.r26.g5379ea1-1`. The host passed all six
-tests again; the corrected clean builder gate remains required.
+`aero7-programs-center-git 1:0.2.0.r26.g5379ea1-2`. The host passed all six
+tests again. A second clean VM attempt still found an 871-pixel command bar
+minimum because its chroot had no usable UI font. The same failure was
+reproduced on the host with an empty font configuration; a Noto Sans-only
+configuration passed at 720 pixels. The recipe now depends on `noto-fonts`,
+which the app stylesheet already names. The clean builder must pass again
+before signing or publication.
 
 The exact currently published base is `20261022T202916Z-50dfda1fb6fb` with
 `aero7.db` SHA-256

@@ -1,7 +1,7 @@
 pkgbase = aero7-programs-center-git
 	pkgdesc = Optional graphical software manager for Aero7 Linux (Beta)
 	pkgver = 0.2.0.r26.g5379ea1
-	pkgrel = 1
+	pkgrel = 2
 	epoch = 1
 	url = https://github.com/aero7-open-project/aero7-programs-center
 	arch = x86_64
@@ -18,6 +18,7 @@ pkgbase = aero7-programs-center-git
 	depends = archlinux-appstream-data
 	depends = flatpak
 	depends = polkit
+	depends = noto-fonts
 	provides = aero7-programs-center
 	conflicts = aero7-programs-center
 	options = !debug
