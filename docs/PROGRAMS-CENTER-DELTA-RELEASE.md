@@ -1,5 +1,26 @@
 # Programs Center 0.2.0 delta release
 
+## 24 October 2026 update candidate
+
+The user approved the host-reviewed Programs Center source at
+`e7691a9de9b9cce1dbc2738bb3a022547b9128fb`. Both source `testing` and
+`beta` point to that commit. This candidate pins it as
+`aero7-programs-center-git 1:0.2.0.r25.ge7691a9-1`.
+
+The exact currently published base is `20261022T202916Z-50dfda1fb6fb` with
+`aero7.db` SHA-256
+`9974edd62cfff70035d75791b60920992cf7cd060e096d2ee62a87ddefb44ba2`.
+The workflow's private and publication steps both pin that base. The delta
+gate must preserve all 22 other public packages, their signatures, and their
+database entries. The October 22 evidence below describes the earlier release
+and is retained as history.
+
+Dispatch the private build first. Review its signed stage and verify-delta
+result before dispatching `PROGRAMS-CENTER-DELTA-PUBLISH:BUILD_ID` with
+`PUBLISH-AERO7-FINAL`. The guarded website activator must find this exact base
+active under its publication lock. Verify the new archive, database, signatures,
+public HTTPS readback, and status page after activation.
+
 ## Scope and pinned inputs
 
 The source `testing` and `beta` branches point to

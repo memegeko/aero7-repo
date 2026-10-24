@@ -63,8 +63,8 @@ jobs:
         run: |
           [[ "$GITHUB_REF_NAME" == programs-center-0.2.0-candidate ]]
           scripts/build-programs-center-delta.sh \
-            20260923T180513Z-ce604b74debf \
-            4c5b932d1998e2b2e649cb406e2e55d714abab51f8c6a02c2dd42f22739c9a9b
+            20261022T202916Z-50dfda1fb6fb \
+            9974edd62cfff70035d75791b60920992cf7cd060e096d2ee62a87ddefb44ba2
 
       - name: Finalize existing staged package set
         if: inputs.resume_build_id != '' && inputs.resume_build_id != 'PROGRAMS-CENTER-DELTA' && !startsWith(inputs.resume_build_id, 'PROGRAMS-CENTER-DELTA-PUBLISH:')
@@ -101,8 +101,8 @@ jobs:
             build_id="${{ steps.staged.outputs.build_id }}"
             scripts/publish-programs-center-delta.sh \
               "$build_id" "/srv/aero7-builder/staging/$build_id/base" \
-              20260923T180513Z-ce604b74debf \
-              4c5b932d1998e2b2e649cb406e2e55d714abab51f8c6a02c2dd42f22739c9a9b \
+              20261022T202916Z-50dfda1fb6fb \
+              9974edd62cfff70035d75791b60920992cf7cd060e096d2ee62a87ddefb44ba2 \
               PUBLISH-AERO7-FINAL
           else
             scripts/promote-build.sh "${{ steps.staged.outputs.build_id }}"

@@ -1,5 +1,5 @@
 pkgname=aero7-programs-center-git
-pkgver=0.2.0.r22.g051fea3
+pkgver=0.2.0.r25.ge7691a9
 pkgrel=1
 epoch=1
 pkgdesc='Optional graphical software manager for Aero7 Linux (Beta)'
@@ -11,7 +11,7 @@ makedepends=('cmake' 'git' 'ninja' 'pkgconf')
 provides=('aero7-programs-center')
 conflicts=('aero7-programs-center')
 options=('!debug')
-_commit=051fea34016122461eab12bc02b56501e1d2a10b
+_commit=e7691a9de9b9cce1dbc2738bb3a022547b9128fb
 source=("aero7-programs-center::git+$url.git#commit=$_commit")
 sha256sums=('SKIP')
 
