@@ -3,9 +3,13 @@
 ## 24 October 2026 update candidate
 
 The user approved the host-reviewed Programs Center source at
-`e7691a9de9b9cce1dbc2738bb3a022547b9128fb`. Both source `testing` and
-`beta` point to that commit. This candidate pins it as
-`aero7-programs-center-git 1:0.2.0.r25.ge7691a9-1`.
+`e7691a9de9b9cce1dbc2738bb3a022547b9128fb`. Its first clean builder
+attempt compiled but the Qt 6.12 offscreen layout gate found an 871-pixel
+minimum at the requested 720-pixel width; nothing was staged or published.
+Source `testing` and `beta` now point to the narrow-width correction
+`5379ea11902f1eb8e5b695f7dcb84b4b1bb159c1`. This candidate pins
+`aero7-programs-center-git 1:0.2.0.r26.g5379ea1-1`. The host passed all six
+tests again; the corrected clean builder gate remains required.
 
 The exact currently published base is `20261022T202916Z-50dfda1fb6fb` with
 `aero7.db` SHA-256
